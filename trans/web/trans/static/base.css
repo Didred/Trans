@@ -56,6 +56,12 @@ body {
     color: red;
 }
 
+.btn_color {
+    color: #fff;
+    background-color: #5cb85c;
+    border-color: #4cae4c;
+}
+
 .container {
   width: 95%;
   max-width: none !important;

@@ -1,6 +1,6 @@
 import os
 
-from lib.api.api import API
+from library.api.api import API
 
 
 DEFAULT_CONFIG_DIRECTORY = os.path.expanduser("~/Documents/Диплом/.trans/")

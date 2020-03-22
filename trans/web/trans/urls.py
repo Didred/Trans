@@ -11,4 +11,5 @@ urlpatterns = [
 
     url(r'^signup/$', views.signup, name='signup'),
     url(r'^profile/$', views.profile, name='profile'),
+    url(r'^add_company/$', views.add_company, name='add_company'),
 ]

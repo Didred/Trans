@@ -1,4 +1,4 @@
-from lib.database import Base
+from library.database import Base
 from sqlalchemy import (
     Column,
     String,
@@ -12,6 +12,7 @@ class Company(Base):
     __tablename__ = 'company'
 
     id = Column(Integer, primary_key=True)
+    nickname = Column(String)
     UNP = Column(String) #?
     name = Column(String)
     primary_occupation = Column(String)
@@ -24,6 +25,7 @@ class Company(Base):
 
     def __init__(
             self,
+            nickname,
             UNP,
             name,
             primary_occupation,
@@ -32,6 +34,7 @@ class Company(Base):
             town,
             address,
             phone):
+        self.nickname = nickname
         self.UNP = UNP
         self.name = name
         self.primary_occupation = primary_occupation

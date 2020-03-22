@@ -7,11 +7,11 @@ from sqlalchemy import (
     and_,
     or_
 )
-from lib.database import get_session
-from lib.models.car import Car
-from lib.models.user import User
-from lib.models.goods import Goods
-from lib.models.company import Company
+from library.database import get_session
+from library.models.car import Car
+from library.models.user import User
+from library.models.goods import Goods
+from library.models.company import Company
 
 
 DEFAULT_CONFIG_DIRECTORY = os.path.expanduser("~/Documents/Диплом/.trans/")
@@ -142,10 +142,14 @@ class API:
 
         return user.id
 
-    def get_user(self, user_id):
+    def get_user(self, user_id=None, nickname=None):
         try:
-            return (self._session.query(User)
-                    .filter(User.id == user_id).one())
+            if nickname is not None:
+                return (self._session.query(User)
+                    .filter(User.nickname == nickname).one())
+            else:
+                return (self._session.query(User)
+                        .filter(User.id == user_id).one())
         except sqlalchemy.orm.exc.NoResultFound:
             raise Exception("User not found")
 
@@ -157,7 +161,7 @@ class API:
             surname=None,
             email=None,
             phone=None):
-        user = self.get_user(user_id)
+        user = self.get_user(user_id=user_id)
 
         if nickname is not None:
             user.nickname = nickname
@@ -177,7 +181,7 @@ class API:
         self._session.commit()
 
     def delete_user(self, user_id):
-        user = self.get_user(user_id)
+        user = self.get_user(user_id=user_id)
 
         self._delete(user)
 
@@ -282,6 +286,7 @@ class API:
 
     def create_company(
             self,
+            nickname,
             UNP,
             name,
             primary_occupation,
@@ -292,6 +297,7 @@ class API:
             phone):
 
         company = Company(
+            nickname,
             UNP,
             name,
             primary_occupation,
@@ -306,10 +312,14 @@ class API:
 
         return company.id
 
-    def get_company(self, company_id):
+    def get_company(self, company_id=None, nickname=None):
         try:
-            return (self._session.query(Company)
-                    .filter(Company.id == company_id).one())
+            if nickname is not None:
+                return (self._session.query(Company)
+                    .filter(Company.nickname == nickname).one_or_none())
+            else:
+                return (self._session.query(Company)
+                        .filter(Company.id == company_id).one())
         except sqlalchemy.orm.exc.NoResultFound:
             raise Exception("Company not found")
 
@@ -324,7 +334,7 @@ class API:
             town=None,
             address=None,
             phone=None):
-        company = self.get_company(company_id)
+        company = self.get_company(company_id=company_id)
 
         if UNP is not None:
             company.UNP = UNP
@@ -353,7 +363,7 @@ class API:
         self._session.commit()
 
     def delete_company(self, company_id):
-        company = self.get_company(company_id)
+        company = self.get_company(company_id=company_id)
 
         self._delete(company)
 

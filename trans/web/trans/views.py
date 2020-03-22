@@ -12,7 +12,8 @@ from django.shortcuts import (
 
 from . import get_api
 from .forms import (
-    UserForm
+    UserForm,
+    CompanyForm
 )
 
 
@@ -43,4 +44,39 @@ def signup(request):
 
 
 def profile(request):
-    return render(request, 'trans/profile.html')
+    api = get_api()
+    user = api.get_user(nickname=request.user.username)
+    company = api.get_company(nickname=request.user.username)
+    write_file(company)
+
+    return render(request, 'trans/profile.html', {'member': user, 'company': company})
+
+
+def add_company(request):
+    api = get_api()
+
+    if request.method == 'POST':
+        form = CompanyForm(request.POST)
+        write_file(form.is_valid())
+        if form.is_valid():
+            api.create_company(
+                request.user.username,
+                form.cleaned_data['UNP'],
+                form.cleaned_data['name'],
+                form.cleaned_data['primary_occupation'],
+                form.cleaned_data['license'],
+                form.cleaned_data['country'],
+                form.cleaned_data['town'],
+                form.cleaned_data['address'],
+                form.cleaned_data['phone']
+            )
+            return redirect('/profile/')
+    else:
+        form = CompanyForm()
+
+    return render(request, 'trans/add_company.html', {'form': form})
+
+
+def write_file(text):
+    with open("output.txt", "w") as file:
+        file.write(str(text))
