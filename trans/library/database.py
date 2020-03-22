@@ -10,6 +10,6 @@ Base = declarative_base()
 
 def get_session(connection_string):
     engine = create_engine(connection_string)
-    Session = sessionmaker(bind=engine)
+    session = sessionmaker(bind=engine)
     Base.metadata.create_all(engine)
-    return scoped_session(Session)
+    return scoped_session(session)

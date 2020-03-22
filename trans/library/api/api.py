@@ -1,6 +1,7 @@
 import os
 import re
 import sqlalchemy
+
 from datetime import datetime
 from sqlalchemy import (
     and_,
@@ -11,6 +12,7 @@ from library.models.car import Car
 from library.models.user import User
 from library.models.goods import Goods
 from library.models.company import Company
+
 
 DEFAULT_CONFIG_DIRECTORY = os.path.expanduser("~/Documents/Диплом/.trans/")
 DEFAULT_DATABASE_URL = ''.join(["sqlite:///",
@@ -115,6 +117,11 @@ class API:
 
         self._session.commit()
 
+    def delete_car(self, car_id):
+        car = self.get_car(car_id)
+
+        self._delete(car)
+
     def create_user(
             self,
             name,
@@ -162,6 +169,11 @@ class API:
             user.phone = phone
 
         self._session.commit()
+
+    def delete_user(self, user_id):
+        user = self.get_user(user_id)
+
+        self._delete(user)
 
     def create_goods(
             self,
@@ -257,11 +269,17 @@ class API:
 
         self._session.commit()
 
+    def delete_goods(self, goods_id):
+        goods = self.get_goods(goods_id)
+
+        self._delete(goods)
+
     def create_company(
             self,
             UNP,
             name,
             primary_occupation,
+            license,
             country,
             town,
             address,
@@ -271,6 +289,7 @@ class API:
             UNP,
             name,
             primary_occupation,
+            license,
             country,
             town,
             address,
@@ -294,6 +313,7 @@ class API:
             UNP=None,
             name=None,
             primary_occupation=None,
+            license=None,
             country=None,
             town=None,
             address=None,
@@ -309,6 +329,9 @@ class API:
         if primary_occupation is not None:
             company.primary_occupation = primary_occupation
 
+        if license is not None:
+            company.license = license
+
         if country is not None:
             company.country = country
 
@@ -323,9 +346,20 @@ class API:
 
         self._session.commit()
 
+    def delete_company(self, company_id):
+        company = self.get_company(company_id)
+
+        self._delete(company)
+
     def _add(self, object):
         self._session.add(object)
         self._session.commit()
 
+    def _delete(self, object):
+        self._session.delete(object)
+        self._session.commit()
+
 
 api = API(DEFAULT_DATABASE_URL)
+# api.create_company(123, "ЮРМАТРАНС", "Перевозчик", "321", "Беларусь", "Минск", "Адрес", "+375339019468")
+
