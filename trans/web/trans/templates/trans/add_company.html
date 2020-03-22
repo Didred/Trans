@@ -29,8 +29,16 @@
                         {{ error }}
                     </div>
                 {% endfor %}
-                 <div class="form-group">
+                <!-- <div class="form-group">
                     <input type="text" name="primary_occupation" class="form-control" placeholder="Вид деятельности">
+                </div> -->
+                <div class="form-group">
+                    <select name="primary_occupation" class="form-control">
+                        <option value="-1" selected="selected"> Основной вид дейтельности </option>
+                        {% for field in fields %}
+                            <option value={{ forloop.counter0 }}> {{ field }} </option>
+                        {% endfor %}
+                    </select>
                 </div>
                 {% for error in form.primary_occupation.errors %}
                     <div class="form-group has-errors text-danger">

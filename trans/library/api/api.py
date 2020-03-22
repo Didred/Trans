@@ -142,29 +142,22 @@ class API:
 
         return user.id
 
-    def get_user(self, user_id=None, nickname=None):
+    def get_user(self, nickname):
         try:
-            if nickname is not None:
-                return (self._session.query(User)
-                    .filter(User.nickname == nickname).one())
-            else:
-                return (self._session.query(User)
-                        .filter(User.id == user_id).one())
+            return (self._session.query(User)
+                .filter(User.nickname == nickname).one_or_none())
+
         except sqlalchemy.orm.exc.NoResultFound:
             raise Exception("User not found")
 
     def edit_user(
             self,
-            user_id,
-            nickname=None,
+            nickname,
             name=None,
             surname=None,
             email=None,
             phone=None):
-        user = self.get_user(user_id=user_id)
-
-        if nickname is not None:
-            user.nickname = nickname
+        user = self.get_user(nickname)
 
         if name is not None:
             user.name = name
@@ -180,8 +173,8 @@ class API:
 
         self._session.commit()
 
-    def delete_user(self, user_id):
-        user = self.get_user(user_id=user_id)
+    def delete_user(self, nickname):
+        user = self.get_user(nickname)
 
         self._delete(user)
 

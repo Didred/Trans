@@ -56,11 +56,17 @@ body {
     color: red;
 }
 
-.btn_color {
-    color: #fff;
-    background-color: #5cb85c;
-    border-color: #4cae4c;
-}
+div.wrapper {
+  width:450px;
+  }
+  div.left_block {
+  float:left;
+  width:200px;
+  }
+  div.right_block {
+  float:right;
+  width:200px;
+  }
 
 .container {
   width: 95%;

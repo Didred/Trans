@@ -18,7 +18,17 @@ class UsernameField(forms.CharField):
         return unicodedata.normalize('NFKC', super(UsernameField, self).to_python(value))
 
 
+class EditUserForm(forms.Form):
+    name = forms.CharField(max_length=30)
+    surname = forms.CharField(max_length=30)
+    email = forms.CharField(max_length=30)
+    phone = forms.CharField(max_length=30)
+
+
 class UserForm(forms.ModelForm):
+    # def __init__(self, nickname, *args, **kwargs):
+    #     super(UserForm, self).__init__(*args, **kwargs)
+
     error_messages = {
         'password_mismatch': _("The two password fields didn't match."),
     }
@@ -70,7 +80,6 @@ class UserForm(forms.ModelForm):
 
 
 class CompanyForm(forms.Form):
-    # nickname = forms.CharField(max_length=30)
     UNP = forms.CharField(max_length=30)
     name = forms.CharField(max_length=30)
     primary_occupation = forms.CharField(max_length=30)
@@ -79,11 +88,3 @@ class CompanyForm(forms.Form):
     town = forms.CharField(max_length=30)
     address = forms.CharField(max_length=30)
     phone = forms.CharField(max_length=30)
-
-    # date_registration = forms.DateTimeField(
-    #     widget=forms.widgets.DateInput(
-    #         attrs={'type': 'datetime'},
-    #         format=DATE_FORMAT
-    #     ),
-    #     initial=format(datetime.now(), DATE_FORMAT)
-    # )
