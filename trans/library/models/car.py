@@ -1,4 +1,4 @@
-from library.database import Base
+from lib.database import Base
 from sqlalchemy import (
     Column,
     String,

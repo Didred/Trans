@@ -7,11 +7,11 @@ from sqlalchemy import (
     and_,
     or_
 )
-from library.database import get_session
-from library.models.car import Car
-from library.models.user import User
-from library.models.goods import Goods
-from library.models.company import Company
+from lib.database import get_session
+from lib.models.car import Car
+from lib.models.user import User
+from lib.models.goods import Goods
+from lib.models.company import Company
 
 
 DEFAULT_CONFIG_DIRECTORY = os.path.expanduser("~/Documents/Диплом/.trans/")
@@ -124,12 +124,14 @@ class API:
 
     def create_user(
             self,
+            nickname,
             name,
             surname,
             email,
             phone):
 
         user = User(
+            nickname,
             name,
             surname,
             email,
@@ -150,11 +152,15 @@ class API:
     def edit_user(
             self,
             user_id,
+            nickname=None,
             name=None,
             surname=None,
             email=None,
             phone=None):
         user = self.get_user(user_id)
+
+        if nickname is not None:
+            user.nickname = nickname
 
         if name is not None:
             user.name = name
@@ -360,6 +366,7 @@ class API:
         self._session.commit()
 
 
-api = API(DEFAULT_DATABASE_URL)
-# api.create_company(123, "ЮРМАТРАНС", "Перевозчик", "321", "Беларусь", "Минск", "Адрес", "+375339019468")
+if __name__ == "__main__":
+    api = API(DEFAULT_DATABASE_URL)
+    # api.create_company(123, "ЮРМАТРАНС", "Перевозчик", "321", "Беларусь", "Минск", "Адрес", "+375339019468")
 

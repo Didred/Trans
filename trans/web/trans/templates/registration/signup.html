@@ -1,0 +1,79 @@
+{% extends 'trans/base.html' %}
+
+{% block title %}Регистрация{% endblock %}
+
+{% block login %}
+    <div class="container">
+        <div class="col-lg-4"></div>
+        <div class="col-lg-4">
+            <h2 class="text-muted">Регистрация</h2>
+            {% for error in form.non_field_errors %}
+                <div class="form-group has-errors text-danger">
+                    {{error}}
+                </div>
+            {% endfor %}
+            <form method="post">
+                <div class="form-group">
+                    <input type="text" name="username" class="form-control" placeholder="Логин">
+                </div>
+                {% for error in form.username.errors %}
+                    <div class="form-group has-errors text-danger">
+                        {{ error }}
+                    </div>
+                {% endfor %}
+                <div class="form-group">
+                    <input type="text" name="name" class="form-control" placeholder="Имя">
+                </div>
+                {% for error in form.name.errors %}
+                    <div class="form-group has-errors text-danger">
+                        {{ error }}
+                    </div>
+                {% endfor %}
+                 <div class="form-group">
+                    <input type="text" name="surname" class="form-control" placeholder="Фамилия">
+                </div>
+                {% for error in form.surname.errors %}
+                    <div class="form-group has-errors text-danger">
+                        {{ error }}
+                    </div>
+                {% endfor %}
+                <div class="form-group">
+                    <input type="email" name="email" class="form-control" placeholder="Email">
+                </div>
+                {% for error in form.email.errors %}
+                    <div class="form-group has-errors text-danger">
+                        {{ error }}
+                    </div>
+                {% endfor %}
+                <div class="form-group">
+                    <input type="text" name="phone" class="form-control" placeholder="Введите номер телефона в формате +375339019468">
+                </div>
+                {% for error in form.phone.errors %}
+                    <div class="form-group has-errors text-danger">
+                        {{ error }}
+                    </div>
+                {% endfor %}
+                <div class="form-group">
+                    <input type="password" name="password1" class="form-control" placeholder="Password">
+                </div>
+                {% for error in form.password1.errors %}
+                    <div class="form-group has-errors text-danger">
+                        {{ error }}
+                    </div>
+                {% endfor %}
+                <div class="form-group">
+                    <input type="password" name="password2" class="form-control" placeholder="Confirm password">
+                </div>
+                {% for error in form.password2.errors %}
+                    <div class="form-group has-errors text-danger">
+                        {{ error }}
+                    </div>
+                {% endfor %}
+                <div class="form-group">
+                    {% csrf_token %}
+                    <input type="submit" class="btn btn-success" value="Sign Up">
+                </div>
+            </form>
+        </div>
+	</div>
+{% endblock %}
