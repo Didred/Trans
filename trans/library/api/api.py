@@ -318,7 +318,7 @@ class API:
 
     def edit_company(
             self,
-            company_id,
+            nickname,
             UNP=None,
             name=None,
             primary_occupation=None,
@@ -327,7 +327,7 @@ class API:
             town=None,
             address=None,
             phone=None):
-        company = self.get_company(company_id=company_id)
+        company = self.get_company(nickname=nickname)
 
         if UNP is not None:
             company.UNP = UNP

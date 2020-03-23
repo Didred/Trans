@@ -14,4 +14,5 @@ urlpatterns = [
     url(r'^add_company/$', views.add_company, name='add_company'),
     url(r'^profile/edit/$', views.edit_profile, name='edit_profile'),
     url(r'^profile/edit/password$', views.edit_password, name='edit_password'),
+    url(r'^profile/edit/company$', views.edit_company, name='edit_company'),
 ]

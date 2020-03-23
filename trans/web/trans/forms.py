@@ -25,6 +25,17 @@ class EditUserForm(forms.Form):
     phone = forms.CharField(max_length=30)
 
 
+class CompanyForm(forms.Form):
+    name = forms.CharField(max_length=30)
+    UNP = forms.CharField(max_length=30)
+    primary_occupation = forms.CharField(max_length=30)
+    license = forms.CharField(max_length=30)
+    country = forms.CharField(max_length=30)
+    town = forms.CharField(max_length=30)
+    address = forms.CharField(max_length=30)
+    phone = forms.CharField(max_length=30)
+
+
 class UserForm(forms.ModelForm):
     # def __init__(self, nickname, *args, **kwargs):
     #     super(UserForm, self).__init__(*args, **kwargs)

@@ -119,9 +119,33 @@ def edit_profile(request):
     return render(request, 'trans/edit_profile.html', {'form': member})
 
 
-def write_file(text):
-    with open("output.txt", "w") as file:
-        file.write(str(text))
+def edit_company(request):
+    api = get_api()
+    user = request.user.username
+    company = ""
+
+    if request.method == 'POST':
+        form = CompanyForm(request.POST)
+        write_file(form.is_valid())
+        if form.is_valid():
+            api.edit_company(
+                user,
+                form.cleaned_data['UNP'],
+                form.cleaned_data['name'],
+                FIELDS[int(form.cleaned_data['primary_occupation'])],
+                form.cleaned_data['license'],
+                form.cleaned_data['country'],
+                form.cleaned_data['town'],
+                form.cleaned_data['address'],
+                form.cleaned_data['phone']
+            )
+            return redirect('/profile/')
+
+    else:
+        company = api.get_company(nickname=user)
+        number = FIELDS.index(company.primary_occupation)
+
+    return render(request, 'trans/edit_company.html', {'form': company, 'fields': FIELDS, 'number': number})
 
 
 def edit_password(request):
@@ -133,3 +157,8 @@ def edit_password(request):
     else:
         form = PasswordChangeForm(request.user)
     return render(request, 'trans/change_password.html', {'form': form})
+
+
+def write_file(text):
+    with open("output.txt", "w") as file:
+        file.write(str(text))
