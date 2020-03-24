@@ -287,7 +287,8 @@ class API:
             country,
             town,
             address,
-            phone):
+            phone,
+            description):
 
         company = Company(
             nickname,
@@ -298,7 +299,8 @@ class API:
             country,
             town,
             address,
-            phone
+            phone,
+            description
         )
 
         self._add(company)
@@ -316,6 +318,19 @@ class API:
         except sqlalchemy.orm.exc.NoResultFound:
             raise Exception("Company not found")
 
+    def get_companys(self, primary_occupation=None, name=None, country=None):
+        _filter = and_(
+            or_(name is None, Company.name == name),
+            or_(primary_occupation is None, Company.primary_occupation == primary_occupation),
+            or_(country is None, Company.country == country)
+        )
+        print(_filter)
+
+        companys = self._session.query(Company).filter(_filter).all()
+        self._session.commit()
+
+        return companys
+
     def edit_company(
             self,
             nickname,
@@ -326,7 +341,8 @@ class API:
             country=None,
             town=None,
             address=None,
-            phone=None):
+            phone=None,
+            description=None):
         company = self.get_company(nickname=nickname)
 
         if UNP is not None:
@@ -353,6 +369,10 @@ class API:
         if phone is not None:
             company.phone = phone
 
+        if description is not None:
+            company.description = description
+            company.small_description = company.pars_description()
+
         self._session.commit()
 
     def delete_company(self, company_id):
@@ -370,6 +390,7 @@ class API:
 
 
 if __name__ == "__main__":
-    api = API(DEFAULT_DATABASE_URL)
+    pass
+    # api = API(DEFAULT_DATABASE_URL)
     # api.create_company(123, "ЮРМАТРАНС", "Перевозчик", "321", "Беларусь", "Минск", "Адрес", "+375339019468")
 

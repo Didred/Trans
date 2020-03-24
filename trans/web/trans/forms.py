@@ -21,7 +21,7 @@ class UsernameField(forms.CharField):
 class EditUserForm(forms.Form):
     name = forms.CharField(max_length=30)
     surname = forms.CharField(max_length=30)
-    email = forms.CharField(max_length=30)
+    email = forms.EmailField(max_length=30)
     phone = forms.CharField(max_length=30)
 
 
@@ -34,6 +34,7 @@ class CompanyForm(forms.Form):
     town = forms.CharField(max_length=30)
     address = forms.CharField(max_length=30)
     phone = forms.CharField(max_length=30)
+    description = forms.CharField(max_length=10000)
 
 
 class UserForm(forms.ModelForm):
@@ -88,14 +89,3 @@ class UserForm(forms.ModelForm):
         if commit:
             user.save()
         return user
-
-
-class CompanyForm(forms.Form):
-    UNP = forms.CharField(max_length=30)
-    name = forms.CharField(max_length=30)
-    primary_occupation = forms.CharField(max_length=30)
-    license = forms.CharField(max_length=30)
-    country = forms.CharField(max_length=30)
-    town = forms.CharField(max_length=30)
-    address = forms.CharField(max_length=30)
-    phone = forms.CharField(max_length=30)

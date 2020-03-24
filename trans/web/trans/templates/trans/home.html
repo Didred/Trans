@@ -1,1 +1,65 @@
 {% extends 'trans/base.html' %}
+
+{% block content %}
+    <form class="form-inline form-group">
+        <label class="home3">Вид деятельности:</label>
+        <label class="home3">По названию:</label>
+        <label class="home3">Местоположение:</label>
+    </form>
+    <form class="form-inline form-group">
+        <select name="asd" class="form-control" style="width: 30%;">
+            <option value='test1' selected="selected"> Любой </option>
+            {% for field in fields %}
+                {% if not forloop.last %}
+                    <option value='test1'> {{ field }} </option>
+                {% endif %}
+            {% endfor %}
+        </select>
+        <input name="" class="form-control" style="width: 30%;"></input>
+        <select name="" class="form-control" style="width: 30%;">
+            <option value='test1'> test </option>
+        </select>
+        <button type="button" class="btn btn-primary" style="width: 8%;">Поиск</button>
+    </form>
+
+    {% for company in companys %}
+        <form class="form-inline form-group">
+        <div class="form-group company-block">
+            <div class="company-name">
+                <label class="company-text"> <a style="text-decoration: none; color: black;" href="{% url 'profile' nickname=company.nickname %}"> {{ company.name }} </a></label>
+                <p class=company-text> {{ company.primary_occupation }}, <span class="company-color"> {{ company.country }}, {{ company.town }} </span></p>
+            </div>
+
+            <div class="company-box">
+                <div class="company-box-logo">
+                    <img class="home-company-logo" src="https://i.ibb.co/x6FDdzW/image.png">
+                </div>
+                <div class="company-box-help">
+                    <p><button type="button" class="btn btn-primary">in developing</button></p>
+                    <p><button type="button" class="btn btn-primary">in developing</button></p>
+                    <p> in developing </p>
+                    <p> in developing </p>
+                    <p><a style="text-decoration: none;" href="{% url 'profile' nickname=company.nickname %}"> {{ company.nickname }} </a></p>
+                </div>
+                {% if company.description %}
+                    <div class="company-box-description">
+                        <label class=""> Описание </label>
+                        <div class="">
+                            <p> {{ company.small_description }} </p>
+                        </div>
+                    </div>
+                {% endif %}
+                <div class="company-box-rating">
+                    <div class="company-box-rating-item">
+                        <p class="company-rating"> Рейтинг: </p>
+                        <p><a href="#"><img class="like" src="https://i.ibb.co/RCjnKQW/image.png"></a> 0 </p>
+                        <p><a href="#"><img class="like" src="https://i.ibb.co/pRpSXSx/image.png"></a> 0 </p>
+                        <p><a style="text-decoration: none;" href="#">Смотреть отзывы</a></p>
+                        <p><a href="{% url 'edit_password' %}" type="button" class="btn btn-warning company-box-rating-button">Добавить отзыв</a></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        </form>
+    {% endfor %}
+{% endblock %}

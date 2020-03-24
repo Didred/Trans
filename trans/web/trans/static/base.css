@@ -157,3 +157,96 @@ div.wrapper {
   background-color: transparent !important;
 }
 
+.home3 {
+  width: 30%;
+}
+
+.company-block {
+  width: 100%;
+  outline: 1px solid #ccc;
+  box-shadow: 0 0 5px rgba(0,0,0,0.5);
+  overflow: auto;
+}
+
+.company-name {
+  width: 100%;	height: auto;
+  background-color: #f6f6f6;
+  outline: 1px solid #e7e7e7;
+}
+
+.company-text {
+  margin-left: 10px;
+  margin-top: 10px;
+  margin-bottom: 0px;
+}
+
+.company-color {
+  color: #979292
+}
+
+.home-company-logo {
+  max-width: 100%;
+  max-height: 100%;
+}
+
+.company-box {
+  margin-top: 10px;
+  position: relative;
+}
+
+.company-box-logo {
+  width: 15%;
+  display: inline-block;
+  vertical-align: top;
+}
+.company-box-help {
+  width: 20%;
+  display: inline-block;
+  text-align: center;
+  vertical-align: top;
+}
+
+.company-box-description {
+  width: 42%;
+  display: inline-block;
+  text-align: center;
+}
+
+.company-textarea {
+  max-width: 100px;
+}
+
+.company-box-rating {
+  margin-top: -10px;
+  width: 17%;
+  display: inline-block;
+  border-left: 1px solid #ccc;
+  position: absolute;
+  right:0;
+  top:0;
+  bottom:0;
+  background-color: #d1d1d1;
+}
+
+.company-box-rating-item {
+  margin-top: 20px;
+  margin-left: 20px;
+}
+
+.company-rating {
+  margin-bottom: 15px;
+}
+
+.company-box-rating-button {
+  bottom: 20px;
+  position: absolute;
+  right: 20px;
+  left: 20px;
+}
+
+.like {
+  width: 10%;
+  margin-right: 20px;
+}
+
+

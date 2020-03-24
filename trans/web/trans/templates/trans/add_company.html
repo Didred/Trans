@@ -83,6 +83,14 @@
                     </div>
                 {% endfor %}
                 <div class="form-group">
+                    <textarea type="text" style="max-width: 100%; resize: none;" rows="10" name="description" maxlength="10000" class="form-control" placeholder="Описание"></textarea>
+                </div>
+                {% for error in form.description.errors %}
+                    <div class="form-group has-errors text-danger">
+                        {{ error }}
+                    </div>
+                {% endfor %}
+                <div class="form-group">
                     {% csrf_token %}
                     <input type="submit" class="btn btn-success" value="Зарегистрировать">
                 </div>

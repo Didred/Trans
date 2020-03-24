@@ -39,7 +39,10 @@ FIELDS = [
 
 
 def home(request):
-    return render(request, 'trans/home.html')
+    api = get_api()
+    companys = api.get_companys()
+
+    return render(request, 'trans/home.html', {'fields': FIELDS, 'companys': companys})
 
 
 def signup(request):
@@ -64,12 +67,15 @@ def signup(request):
     return render(request, 'registration/signup.html', {'form': form})
 
 
-def profile(request):
+def profile(request, nickname):
     api = get_api()
-    user = api.get_user(nickname=request.user.username)
-    company = api.get_company(nickname=request.user.username)
+    owner = request.user.username
 
-    return render(request, 'trans/profile.html', {'member': user, 'company': company})
+    user = api.get_user(nickname=nickname)
+    company = api.get_company(nickname=nickname)
+    check = nickname == owner
+
+    return render(request, 'trans/profile.html', {'member': user, 'company': company, 'check': check})
 
 
 def add_company(request):
@@ -88,7 +94,8 @@ def add_company(request):
                 form.cleaned_data['country'],
                 form.cleaned_data['town'],
                 form.cleaned_data['address'],
-                form.cleaned_data['phone']
+                form.cleaned_data['phone'],
+                form.cleaned_data['description']
             )
             return redirect('/profile/')
     else:
@@ -137,7 +144,8 @@ def edit_company(request):
                 form.cleaned_data['country'],
                 form.cleaned_data['town'],
                 form.cleaned_data['address'],
-                form.cleaned_data['phone']
+                form.cleaned_data['phone'],
+                form.cleaned_data['description']
             )
             return redirect('/profile/')
 

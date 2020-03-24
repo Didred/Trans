@@ -22,6 +22,8 @@ class Company(Base):
     address = Column(String)
     phone = Column(String)
     date_registration = Column(DateTime)
+    description = Column(String)
+    small_description = Column(String)
 
     def __init__(
             self,
@@ -33,7 +35,8 @@ class Company(Base):
             country,
             town,
             address,
-            phone):
+            phone,
+            description):
         self.nickname = nickname
         self.UNP = UNP
         self.name = name
@@ -44,3 +47,14 @@ class Company(Base):
         self.address = address
         self.phone = phone
         self.date_registration = datetime.now()
+        self.description = description
+        self.small_description = self._pars_description()
+
+    def pars_description(self):
+        small_description = self.description[0:420]
+        residue = self.description[420:]
+
+        index = residue.index(" ")
+        small_description += residue[0: index] + " ..."
+
+        return small_description
