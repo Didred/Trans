@@ -14,7 +14,8 @@ from . import get_api
 from .forms import (
     UserForm,
     EditUserForm,
-    CompanyForm
+    CompanyForm,
+    ReviewForm
 )
 
 FIELDS = [
@@ -118,7 +119,7 @@ def edit_profile(request):
                 form.cleaned_data['email'],
                 form.cleaned_data['phone'],
             )
-            return redirect('/profile/')
+            return redirect('/profile/' + user)
 
     else:
         member = api.get_user(nickname=user)
@@ -133,21 +134,13 @@ def edit_company(request):
 
     if request.method == 'POST':
         form = CompanyForm(request.POST)
-        write_file(form.is_valid())
         if form.is_valid():
             api.edit_company(
-                user,
-                form.cleaned_data['UNP'],
-                form.cleaned_data['name'],
-                FIELDS[int(form.cleaned_data['primary_occupation'])],
-                form.cleaned_data['license'],
-                form.cleaned_data['country'],
-                form.cleaned_data['town'],
-                form.cleaned_data['address'],
-                form.cleaned_data['phone'],
-                form.cleaned_data['description']
+                nickname=user,
+                phone=form.cleaned_data['phone'],
+                description=form.cleaned_data['description']
             )
-            return redirect('/profile/')
+            return redirect('/profile/' + user)
 
     else:
         company = api.get_company(nickname=user)
@@ -165,6 +158,43 @@ def edit_password(request):
     else:
         form = PasswordChangeForm(request.user)
     return render(request, 'trans/change_password.html', {'form': form})
+
+
+def add_review(request, company_id):
+    api = get_api()
+    user_id = api.get_user(nickname=request.user.username).id
+
+    if request.method == 'POST':
+        form = ReviewForm(request.POST)
+        if form.is_valid():
+            api.create_review(
+                form.cleaned_data['rating'],
+                form.cleaned_data['review'],
+                company_id,
+                user_id
+            )
+            return redirect('/')
+    else:
+        form = CompanyForm()
+
+    company = api.get_company(company_id).name
+
+    return render(request, 'trans/add_review.html', {'form': form, 'company': company})
+
+
+def get_review(request, company_id):
+    api = get_api()
+
+    company = api.get_company(company_id=company_id)
+    company_reviews = api.get_reviews(company_id)
+    reviews = []
+
+    for review in company_reviews:
+        reviews.append((review, api.get_user(user_id=review.user_id)))
+
+    print(reviews)
+
+    return render(request, 'trans/review.html', {'reviews': reviews, 'company': company})
 
 
 def write_file(text):

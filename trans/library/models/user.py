@@ -4,6 +4,10 @@ from sqlalchemy import (
     String,
     Integer
 )
+from sqlalchemy.orm import (
+    relationship,
+    backref
+)
 
 
 class User(Base):

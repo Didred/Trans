@@ -7,33 +7,29 @@
         <h3 class="text-muted">Редактирование данных предприятия</h3>
         <form method="POST">
             <div class="form-group">
-                <input type="text" name="name" class="form-control" placeholder="Название предприятия" value="{{ form.name }}">
+                <input type="text" readonly name="name" class="form-control" placeholder="Название предприятия" value="{{ form.name }}">
             </div>
             <div class="form-group">
-                <input type="text" name="UNP" class="form-control" placeholder="УНП/ИНН" value="{{ form.UNP }}">
+                <input type="text" readonly name="UNP" class="form-control" placeholder="УНП/ИНН" value="{{ form.UNP }}">
             </div>
             <div class="form-group">
-                <select name="primary_occupation" class="form-control">
                     {% for field in fields %}
                         {% if number == forloop.counter0 %}
-                            <option value='{{ forloop.counter0 }}' selected="selected"> {{ field }} </option>
-                        {% else %}
-                            <option value='{{ forloop.counter0 }}'> {{ field }} </option>
+                            <input type="text" readonly name="primary_occupation" class="form-control" placeholder="УНП/ИНН" value="{{ field }}">
                         {% endif %}
                     {% endfor %}
-                </select>
             </div>
             <div class="form-group">
-                <input type="text" name="license" class="form-control" placeholder="Номер лицензии" value="{{ form.license }}">
+                <input type="text" readonly name="license" class="form-control" placeholder="Номер лицензии" value="{{ form.license }}">
             </div>
             <div class="form-group">
-                <input type="text" name="country" class="form-control" placeholder="Страна" value="{{ form.country }}">
+                <input type="text" readonly name="country" class="form-control" placeholder="Страна" value="{{ form.country }}">
             </div>
             <div class="form-group">
-                <input type="text" name="town" class="form-control" placeholder="Город" value="{{ form.town }}">
+                <input type="text" readonly name="town" class="form-control" placeholder="Город" value="{{ form.town }}">
             </div>
             <div class="form-group">
-                <input type="text" name="address" class="form-control" placeholder="Адрес" value="{{ form.address }}">
+                <input type="text" readonly name="address" class="form-control" placeholder="Адрес" value="{{ form.address }}">
             </div>
             <div class="form-group">
                 <input type="text" name="phone" class="form-control" placeholder="Номер телефона в формате +375339019468" value="{{ form.phone }}">
@@ -44,7 +40,7 @@
             {% csrf_token %}
             <p>
                 <input type="submit" class="btn btn-primary" value="Сохранить изменения">
-                <a href="{% url 'profile' %}" type="button" class="btn btn-danger">Отмена</a>
+                <a href="{% url 'profile' nickname=form.nickname %}" type="button" class="btn btn-danger">Отмена</a>
             </p>
         </form>
     </div>

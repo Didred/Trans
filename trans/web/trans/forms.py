@@ -8,6 +8,7 @@ from django.contrib.auth.models import User
 from django.utils.translation import ugettext_lazy as _
 
 from . import get_api
+from library.models.review import Rating
 
 
 DATE_FORMAT = '%Y-%m-%d %H:%M'
@@ -35,6 +36,17 @@ class CompanyForm(forms.Form):
     address = forms.CharField(max_length=30)
     phone = forms.CharField(max_length=30)
     description = forms.CharField(max_length=10000)
+
+
+FRUIT_CHOICES= [
+    (1, 'Отрицательный'),
+    (2, 'Нейтральный'),
+    (3, 'Положительный'),
+    ]
+
+class ReviewForm(forms.Form):
+    rating = forms.CharField(widget=forms.RadioSelect(choices=FRUIT_CHOICES))
+    review = forms.CharField(max_length=10000)
 
 
 class UserForm(forms.ModelForm):

@@ -54,8 +54,12 @@
                         <p class="company-rating"> Рейтинг: </p>
                         <p><a href="#"><img class="like" src="https://i.ibb.co/RCjnKQW/image.png"></a> 0 </p>
                         <p><a href="#"><img class="like" src="https://i.ibb.co/pRpSXSx/image.png"></a> 0 </p>
-                        <p><a style="text-decoration: none;" href="#">Смотреть отзывы</a></p>
-                        <p><a href="{% url 'edit_password' %}" type="button" class="btn btn-warning company-box-rating-button">Добавить отзыв</a></p>
+                        <p><a style="text-decoration: none;" href="{% url 'review' company_id=company.id%}">Смотреть отзывы</a></p>
+                        {% if user.is_authenticated %}
+                            <p><a href="{% url 'add_review' company_id=company.id%}" type="button" class="btn btn-warning company-box-rating-button">Добавить отзыв</a></p>
+                        {% else %}
+                            <p><a href="{% url 'signup'%}" type="button" class="btn btn-warning company-box-rating-button">Добавить отзыв</a></p>
+                        {% endif %}
                     </div>
                 </div>
             </div>

@@ -5,6 +5,10 @@ from sqlalchemy import (
     Integer,
     DateTime
 )
+from sqlalchemy.orm import (
+    relationship,
+    backref
+)
 from datetime import datetime
 
 

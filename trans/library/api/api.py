@@ -12,6 +12,7 @@ from library.models.car import Car
 from library.models.user import User
 from library.models.goods import Goods
 from library.models.company import Company
+from library.models.review import Review
 
 
 DEFAULT_CONFIG_DIRECTORY = os.path.expanduser("~/Documents/Диплом/.trans/")
@@ -142,10 +143,15 @@ class API:
 
         return user.id
 
-    def get_user(self, nickname):
+    def get_user(self, user_id=None, nickname=None):
+        _filter = and_(
+            or_(user_id is None, User.id == user_id),
+            or_(nickname is None, User.nickname == nickname)
+        )
+
         try:
             return (self._session.query(User)
-                .filter(User.nickname == nickname).one_or_none())
+                .filter(_filter).one_or_none())
 
         except sqlalchemy.orm.exc.NoResultFound:
             raise Exception("User not found")
@@ -157,7 +163,7 @@ class API:
             surname=None,
             email=None,
             phone=None):
-        user = self.get_user(nickname)
+        user = self.get_user(nickname=nickname)
 
         if name is not None:
             user.name = name
@@ -174,7 +180,7 @@ class API:
         self._session.commit()
 
     def delete_user(self, nickname):
-        user = self.get_user(nickname)
+        user = self.get_user(nickname=nickname)
 
         self._delete(user)
 
@@ -324,7 +330,6 @@ class API:
             or_(primary_occupation is None, Company.primary_occupation == primary_occupation),
             or_(country is None, Company.country == country)
         )
-        print(_filter)
 
         companys = self._session.query(Company).filter(_filter).all()
         self._session.commit()
@@ -388,9 +393,33 @@ class API:
         self._session.delete(object)
         self._session.commit()
 
+    def create_review(
+            self,
+            rating,
+            review,
+            company_id,
+            user_id):
 
-if __name__ == "__main__":
-    pass
-    # api = API(DEFAULT_DATABASE_URL)
-    # api.create_company(123, "ЮРМАТРАНС", "Перевозчик", "321", "Беларусь", "Минск", "Адрес", "+375339019468")
+        review = Review(
+            rating,
+            review,
+            company_id,
+            user_id
+        )
 
+        self._add(review)
+
+        return review.id
+
+    def get_reviews(self, company_id):
+        try:
+            return (self._session.query(Review)
+                .filter(Review.company_id == company_id).all())
+
+        except sqlalchemy.orm.exc.NoResultFound:
+            raise Exception("Review not found")
+
+    def get_company_rating(self, company_id):
+        company = self.get_reviews(company_id)
+
+    

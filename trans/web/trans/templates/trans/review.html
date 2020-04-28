@@ -1,0 +1,16 @@
+{% extends 'trans/base.html' %}
+
+{% block title %}Добавить отзыв{% endblock %}
+
+{% block content %}
+    <div class="container"></div>
+        <div class="col-lg-2"></div>
+        <div class="margin_boottom_20">
+            <h3 class="text-muted center">Отзывы предприятия {{ company.name }}</h3>
+        </div>
+        
+    {% for review, user in reviews %}
+        {{ review.review }}
+        {{ user.name }}
+    {% endfor %}
+{% endblock %}

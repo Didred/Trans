@@ -1,0 +1,40 @@
+{% extends 'trans/base.html' %}
+
+{% block title %}Добавить отзыв{% endblock %}
+
+{% block content %}
+    <form method="POST">
+        <div class="container"></div>
+            <div class="col-lg-2"></div>
+            <div class="margin_boottom_20">
+                <h3 class="text-muted center">Добавить отзыв</h3>
+            </div>
+            <div class="margin_boottom_20">
+                <h5 class="text-muted center">Для компании: {{ company }} </h5>
+            </div>
+            <div class="center inline margin_boottom_20">
+                <div class="radio_button red">
+                    <input type="radio" id="rating1" name="rating" value="1">
+                    <label for="rating1" class="radio_button_text">Отрицательный</label>
+                </div>
+
+                <div class="radio_button">
+                    <input type="radio" id="rating2" name="rating" value="2" checked>
+                    <label for="rating2" class="radio_button_text">Нейтральный</label>
+                </div>
+
+                <div class="radio_button green">
+                    <input type="radio" id="rating3" name="rating" value="3">
+                    <label for="rating3" class="radio_button_text">Положительный</label>
+                </div>
+            </div>
+            <div class="form-group">
+                <textarea type="text" style="min-width: 100%; max-width: 100%; min-height: 110px; max-height: 400px" rows="10" name="review" maxlength="10000" class="form-control" placeholder="Отзыв"></textarea>
+            </div>
+            <div class="form-group">
+                {% csrf_token %}
+                <input type="submit" class="btn btn-success" value="Добавить отзыв">
+            </div>
+        </div>
+    </form>
+{% endblock %}
