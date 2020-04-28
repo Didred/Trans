@@ -30,14 +30,17 @@ class Review(Base):
     review = Column(String)
     company_id = Column(Integer)
     user_id = Column(Integer)
+    date = Column(DateTime)
 
     def __init__(
             self,
             rating,
             review,
             company_id,
-            user_id):
+            user_id,
+            date):
         self.rating = Rating(int(rating))
         self.review = review
         self.company_id = company_id
         self.user_id = user_id
+        self.date = date

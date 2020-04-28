@@ -2,7 +2,7 @@ import os
 import re
 import sqlalchemy
 
-from datetime import datetime
+import datetime
 from sqlalchemy import (
     and_,
     or_
@@ -12,7 +12,7 @@ from library.models.car import Car
 from library.models.user import User
 from library.models.goods import Goods
 from library.models.company import Company
-from library.models.review import Review
+from library.models.review import Review, Rating
 
 
 DEFAULT_CONFIG_DIRECTORY = os.path.expanduser("~/Documents/Диплом/.trans/")
@@ -404,7 +404,8 @@ class API:
             rating,
             review,
             company_id,
-            user_id
+            user_id,
+            datetime.datetime.now()
         )
 
         self._add(review)
@@ -420,6 +421,10 @@ class API:
             raise Exception("Review not found")
 
     def get_company_rating(self, company_id):
-        company = self.get_reviews(company_id)
+        reviews = self.get_reviews(company_id)
+        rating = [0, 0, 0]
 
-    
+        for review in reviews:
+            rating[review.rating.value - 1] += 1
+
+        return rating

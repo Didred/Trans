@@ -281,3 +281,45 @@ div.wrapper {
 .green {
   color: green;
 }
+
+.rating_text {
+  padding-left: 40px;
+  padding-right: 40px;
+}
+
+.container_review_red {
+  border: 2px solid red;
+}
+
+.container_review_normal {
+  border: 2px solid #ccc;
+}
+
+.container_review_green {
+  border: 2px solid green;
+}
+
+.container_review {
+  background-color: #eee;
+  border-radius: 5px;
+  padding: 16px;
+  margin: 16px 0;
+  box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.5);
+}
+
+.container_review::after {
+  content: "";
+  clear: both;
+  display: table;
+}
+
+.container_review img {
+  float: left;
+  margin-right: 20px;
+  border-radius: 50%;
+}
+
+.container_review span {
+  font-size: 20px;
+  margin-right: 15px;
+}

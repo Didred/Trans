@@ -8,9 +8,22 @@
         <div class="margin_boottom_20">
             <h3 class="text-muted center">Отзывы предприятия {{ company.name }}</h3>
         </div>
-        
-    {% for review, user in reviews %}
-        {{ review.review }}
-        {{ user.name }}
+        <div class="center inline margin_boottom_20">
+            <label class="red rating_text">Отрицательные: {{ negative }}</label>
+            <label class="rating_text">Нейтральные: {{ neutral }}</label>
+            <label class="green rating_text">Положительные: {{ positive }}</label>
+        </div>
+    {% for review, user, date_creation in reviews %}
+        {% if review.rating.value == 1%}
+            <div class="container_review container_review_red">
+        {% elif review.rating.value == 2%}
+            <div class="container_review container_review_normal">
+        {% elif review.rating.value == 3%}
+            <div class="container_review container_review_green">
+        {% endif %}
+            <img src="https://i.ibb.co/x6FDdzW/image.png" alt="Avatar" style="width:90px">
+            <p><span>{{ user.name }} {{ user.surname }}</span> {{ date_creation }}</p>
+            <p>{{ review.review }}</p>
+        </div>
     {% endfor %}
 {% endblock %}

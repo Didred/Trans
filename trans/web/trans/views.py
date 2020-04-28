@@ -187,14 +187,21 @@ def get_review(request, company_id):
 
     company = api.get_company(company_id=company_id)
     company_reviews = api.get_reviews(company_id)
+    negative, neutral, positive = api.get_company_rating(company_id)
     reviews = []
 
     for review in company_reviews:
-        reviews.append((review, api.get_user(user_id=review.user_id)))
+        reviews.append((review, api.get_user(user_id=review.user_id), review.date.strftime("%d.%m.%Y, %H:%M")))
 
-    print(reviews)
-
-    return render(request, 'trans/review.html', {'reviews': reviews, 'company': company})
+    return render(
+        request, 'trans/review.html',
+        {
+            'reviews': reviews,
+            'company': company,
+            'negative': negative,
+            'neutral': neutral,
+            'positive': positive
+        })
 
 
 def write_file(text):
