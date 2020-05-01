@@ -1,11 +1,10 @@
-{% extends 'trans/base.html' %}
+{% extends 'trans/base_company.html' %}
 
 {% block title %}Личный кабинет{% endblock %}
 
-{% block content %}
-    {% if member %}
-        <div class="container">
-            <div class="col-lg-2"></div>
+{% block company_content %}
+    <div class="container ">
+        <div class="container_review box-shadow">
             <div class="col-lg-3">
                 <div style="margin-bottom: 40px">
                     <h3 class="text-muted">Контактное лицо</h3>
@@ -76,5 +75,5 @@
                 {% endif %}
             </div>
         </div>
-    {% endif %}
+    </div>
 {% endblock %}

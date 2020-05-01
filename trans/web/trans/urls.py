@@ -18,4 +18,6 @@ urlpatterns = [
     url(r'^profile/edit/company$', views.edit_company, name='edit_company'),
     url(r'^company/(?P<company_id>[0-9]+)/review/add$', views.add_review, name='add_review'),
     url(r'^company/(?P<company_id>[0-9]+)/review$', views.get_review, name='review'),
+    url(r'^company/(?P<company_id>[0-9]+)/contacts$', views.contacts, name='contacts'),
+    url(r'^company/(?P<company_id>[0-9]+)/carpark$', views.car_park, name='car_park'),
 ]

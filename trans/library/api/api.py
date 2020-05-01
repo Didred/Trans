@@ -9,7 +9,7 @@ from sqlalchemy import (
 )
 from library.database import get_session
 from library.models.car import Car
-from library.models.user import User
+from library.models.user import User, Role
 from library.models.goods import Goods
 from library.models.company import Company
 from library.models.review import Review, Rating
@@ -62,7 +62,7 @@ class API:
     def get_car(self, car_id):
         try:
             return (self._session.query(Car)
-                    .filter(Car.id == car_id).one())
+                    .filter(Car.id == car_id).one_or_none())
         except sqlalchemy.orm.exc.NoResultFound:
             raise Exception("Car not found")
 
@@ -136,7 +136,9 @@ class API:
             name,
             surname,
             email,
-            phone
+            phone,
+            None,
+            Role(1)
         )
 
         self._add(user)
@@ -155,6 +157,40 @@ class API:
 
         except sqlalchemy.orm.exc.NoResultFound:
             raise Exception("User not found")
+
+    def get_users(self, company_id=None, role=None):
+        _filter = and_(
+            or_(company_id is None, User.company_id == company_id),
+            or_(role is None, User.role == role)
+        )
+
+        users = self._session.query(User).filter(_filter).all()
+        self._session.commit()
+
+        return users
+
+    def is_administrator(self, user_id, company_id):
+        _filter = and_(
+            or_(user_id is None, User.id == user_id),
+            or_(company_id is None, User.company_id == company_id),
+            or_(User.role == Role(2))
+        )
+
+        users = self._session.query(User).filter(_filter).all()
+        self._session.commit()
+
+        return len(users) > 0
+
+    def is_employee(self, user_id, company_id):
+        _filter = and_(
+            or_(user_id is None, User.id == user_id),
+            or_(company_id is None, User.company_id == company_id)
+        )
+
+        users = self._session.query(User).filter(_filter).all()
+        self._session.commit()
+
+        return len(users) > 0
 
     def edit_user(
             self,
@@ -221,7 +257,7 @@ class API:
     def get_goods(self, goods_id):
         try:
             return (self._session.query(Goods)
-                    .filter(Goods.id == goods_id).one())
+                    .filter(Goods.id == goods_id).one_or_none())
         except sqlalchemy.orm.exc.NoResultFound:
             raise Exception("Goods not found")
 
@@ -320,7 +356,7 @@ class API:
                     .filter(Company.nickname == nickname).one_or_none())
             else:
                 return (self._session.query(Company)
-                        .filter(Company.id == company_id).one())
+                        .filter(Company.id == company_id).one_or_none())
         except sqlalchemy.orm.exc.NoResultFound:
             raise Exception("Company not found")
 

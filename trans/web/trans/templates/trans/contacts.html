@@ -1,0 +1,77 @@
+{% extends 'trans/base_company.html' %}
+
+{% block title %}Контакты{% endblock %}
+
+{% block company_content %}
+    {% if is_employee %}
+        <div class="container">
+            <h3 class="text-muted center">Администраторы</h3>
+            {% for administrator in administrators %}
+                <div class="box-shadow container_contact">
+                    <img class="company_contact_logo" src="https://i.ibb.co/x6FDdzW/image.png">
+                    <div>
+                        {{ administrator.surname }}
+                        {{ administrator.name }}
+                        <p></p>
+                        {{ administrator.phone }}
+                        <p></p>
+                        {{ administrator.email }}
+                        <p></p>
+                        <a>Написать сообщение</a>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+        <div class="container">
+            <h3 class="text-muted center">Сотрудники</h3>
+            {% for employee in employees %}
+                <div class="box-shadow container_contact">
+                    <img class="company_contact_logo" src="https://i.ibb.co/x6FDdzW/image.png">
+                    <div>
+                        {{ employee.surname }}
+                        {{ employee.name }}
+                        <p></p>
+                        {{ employee.phone }}
+                        <p></p>
+                        {{ employee.email }}
+                        <p></p>
+                        <a>Написать сообщение</a>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <h3 class="text-muted center">Сотрудники</h3>
+        {% for employee in administrators %}
+            <div class="box-shadow container_contact">
+                <img class="company_contact_logo" src="https://i.ibb.co/x6FDdzW/image.png">
+                <div>
+                    {{ employee.surname }}
+                    {{ employee.name }}
+                    <p></p>
+                    {{ employee.phone }}
+                    <p></p>
+                    {{ employee.email }}
+                    <p></p>
+                    <a>Написать сообщение</a>
+                </div>
+            </div>
+        {% endfor %}
+        {% for employee in employees %}
+            <div class="box-shadow container_contact">
+                <img class="company_contact_logo" src="https://i.ibb.co/x6FDdzW/image.png">
+                <div>
+                    {{ employee.surname }}
+                    {{ employee.name }}
+                    <p></p>
+                    {{ employee.phone }}
+                    <p></p>
+                    {{ employee.email }}
+                    <p></p>
+                    <a>Написать сообщение</a>
+                </div>
+            </div>
+        {% endfor %}
+    {% endif %}
+    
+{% endblock %}

@@ -13,7 +13,7 @@
         <link rel="stylesheet" type="text/css" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
         <link rel="stylesheet" href="{% static 'base.css' %}"/>
     </head>
-    <body>
+    <body class="background">
         <div class="navbar navbar-default navbar-fixed-top" role="navigation">
             <div class="container">
                 <div class="navbar-header">
@@ -30,10 +30,10 @@
                     <ul class="nav navbar-nav navbar-right">
                         {% if user.is_authenticated %}
                             <li><a href="{% url 'profile' nickname=user %}"> {{ user }} </a></li>
-                            <li><a href="{% url 'logout' %}"><span class="glyphicon glyphicon-log-in"></span> Logout</a></li>
+                            <li><a href="{% url 'logout' %}"><span class="glyphicon glyphicon-log-in"></span> Выход </a></li>
                         {% else %}
-                            <li><a href="{% url 'signup' %}"><span class="glyphicon glyphicon-user"></span> Sign Up</a></li>
-                            <li><a href="{% url 'login' %}"><span class="glyphicon glyphicon-log-in"></span> Login</a></li>
+                            <li><a href="{% url 'signup' %}"><span class="glyphicon glyphicon-user"></span> Регистрация</a></li>
+                            <li><a href="{% url 'login' %}"><span class="glyphicon glyphicon-log-in"></span> Логин</a></li>
                         {% endif %}
                     </ul>
                 </div>

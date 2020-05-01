@@ -24,46 +24,46 @@
 
     {% for company in companys %}
         <form class="form-inline form-group">
-        <div class="form-group company-block">
-            <div class="company-name">
-                <label class="company-text"> <a style="text-decoration: none; color: black;" href="{% url 'profile' nickname=company.nickname %}"> {{ company.name }} </a></label>
-                <p class=company-text> {{ company.primary_occupation }}, <span class="company-color"> {{ company.country }}, {{ company.town }} </span></p>
-            </div>
+            <div class="form-group company-block box-shadow">
+                <div class="company-name">
+                    <label class="company-text"> <a style="text-decoration: none; color: black;" href="{% url 'profile' nickname=company.nickname %}"> {{ company.name }} </a></label>
+                    <p class=company-text> {{ company.primary_occupation }}, <span class="company-color"> {{ company.country }}, {{ company.town }} </span></p>
+                </div>
 
-            <div class="company-box">
-                <div class="company-box-logo">
-                    <img class="home-company-logo" src="https://i.ibb.co/x6FDdzW/image.png">
-                </div>
-                <div class="company-box-help">
-                    <p><button type="button" class="btn btn-primary">in developing</button></p>
-                    <p><button type="button" class="btn btn-primary">in developing</button></p>
-                    <p> in developing </p>
-                    <p> in developing </p>
-                    <p><a style="text-decoration: none;" href="{% url 'profile' nickname=company.nickname %}"> {{ company.nickname }} </a></p>
-                </div>
-                {% if company.description %}
-                    <div class="company-box-description">
-                        <label class=""> Описание </label>
-                        <div class="">
-                            <p> {{ company.small_description }} </p>
+                <div class="company-box">
+                    <div class="company-box-logo">
+                        <img class="home-company-logo" src="https://i.ibb.co/x6FDdzW/image.png">
+                    </div>
+                    <div class="company-box-help">
+                        <p><button type="button" class="btn btn-primary">in developing</button></p>
+                        <p><button type="button" class="btn btn-primary">in developing</button></p>
+                        <p> in developing </p>
+                        <p> in developing </p>
+                        <p><a style="text-decoration: none;" href="{% url 'profile' nickname=company.nickname %}"> {{ company.nickname }} </a></p>
+                    </div>
+                    {% if company.description %}
+                        <div class="company-box-description">
+                            <label class=""> Описание </label>
+                            <div class="">
+                                <p> {{ company.small_description }} </p>
+                            </div>
+                        </div>
+                    {% endif %}
+                    <div class="company-box-rating">
+                        <div class="company-box-rating-item">
+                            <p class="company-rating"> Рейтинг: </p>
+                            <p><a href="#"><img class="like" src="https://i.ibb.co/RCjnKQW/image.png"></a> 0 </p>
+                            <p><a href="#"><img class="like" src="https://i.ibb.co/pRpSXSx/image.png"></a> 0 </p>
+                            <p><a style="text-decoration: none;" href="{% url 'review' company_id=company.id%}">Смотреть отзывы</a></p>
+                            {% if user.is_authenticated %}
+                                <p><a href="{% url 'add_review' company_id=company.id%}" type="button" class="btn btn-warning company-box-rating-button">Добавить отзыв</a></p>
+                            {% else %}
+                                <p><a href="{% url 'signup'%}" type="button" class="btn btn-warning company-box-rating-button">Добавить отзыв</a></p>
+                            {% endif %}
                         </div>
                     </div>
-                {% endif %}
-                <div class="company-box-rating">
-                    <div class="company-box-rating-item">
-                        <p class="company-rating"> Рейтинг: </p>
-                        <p><a href="#"><img class="like" src="https://i.ibb.co/RCjnKQW/image.png"></a> 0 </p>
-                        <p><a href="#"><img class="like" src="https://i.ibb.co/pRpSXSx/image.png"></a> 0 </p>
-                        <p><a style="text-decoration: none;" href="{% url 'review' company_id=company.id%}">Смотреть отзывы</a></p>
-                        {% if user.is_authenticated %}
-                            <p><a href="{% url 'add_review' company_id=company.id%}" type="button" class="btn btn-warning company-box-rating-button">Добавить отзыв</a></p>
-                        {% else %}
-                            <p><a href="{% url 'signup'%}" type="button" class="btn btn-warning company-box-rating-button">Добавить отзыв</a></p>
-                        {% endif %}
-                    </div>
                 </div>
             </div>
-        </div>
         </form>
     {% endfor %}
 {% endblock %}

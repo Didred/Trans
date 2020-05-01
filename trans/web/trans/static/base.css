@@ -163,9 +163,9 @@ div.wrapper {
 
 .company-block {
   width: 100%;
-  outline: 1px solid #ccc;
-  box-shadow: 0 0 5px rgba(0,0,0,0.5);
   overflow: auto;
+  border-radius: 5px;
+  border: 1px solid #ccc;
 }
 
 .company-name {
@@ -175,9 +175,17 @@ div.wrapper {
 }
 
 .company-text {
-  margin-left: 10px;
+  margin-left: 15px;
   margin-top: 10px;
   margin-bottom: 0px;
+  padding-bottom: 5px;
+}
+
+p.company-text {
+  margin-left: 15px;
+  margin-top: 5px;
+  margin-bottom: 0px;
+  padding-bottom: 5px;
 }
 
 .company-color {
@@ -190,8 +198,8 @@ div.wrapper {
 }
 
 .company-box {
-  margin-top: 10px;
   position: relative;
+  background-color: #eee;
 }
 
 .company-box-logo {
@@ -200,6 +208,7 @@ div.wrapper {
   vertical-align: top;
 }
 .company-box-help {
+  padding-top: 20px;
   width: 20%;
   display: inline-block;
   text-align: center;
@@ -207,6 +216,7 @@ div.wrapper {
 }
 
 .company-box-description {
+  padding-top: 20px;
   width: 42%;
   display: inline-block;
   text-align: center;
@@ -217,7 +227,6 @@ div.wrapper {
 }
 
 .company-box-rating {
-  margin-top: -10px;
   width: 17%;
   display: inline-block;
   border-left: 1px solid #ccc;
@@ -304,7 +313,7 @@ div.wrapper {
   border-radius: 5px;
   padding: 16px;
   margin: 16px 0;
-  box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.5);
+  border: 1px solid #ccc;
 }
 
 .container_review::after {
@@ -323,3 +332,56 @@ div.wrapper {
   font-size: 20px;
   margin-right: 15px;
 }
+
+.background {
+  background: url("https://i.ibb.co/31Xjt2C/white-waves.png");
+  background-attachment: fixed;
+}
+
+.box-shadow {
+  box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.5);
+}
+
+.container_profile {
+  display: flex;
+  justify-content: center;
+}
+
+.container_profile img {
+  float: left;
+  border-radius: 50%;
+  cursor: pointer;
+  height: 70px;
+  border: 2px solid #000;
+}
+
+.test {
+  float: left;
+  margin-left: 50px;
+  margin-right: 50px;
+  border-radius: 50%;
+}
+
+.container_contact {
+  background-color: #eee;
+  border-radius: 5px;
+  padding: 16px;
+  margin: 16px 0;
+  border: 1px solid #ccc;
+  max-width: 30%;
+  min-width: 30%;
+  float: left;
+  margin-left: 1.6%;
+  margin-right: 1.6%;
+  display: flex;
+}
+
+.company_contact_logo {
+  max-width: 33%;
+  min-width: 33%;
+  display: inline-block;
+  vertical-align: top;
+  margin-right: 5%;
+}
+
+

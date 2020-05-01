@@ -17,6 +17,7 @@ from .forms import (
     CompanyForm,
     ReviewForm
 )
+from library.models.user import Role
 
 FIELDS = [
     "Перевозчик",
@@ -73,10 +74,11 @@ def profile(request, nickname):
     owner = request.user.username
 
     user = api.get_user(nickname=nickname)
-    company = api.get_company(nickname=nickname)
+    company = api.get_company(company_id=user.company_id)
     check = nickname == owner
+    show = not check or company != None
 
-    return render(request, 'trans/profile.html', {'member': user, 'company': company, 'check': check})
+    return render(request, 'trans/profile.html', {'member': user, 'company': company, 'check': check, 'show': show})
 
 
 def add_company(request):
@@ -202,6 +204,34 @@ def get_review(request, company_id):
             'neutral': neutral,
             'positive': positive
         })
+
+
+def contacts(request, company_id):
+    api = get_api()
+
+    owner = request.user.username
+    user = api.get_user(nickname=request.GET.get("login"))
+
+    company = api.get_company(company_id=company_id)
+
+    administrators = api.get_users(company_id=company_id, role=Role(2))
+    employees = api.get_users(company_id=company_id, role=Role(1))
+
+    is_administrator = api.is_administrator(user.id, company_id)
+    is_employee = api.is_employee(user.id, company_id)
+
+    check = request.GET.get("login") == owner
+    show = not check or company != None
+    print(check, company, show)
+
+    return render(request, 'trans/contacts.html', {'company': company, 'administrators': administrators, 'is_administrator': is_administrator, 'is_employee': is_employee, 'employees': employees, 'show': show})
+
+
+def car_park(request, company_id):
+    api = get_api()
+    company = api.get_company(company_id=company_id)
+
+    return render(request, 'trans/car_park.html', {'company': company})
 
 
 def write_file(text):

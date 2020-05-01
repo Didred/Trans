@@ -1,12 +1,12 @@
 {% extends 'trans/base.html' %}
 
-{% block title %}Login{% endblock %}
+{% block title %}Логин{% endblock %}
 
 {% block login %}
     <div class="container">
         <div class="col-lg-4"></div>
         <div class="col-lg-4">
-            <h2 class="text-muted">Login</h2>
+            <h2 class="text-muted">Логин</h2>
             <form method="post">
                 <div class="form-group">
                     <input type="text" name="username" class="form-control" placeholder="Username">
@@ -21,7 +21,7 @@
                 {% endfor %}
                 <div class="form-group">
                     {% csrf_token %}
-                    <input type="submit" class="btn btn-success" value="Login">
+                    <input type="submit" class="btn btn-success" value="Войти">
                 </div>
             </form>
         </div>
