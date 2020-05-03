@@ -15,7 +15,8 @@ from .forms import (
     UserForm,
     EditUserForm,
     CompanyForm,
-    ReviewForm
+    ReviewForm,
+    EmployeeForm
 )
 from library.models.user import Role
 
@@ -210,7 +211,7 @@ def contacts(request, company_id):
     api = get_api()
 
     owner = request.user.username
-    user = api.get_user(nickname=request.GET.get("login"))
+    user = api.get_user(nickname=owner)
 
     company = api.get_company(company_id=company_id)
 
@@ -222,7 +223,6 @@ def contacts(request, company_id):
 
     check = request.GET.get("login") == owner
     show = not check or company != None
-    print(check, company, show)
 
     return render(request, 'trans/contacts.html', {'company': company, 'administrators': administrators, 'is_administrator': is_administrator, 'is_employee': is_employee, 'employees': employees, 'show': show})
 
@@ -232,6 +232,34 @@ def car_park(request, company_id):
     company = api.get_company(company_id=company_id)
 
     return render(request, 'trans/car_park.html', {'company': company})
+
+
+def add_employee(request, company_id):
+    api = get_api()
+    owner = request.user.username
+    user = api.get_user(nickname=owner)
+
+    company = api.get_company(company_id=company_id)
+
+    check = request.GET.get("login") == owner
+    show = not check or company != None
+
+    if request.method == 'POST':
+        form = EmployeeForm(request.POST)
+        if form.is_valid():
+            nickname = form.cleaned_data['login']
+            check_user, check_company = api.add_user_to_company(nickname, company_id)
+
+            if check_user and check_company:
+                return redirect('/company/' + company_id + '/contacts')
+            elif not check_user:
+                error = "Пользователь с данным логином не зарегистрирован на сайте."
+                return render(request, 'trans/add_employee.html', {'company': company, 'show': show, 'error': error})
+            elif not check_company:
+                error = "Пользователь уже состоит в предприятии."
+                return render(request, 'trans/add_employee.html', {'company': company, 'show': show, 'error': error})
+
+    return render(request, 'trans/add_employee.html', {'company': company, 'show': show})
 
 
 def write_file(text):

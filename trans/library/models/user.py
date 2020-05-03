@@ -48,3 +48,7 @@ class User(Base):
         self.phone = phone
         self.company_id = company_id
         self.role = role
+
+
+    def add_company(self, company_id):
+        self.company_id = company_id

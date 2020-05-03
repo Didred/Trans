@@ -1,0 +1,19 @@
+{% extends 'trans/base_company.html' %}
+
+{% block title %}Контакты{% endblock %}
+
+{% block company_content %}
+    <div class="container">
+        <h3 class="text-muted center">Добавление сотрудника</h3>
+        <h4>Если вы хотите прикрепить к предприятию сотрудника, который уже зарегистрирован, то укажите логин учетной записи сотрудника. Сотрудник получит приглашение на email, подтвердит свое желание и будет прикреплен к вашему предприятию.</h4>
+        <form method="POST">
+            <div class="display_flex margin">
+                <label for="login" class="label">Логин сотрудника:</label>
+                <input id="login" type="text" name="login" class="form-control input_employee" placeholder="Введите логин для приглашения">  
+                <label class="label error">{{ error }}</label>
+            </div>
+            {% csrf_token %}
+            <input type="submit" class="btn btn-success btn-employee" value="Добавить сотрудника">
+        </form>
+    </div>
+{% endblock %}

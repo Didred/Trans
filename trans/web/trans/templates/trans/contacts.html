@@ -23,7 +23,9 @@
             {% endfor %}
         </div>
         <div class="container">
-            <h3 class="text-muted center">Сотрудники</h3>
+            {% if employees %}
+                <h3 class="text-muted center">Сотрудники</h3>
+            {% endif %}
             {% for employee in employees %}
                 <div class="box-shadow container_contact">
                     <img class="company_contact_logo" src="https://i.ibb.co/x6FDdzW/image.png">
@@ -41,37 +43,43 @@
             {% endfor %}
         </div>
     {% else %}
-        <h3 class="text-muted center">Сотрудники</h3>
-        {% for employee in administrators %}
-            <div class="box-shadow container_contact">
-                <img class="company_contact_logo" src="https://i.ibb.co/x6FDdzW/image.png">
-                <div>
-                    {{ employee.surname }}
-                    {{ employee.name }}
-                    <p></p>
-                    {{ employee.phone }}
-                    <p></p>
-                    {{ employee.email }}
-                    <p></p>
-                    <a>Написать сообщение</a>
+        <div class="container">
+            <h3 class="text-muted center">Сотрудники</h3>
+            {% for employee in administrators %}
+                <div class="box-shadow container_contact">
+                    <img class="company_contact_logo" src="https://i.ibb.co/x6FDdzW/image.png">
+                    <div>
+                        {{ employee.surname }}
+                        {{ employee.name }}
+                        <p></p>
+                        {{ employee.phone }}
+                        <p></p>
+                        {{ employee.email }}
+                        <p></p>
+                        <a>Написать сообщение</a>
+                    </div>
                 </div>
-            </div>
-        {% endfor %}
-        {% for employee in employees %}
-            <div class="box-shadow container_contact">
-                <img class="company_contact_logo" src="https://i.ibb.co/x6FDdzW/image.png">
-                <div>
-                    {{ employee.surname }}
-                    {{ employee.name }}
-                    <p></p>
-                    {{ employee.phone }}
-                    <p></p>
-                    {{ employee.email }}
-                    <p></p>
-                    <a>Написать сообщение</a>
+            {% endfor %}
+            {% for employee in employees %}
+                <div class="box-shadow container_contact">
+                    <img class="company_contact_logo" src="https://i.ibb.co/x6FDdzW/image.png">
+                    <div>
+                        {{ employee.surname }}
+                        {{ employee.name }}
+                        <p></p>
+                        {{ employee.phone }}
+                        <p></p>
+                        {{ employee.email }}
+                        <p></p>
+                        <a>Написать сообщение</a>
+                    </div>
                 </div>
-            </div>
-        {% endfor %}
+            {% endfor %}
+        </div>
     {% endif %}
-    
+    {% if is_administrator %}
+        <div class="absolute_center">
+            <a href="{% url 'add_employee' company_id=company.id%}"><button type="button" class="btn btn-primary">Добавить сотрудника</button></a>
+        </div>
+    {% endif %}
 {% endblock %}

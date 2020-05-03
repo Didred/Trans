@@ -49,6 +49,10 @@ class ReviewForm(forms.Form):
     review = forms.CharField(max_length=10000)
 
 
+class EmployeeForm(forms.Form):
+    login = forms.CharField(max_length=20)
+
+
 class UserForm(forms.ModelForm):
     # def __init__(self, nickname, *args, **kwargs):
     #     super(UserForm, self).__init__(*args, **kwargs)

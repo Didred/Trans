@@ -215,6 +215,18 @@ class API:
 
         self._session.commit()
 
+    def add_user_to_company(self, nickname, company_id):
+        user = self.get_user(nickname=nickname)
+
+        if not user:
+            return False, False
+        if user.company_id:
+            return True, False
+        else:
+            user.add_company(company_id)
+            self._add(user)
+            return True, True
+
     def delete_user(self, nickname):
         user = self.get_user(nickname=nickname)
 

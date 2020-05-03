@@ -384,4 +384,34 @@ p.company-text {
   margin-right: 5%;
 }
 
+.absolute_center {
+  margin: auto;
+  width: 167.359px;
+}
 
+.display_flex {
+  display: flex;
+}
+
+.input_employee {
+  max-width: 30%;
+}
+
+.label {
+  font: 12pt sans-serif;
+  color: #000;
+  line-height: 1.75em;
+}
+
+.margin {
+  margin-top: 40px;
+  margin-bottom: 40px;
+}
+
+.btn-employee {
+  width: 30%;
+}
+
+.error {
+  color: red
+}
