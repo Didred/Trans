@@ -4,6 +4,7 @@ from django.contrib.auth.forms import (
     UserCreationForm,
     PasswordChangeForm
 )
+from django.http import HttpResponse
 
 from django.shortcuts import (
     render,
@@ -224,14 +225,20 @@ def contacts(request, company_id):
     check = request.GET.get("login") == owner
     show = not check or company != None
 
-    return render(request, 'trans/contacts.html', {'company': company, 'administrators': administrators, 'is_administrator': is_administrator, 'is_employee': is_employee, 'employees': employees, 'show': show})
+    return render(request, 'trans/contacts.html', {'company': company, 'administrators': administrators, 'is_administrator': is_administrator, 'is_employee': is_employee, 'employees': employees, 'show': show, 'nickname': user.nickname })
 
 
 def car_park(request, company_id):
     api = get_api()
+
+    owner = request.user.username
+
     company = api.get_company(company_id=company_id)
 
-    return render(request, 'trans/car_park.html', {'company': company})
+    check = request.GET.get("login") == owner
+    show = not check or company != None
+
+    return render(request, 'trans/car_park.html', {'company': company, 'show': show })
 
 
 def add_employee(request, company_id):
@@ -249,6 +256,7 @@ def add_employee(request, company_id):
         if form.is_valid():
             nickname = form.cleaned_data['login']
             check_user, check_company = api.add_user_to_company(nickname, company_id)
+            print(check_user, check_company)
 
             if check_user and check_company:
                 return redirect('/company/' + company_id + '/contacts')
@@ -260,6 +268,45 @@ def add_employee(request, company_id):
                 return render(request, 'trans/add_employee.html', {'company': company, 'show': show, 'error': error})
 
     return render(request, 'trans/add_employee.html', {'company': company, 'show': show})
+
+
+def change_administrator(request, company_id, user_id):
+    if request.is_ajax():
+        api = get_api()
+        owner = request.user.username
+
+        api.administrator(owner, user_id)
+
+        message = user_id
+    else:
+        message = "Страницы не существует"
+    return HttpResponse(message)
+
+
+def remove_employee(request, company_id, user_id):
+    if request.is_ajax():
+        api = get_api()
+        owner = request.user.username
+
+        api.remove_user_from_company(owner, company_id, user_id)
+
+        message = user_id
+    else:
+        message = "Страницы не существует"
+    return HttpResponse(message)
+
+
+def log(request, company_id):
+    api = get_api()
+
+    owner = request.user.username
+
+    company = api.get_company(company_id=company_id)
+
+    check = request.GET.get("login") == owner
+    show = not check or company != None
+
+    return render(request, 'trans/company_log.html', {'company': company, 'show': show })
 
 
 def write_file(text):

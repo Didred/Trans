@@ -313,7 +313,20 @@ p.company-text {
   border-radius: 5px;
   padding: 16px;
   margin: 16px 0;
+}
+
+.container_profile_box {
+  background-color: #eee;
+  border-radius: 5px;
+  padding: 16px;
+  margin: 16px 0;
   border: 1px solid #ccc;
+}
+
+.container_profile_box::after {
+  content: "";
+  clear: both;
+  display: table;
 }
 
 .container_review::after {
@@ -414,4 +427,12 @@ p.company-text {
 
 .error {
   color: red
+}
+
+.add_administrator {
+  margin-left: auto;
+}
+
+.add_administrator a {
+  text-decoration: none;
 }

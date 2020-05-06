@@ -17,8 +17,16 @@
                         <p></p>
                         {{ administrator.email }}
                         <p></p>
-                        <a>Написать сообщение</a>
+                        {% if nickname != administrator.nickname %}
+                            <a>Написать сообщение</a>
+                        {% endif %}
                     </div>
+                    {% if is_administrator and company.nickname != administrator.nickname and nickname != administrator.nickname %}
+                        <div class="add_administrator">
+                            <a id="change-administrator-{{ administrator.id }}" class="glyphicon glyphicon-chevron-down "></a>
+                            <a id="change-delete-{{ administrator.id }}" class="glyphicon glyphicon-remove "></a>
+                        </div>
+                    {% endif %}
                 </div>
             {% endfor %}
         </div>
@@ -37,8 +45,16 @@
                         <p></p>
                         {{ employee.email }}
                         <p></p>
-                        <a>Написать сообщение</a>
+                        {% if nickname != employee.nickname %}
+                            <a>Написать сообщение</a>
+                        {% endif %}
                     </div>
+                    {% if is_administrator %}
+                        <div class="add_administrator">
+                            <a id="change-administrator-{{ employee.id }}" class="glyphicon glyphicon-chevron-up "></a>
+                            <a id="change-delete-{{ employee.id }}" class="glyphicon glyphicon-remove "></a>
+                        </div>
+                    {% endif %}
                 </div>
             {% endfor %}
         </div>
@@ -82,4 +98,43 @@
             <a href="{% url 'add_employee' company_id=company.id%}"><button type="button" class="btn btn-primary">Добавить сотрудника</button></a>
         </div>
     {% endif %}
+    <script type="text/javascript">
+        // $(function() {
+        //     $("#up-7").click(function() {
+        //         $.get("raise_to_administrator/", function(data) {
+        //             alert(data);
+        //         });
+        //     });
+        // });
+        Array.prototype.forEach.call(document.querySelectorAll('change[type=text]'), function (ths) {
+            ths.onclick = event_click;
+        });
+
+        $('a').click(function () {
+            let action = $(this).attr('id').split('-')[1]
+            let id = $(this).attr('id').split('-')[2]
+            if (action == "administrator") {
+                $.get("change_administrator/" + id, function(data) {
+                    $.ajax({
+                        url: "contacts",
+                        cache: true,
+                        success: function(html){
+                            $("#content").html(html);
+                        }
+                    });
+                });
+            } else {
+                $.get("remove_employee/" + id, function(data) {
+                    $.ajax({
+                        url: "contacts",
+                        cache: true,
+                        success: function(html){
+                            $("#content").html(html);
+                        }
+                    });
+                });
+            }
+        });
+    </script>
 {% endblock %}
+

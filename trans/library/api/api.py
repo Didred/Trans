@@ -221,11 +221,31 @@ class API:
         if not user:
             return False, False
         if user.company_id:
+            print(user.company_id)
             return True, False
         else:
             user.add_company(company_id)
             self._add(user)
             return True, True
+
+    def remove_user_from_company(self, administrator_nickname, company_id, user_id):
+        user = self.get_user(user_id=user_id)
+        administrator = self.get_user(nickname=administrator_nickname)
+
+        if administrator.role.value > 1 and administrator.company_id == user.company_id:
+            user.remove_company()
+            self._add(user)
+
+    def administrator(self, administrator_nickname, user_id):
+        administrator = self.get_user(nickname=administrator_nickname)
+        user = self.get_user(user_id=user_id)
+
+        if administrator.role.value > 1 and administrator.company_id == user.company_id:
+            if user.role == Role(1):
+                user.role = Role(2)
+            else:
+                user.role = Role(1)
+            self._add(user)
 
     def delete_user(self, nickname):
         user = self.get_user(nickname=nickname)

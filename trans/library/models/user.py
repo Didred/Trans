@@ -49,6 +49,9 @@ class User(Base):
         self.company_id = company_id
         self.role = role
 
-
     def add_company(self, company_id):
         self.company_id = company_id
+
+    def remove_company(self):
+        self.role = Role(1)
+        self.company_id = None
