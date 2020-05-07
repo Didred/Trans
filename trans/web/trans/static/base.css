@@ -436,3 +436,7 @@ p.company-text {
 .add_administrator a {
   text-decoration: none;
 }
+
+.font_size_12 {
+  font-size: 12pt;
+}

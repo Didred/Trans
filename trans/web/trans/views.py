@@ -255,8 +255,7 @@ def add_employee(request, company_id):
         form = EmployeeForm(request.POST)
         if form.is_valid():
             nickname = form.cleaned_data['login']
-            check_user, check_company = api.add_user_to_company(nickname, company_id)
-            print(check_user, check_company)
+            check_user, check_company = api.add_user_to_company(owner, nickname, company_id)
 
             if check_user and check_company:
                 return redirect('/company/' + company_id + '/contacts')
@@ -306,7 +305,16 @@ def log(request, company_id):
     check = request.GET.get("login") == owner
     show = not check or company != None
 
-    return render(request, 'trans/company_log.html', {'company': company, 'show': show })
+    logs = []
+    temp_logs = api.get_logs(company_id)
+
+    for log in temp_logs:
+        user = api.get_user(nickname=log.username)
+        logs.append((log, user, log.date.strftime("%d.%m.%Y, %H:%M")))
+
+    logs.reverse()
+
+    return render(request, 'trans/company_log.html', {'company': company, 'show': show, 'logs': logs })
 
 
 def write_file(text):

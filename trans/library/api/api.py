@@ -13,6 +13,13 @@ from library.models.user import User, Role
 from library.models.goods import Goods
 from library.models.company import Company
 from library.models.review import Review, Rating
+from library.models.log import Log
+from sources.templates import (
+    RAISING_TO_ADMINISTRATOR,
+    LOWERING_FROM_ADMINISTRATOR,
+    REMOVE_EMPLOYEE,
+    ADD_EMPLOYEE
+)
 
 
 DEFAULT_CONFIG_DIRECTORY = os.path.expanduser("~/Documents/Диплом/.trans/")
@@ -215,25 +222,33 @@ class API:
 
         self._session.commit()
 
-    def add_user_to_company(self, nickname, company_id):
+    def add_user_to_company(self, administrator, nickname, company_id):
         user = self.get_user(nickname=nickname)
 
         if not user:
             return False, False
         if user.company_id:
-            print(user.company_id)
             return True, False
         else:
             user.add_company(company_id)
+
+            text_log = ADD_EMPLOYEE % user.nickname
+            self.create_log(company_id, administrator, text_log)
+
             self._add(user)
+
             return True, True
 
-    def remove_user_from_company(self, administrator_nickname, company_id, user_id):
+    def remove_user_from_company(self, administrator_nickname, _, user_id):
         user = self.get_user(user_id=user_id)
         administrator = self.get_user(nickname=administrator_nickname)
 
         if administrator.role.value > 1 and administrator.company_id == user.company_id:
             user.remove_company()
+
+            text_log = REMOVE_EMPLOYEE % user.nickname
+            self.create_log(administrator.company_id, administrator.nickname, text_log)
+
             self._add(user)
 
     def administrator(self, administrator_nickname, user_id):
@@ -243,8 +258,14 @@ class API:
         if administrator.role.value > 1 and administrator.company_id == user.company_id:
             if user.role == Role(1):
                 user.role = Role(2)
+
+                text_log = RAISING_TO_ADMINISTRATOR % user.nickname
+                self.create_log(administrator.company_id, administrator.nickname, text_log)
             else:
                 user.role = Role(1)
+
+                text_log = LOWERING_FROM_ADMINISTRATOR % user.nickname
+                self.create_log(administrator.company_id, administrator.nickname, text_log)
             self._add(user)
 
     def delete_user(self, nickname):
@@ -453,14 +474,6 @@ class API:
 
         self._delete(company)
 
-    def _add(self, object):
-        self._session.add(object)
-        self._session.commit()
-
-    def _delete(self, object):
-        self._session.delete(object)
-        self._session.commit()
-
     def create_review(
             self,
             rating,
@@ -473,7 +486,7 @@ class API:
             review,
             company_id,
             user_id,
-            datetime.datetime.now()
+            datetime.datetime.now() + datetime.timedelta(hours=3)
         )
 
         self._add(review)
@@ -496,3 +509,37 @@ class API:
             rating[review.rating.value - 1] += 1
 
         return rating
+
+    def create_log(
+            self,
+            company_id,
+            username,
+            text):
+
+        log = Log(
+            company_id,
+            username,
+            datetime.datetime.now() + datetime.timedelta(hours=3),
+            text
+        )
+
+        self._add(log)
+
+        return log.id
+
+    def get_logs(
+            self,
+            company_id):
+        try:
+            return (self._session.query(Log)
+                    .filter(Log.company_id == company_id).all())
+        except sqlalchemy.orm.exc.NoResultFound:
+            raise Exception("Log not found")
+
+    def _add(self, object):
+        self._session.add(object)
+        self._session.commit()
+
+    def _delete(self, object):
+        self._session.delete(object)
+        self._session.commit()
