@@ -3,5 +3,15 @@
 {% block title %}Автопарк{% endblock %}
 
 {% block company_content %}
-
+    <div class="container">
+        <h3 class="text-muted center">Автопарк</h3>
+        {% for car in cars %}
+            {{ car.country_loading }}
+        {% endfor %}
+        {% if is_administrator %}
+            <div class="absolute_center width_car">
+                <a href="{% url 'add_car' company_id=company.id %}"><button type="button" class="btn btn-primary">Добавить авто</button></a>
+            </div>
+        {% endif %}
+    </div>
 {% endblock %}

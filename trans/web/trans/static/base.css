@@ -399,7 +399,14 @@ p.company-text {
 
 .absolute_center {
   margin: auto;
-  width: 167.359px;
+}
+
+.width_employee {
+  width: 169.359px;
+}
+
+.width_car {
+  width: 122.719px;
 }
 
 .display_flex {
@@ -439,4 +446,25 @@ p.company-text {
 
 .font_size_12 {
   font-size: 12pt;
+}
+
+.autocomplete-items {
+  border: 1px solid #d4d4d4;
+  border-bottom: none;
+  border-top: none;
+  z-index: 99;
+  /*position the autocomplete items to be the same width as the container:*/
+  top: 100%;
+  left: 0;
+  right: 0;
+}
+.autocomplete-items div {
+  padding: 10px;
+  cursor: pointer;
+  background-color: #fff; 
+  border-bottom: 1px solid #d4d4d4; 
+}
+.autocomplete-items div:hover {
+  /*when hovering an item:*/
+  background-color: #e9e9e9; 
 }

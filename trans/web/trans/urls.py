@@ -20,6 +20,7 @@ urlpatterns = [
     url(r'^company/(?P<company_id>[0-9]+)/review$', views.get_review, name='review'),
     url(r'^company/(?P<company_id>[0-9]+)/contacts$', views.contacts, name='contacts'),
     url(r'^company/(?P<company_id>[0-9]+)/carpark$', views.car_park, name='car_park'),
+    url(r'^company/(?P<company_id>[0-9]+)/carpark/add$', views.add_car, name='add_car'),
     url(r'^company/(?P<company_id>[0-9]+)/contacts/add$', views.add_employee, name='add_employee'),
     url(r'^company/(?P<company_id>[0-9]+)/change_administrator/(?P<user_id>[0-9]+)/$', views.change_administrator, name='change_administrator'),
     url(r'^company/(?P<company_id>[0-9]+)/remove_employee/(?P<user_id>[0-9]+)/$', views.remove_employee, name='remove_employee'),

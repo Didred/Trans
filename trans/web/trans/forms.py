@@ -38,14 +38,39 @@ class CompanyForm(forms.Form):
     description = forms.CharField(max_length=10000)
 
 
-FRUIT_CHOICES= [
+class CarForm(forms.Form):
+    body_type = forms.CharField(max_length=30)
+    download_type = forms.CharField(max_length=30)
+    carrying_capacity = forms.CharField(max_length=30)
+    volume = forms.CharField(max_length=30)
+    loading_date_from = forms.DateTimeField(
+        widget=forms.widgets.DateInput(
+            attrs={'type': 'datetime'},
+            format=DATE_FORMAT
+        ),
+        required=False
+    )
+    loading_date_by = forms.DateTimeField(
+        widget=forms.widgets.DateInput(
+            attrs={'type': 'datetime'},
+            format=DATE_FORMAT
+        ),
+        required=False
+    )
+    country_loading = forms.CharField(max_length=30)
+    country_unloading = forms.CharField(max_length=30)
+    note = forms.CharField(max_length=10000, required=False)
+
+
+CHOICES = [
     (1, 'Отрицательный'),
     (2, 'Нейтральный'),
     (3, 'Положительный'),
-    ]
+]
+
 
 class ReviewForm(forms.Form):
-    rating = forms.CharField(widget=forms.RadioSelect(choices=FRUIT_CHOICES))
+    rating = forms.CharField(widget=forms.RadioSelect(choices=CHOICES))
     review = forms.CharField(max_length=10000)
 
 

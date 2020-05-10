@@ -17,9 +17,13 @@ from .forms import (
     EditUserForm,
     CompanyForm,
     ReviewForm,
-    EmployeeForm
+    EmployeeForm,
+    CarForm
 )
 from library.models.user import Role
+
+from datetime import datetime
+import pytz
 
 FIELDS = [
     "Перевозчик",
@@ -39,6 +43,68 @@ FIELDS = [
     "Автовозы",
     "Консалтинг, бухгалтерские услуги",
     "Другие",
+]
+
+BODY_TYPE_COVERED = [
+    "Тент",
+    "Рефрижератор",
+    "Рефрижератор-тушевоз",
+    "Изотерма",
+    "Цельнометаллический",
+    "Контейнер",
+    "Микроавтобус",
+]
+
+BODY_TYPE_UNCOVERED = [
+    "Бортовой",
+    "Гидроманипулятор",
+    "Металловоз (Ломовоз)",
+    "Контейнеровоз",
+    "Площадка без бортов",
+    "Плитовоз",
+    "Самосвал",
+    "Трал (Негабарит)"
+]
+
+BODY_TYPE_TANK = [
+    "Автоцистерна",
+    "Битумовоз",
+    "Бензовоз",
+    "Бетоновоз",
+    "Газовоз",
+    "Кормовоз",
+    "Молоковоз",
+    "Муковоз",
+    "Цементовоз"
+]
+
+BODY_TYPE_SPECIAL = [
+    "Автовоз",
+    "Зерновоз",
+    "Катушковоз",
+    "Коневоз",
+    "Кран",
+    "Лесовоз",
+    "Мусоровоз",
+    "Одеждовоз",
+    "Птицевоз",
+    "Рулоновоз",
+    "Скотовоз",
+    "Стекловоз",
+    "Трубовоз",
+    "Тягач",
+    "Щеповоз",
+    "Эвакуатор",
+    "Другое"
+]
+
+DOWNLOAD_TYPE = [
+    "Задняя",
+    "Боковая",
+    "Верхняя",
+    "Со снятием стоек",
+    "Со снятием поперечных перекладин",
+    "Без ворот"
 ]
 
 
@@ -77,10 +143,14 @@ def profile(request, nickname):
 
     user = api.get_user(nickname=nickname)
     company = api.get_company(company_id=user.company_id)
+    is_administrator = False
+    if company:
+        is_administrator = api.is_administrator(user.id, company.id)
+
     check = nickname == owner
     show = not check or company != None
 
-    return render(request, 'trans/profile.html', {'member': user, 'company': company, 'check': check, 'show': show})
+    return render(request, 'trans/profile.html', {'member': user, 'company': company, 'check': check, 'show': show, 'is_administrator': is_administrator})
 
 
 def add_company(request):
@@ -232,13 +302,18 @@ def car_park(request, company_id):
     api = get_api()
 
     owner = request.user.username
+    user = api.get_user(nickname=owner)
 
     company = api.get_company(company_id=company_id)
+    is_administrator = api.is_administrator(user.id, company_id)
+
 
     check = request.GET.get("login") == owner
     show = not check or company != None
 
-    return render(request, 'trans/car_park.html', {'company': company, 'show': show })
+    cars = api.get_cars(company_id)
+
+    return render(request, 'trans/car_park.html', {'company': company, 'show': show, 'is_administrator': is_administrator, 'cars': cars })
 
 
 def add_employee(request, company_id):
@@ -247,6 +322,7 @@ def add_employee(request, company_id):
     user = api.get_user(nickname=owner)
 
     company = api.get_company(company_id=company_id)
+    is_administrator = api.is_administrator(user.id, company_id)
 
     check = request.GET.get("login") == owner
     show = not check or company != None
@@ -266,7 +342,7 @@ def add_employee(request, company_id):
                 error = "Пользователь уже состоит в предприятии."
                 return render(request, 'trans/add_employee.html', {'company': company, 'show': show, 'error': error})
 
-    return render(request, 'trans/add_employee.html', {'company': company, 'show': show})
+    return render(request, 'trans/add_employee.html', {'company': company, 'show': show, 'is_administrator': is_administrator })
 
 
 def change_administrator(request, company_id, user_id):
@@ -299,8 +375,10 @@ def log(request, company_id):
     api = get_api()
 
     owner = request.user.username
+    user = api.get_user(nickname=owner)
 
     company = api.get_company(company_id=company_id)
+    is_administrator = api.is_administrator(user.id, company_id)
 
     check = request.GET.get("login") == owner
     show = not check or company != None
@@ -314,7 +392,63 @@ def log(request, company_id):
 
     logs.reverse()
 
-    return render(request, 'trans/company_log.html', {'company': company, 'show': show, 'logs': logs })
+    return render(request, 'trans/company_log.html', {'company': company, 'show': show, 'logs': logs, 'is_administrator': is_administrator })
+
+
+def add_car(request, company_id):
+    api = get_api()
+
+    owner = request.user.username
+    user = api.get_user(nickname=owner)
+
+    company = api.get_company(company_id=company_id)
+    is_administrator = api.is_administrator(user.id, company_id)
+
+    check = request.GET.get("login") == owner
+    show = not check or company != None
+    form = None
+    check = True
+
+    if request.method == 'POST':
+        form = CarForm(request.POST)
+        if form.is_valid():
+            if (form.cleaned_data['loading_date_from'] > form.cleaned_data['loading_date_by'] or
+                form.cleaned_data['loading_date_by'] < pytz.utc.localize(datetime.utcnow())):
+                form.add_error('loading_date_from', "Неверный интервал времени.")
+                check = False
+            if int(form.cleaned_data['body_type']) < 0:
+                form.add_error('body_type', "Тип кузова не выбран.")
+                check = False
+            if int(form.cleaned_data['download_type']) < 0:
+                form.add_error('download_type', "Тип загрузки не выбран.")
+                check = False
+            try:
+                temp = int(form.cleaned_data['carrying_capacity'])
+            except ValueError as e:
+                form.add_error('carrying_capacity', "Неверный формат ввода.")
+                check = False
+            try:
+                temp = int(form.cleaned_data['volume'])
+            except ValueError as e:
+                form.add_error('volume', "Неверный формат ввода.")
+                check = False
+
+            if check:
+                api.create_car(
+                    form.cleaned_data['body_type'],
+                    form.cleaned_data['download_type'],
+                    form.cleaned_data['carrying_capacity'],
+                    form.cleaned_data['volume'],
+                    form.cleaned_data['loading_date_from'],
+                    form.cleaned_data['loading_date_by'],
+                    form.cleaned_data['country_loading'],
+                    form.cleaned_data['country_unloading'],
+                    note=form.cleaned_data['note']
+                )
+                return redirect('/company/'+ company_id + '/carpark')
+
+    return render(request, 'trans/add_car.html', {'form': form, 'company': company, 'show': show, 'is_administrator': is_administrator, 'body_type_covered': BODY_TYPE_COVERED, 'body_type_uncovered': BODY_TYPE_UNCOVERED, 'body_type_tank': BODY_TYPE_TANK, 'body_type_special': BODY_TYPE_SPECIAL, 'download_types': DOWNLOAD_TYPE})
+
 
 
 def write_file(text):

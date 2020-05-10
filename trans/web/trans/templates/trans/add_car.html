@@ -1,0 +1,224 @@
+{% extends 'trans/base_company.html' %}
+
+{% block title %}Добавить авто{% endblock %}
+
+{% block company_content %}
+    <div class="container">
+        <h3 class="text-muted center">Добавить авто</h3>
+        <div class="col-lg-3"></div>
+        <div class="col-lg-6">
+            {% for error in form.non_field_errors %}
+                <div class="form-group has-errors text-danger">
+                    {{error}}
+                </div>
+            {% endfor %}
+            <form method="post">
+                <div class="form-group">
+                    <select name="body_type" class="form-control">
+                        <option value="-1" selected="selected" hidden> Тип кузова </option>
+                        <optgroup label="Крытые">
+                            {% for body_type in body_type_covered %}
+                                <option value={{ forloop.counter0 }}> {{ body_type }} </option>
+                            {% endfor %}
+                        </optgroup>
+                        <optgroup label="Открытые">
+                            {% for body_type in body_type_uncovered %}
+                                <option value={{ forloop.counter0 }}> {{ body_type }} </option>
+                            {% endfor %}
+                        </optgroup>
+                        <optgroup label="Цистерны">
+                            {% for body_type in body_type_tank %}
+                                <option value={{ forloop.counter0 }}> {{ body_type }} </option>
+                            {% endfor %}
+                        </optgroup>
+                        <optgroup label="Специальный транспорт">
+                            {% for body_type in body_type_special %}
+                                <option value={{ forloop.counter0 }}> {{ body_type }} </option>
+                            {% endfor %}
+                        </optgroup>
+                    </select>
+                </div>
+                {% for error in form.body_type.errors %}
+                    <div class="form-group has-errors text-danger">
+                        {{ error }}
+                    </div>
+                {% endfor %}
+                <div class="form-group">
+                    <select name="download_type" class="form-control">
+                        <option value="-1" selected="selected" hidden> Тип загрузки </option>
+                        {% for download_type in download_types %}
+                            <option value={{ forloop.counter0 }}> {{ download_type }} </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                {% for error in form.download_type.errors %}
+                    <div class="form-group has-errors text-danger">
+                        {{ error }}
+                    </div>
+                {% endfor %}
+                <div class="form-group">
+                    <input type="text" name="carrying_capacity" class="form-control" placeholder="Грузоподъемность, т" value="{{form.carrying_capacity.value}}">
+                </div>
+                {% for error in form.carrying_capacity.errors %}
+                    <div class="form-group has-errors text-danger">
+                        {{ error }}
+                    </div>
+                {% endfor %}
+                <div class="form-group">
+                    <input type="text" name="volume" class="form-control" placeholder="Объем, м³" value="{{form.volume.value}}">
+                </div>
+                {% for error in form.volume.errors %}
+                    <div class="form-group has-errors text-danger">
+                        {{ error }}
+                    </div>
+                {% endfor %}
+                <div class="form-group">
+                    <h5 class="center">Дата готовности транспорта к загрузке:</h5>
+                    <div class="input-group">
+                        <span class="input-group-addon">с</span>
+                        <input id="loading_date_from" name="loading_date_from" type="date" class="form-control" value="2020-01-01">
+                        <span class="input-group-addon">по</span>
+                        <input id="loading_date_by" name="loading_date_by" type="date" class="form-control" value="2020-01-01">
+                    </div>
+                </div>
+                {% for error in form.loading_date_from.errors %}
+                    <div class="form-group has-errors text-danger">
+                        {{ error }}
+                    </div>
+                {% endfor %}
+                <div class="form-group">
+                    <input id="city1" type="text" name="country_loading" class="form-control" placeholder="Место загрузки" value="{{form.country_loading.value}}">
+                </div>
+                {% for error in form.country_loading.errors %}
+                    <div class="form-group has-errors text-danger">
+                        {{ error }}
+                    </div>
+                {% endfor %}
+                <div class="form-group">
+                    <input id="city2" type="text" name="country_unloading" class="form-control" placeholder="Место разгрузки" value="{{form.country_unloading.value}}">
+                </div>
+                {% for error in form.country_unloading.errors %}
+                    <div class="form-group has-errors text-danger">
+                        {{ error }}
+                    </div>
+                {% endfor %}
+                <div class="form-group">
+                    <textarea type="text" style="max-width: 100%; resize: none;" rows="10" name="note" maxlength="10000" class="form-control" placeholder="Примечание">{{form.note.value}}</textarea>
+                </div>
+                {% for error in form.note.errors %}
+                    <div class="form-group has-errors text-danger">
+                        {{ error }}
+                    </div>
+                {% endfor %}
+                <div class="form-group">
+                    {% csrf_token %}
+                    <input type="submit" class="btn btn-success" value="Разместить заявку">
+                </div>
+            </form>
+        </div>
+    </div>
+    <script>
+        function autocomplete(inp, arr) {
+          /*the autocomplete function takes two arguments,
+          the text field element and an array of possible autocompleted values:*/
+          var currentFocus;
+          /*execute a function when someone writes in the text field:*/
+          inp.addEventListener("input", function(e) {
+              var a, b, i, val = this.value;
+              /*close any already open lists of autocompleted values*/
+              closeAllLists();
+              if (!val) { return false;}
+              currentFocus = -1;
+              /*create a DIV element that will contain the items (values):*/
+              a = document.createElement("DIV");
+              a.setAttribute("id", this.id + "autocomplete-list");
+              a.setAttribute("class", "autocomplete-items");
+              /*append the DIV element as a child of the autocomplete container:*/
+              this.parentNode.appendChild(a);
+              /*for each item in the array...*/
+              for (i = 0; i < arr.length; i++) {
+                /*check if the item starts with the same letters as the text field value:*/
+                if (arr[i].substr(0, val.length).toUpperCase() == val.toUpperCase()) {
+                  /*create a DIV element for each matching element:*/
+                  b = document.createElement("DIV");
+                  /*make the matching letters bold:*/
+                  b.innerHTML = "<strong>" + arr[i].substr(0, val.length) + "</strong>";
+                  b.innerHTML += arr[i].substr(val.length);
+                  /*insert a input field that will hold the current array item's value:*/
+                  b.innerHTML += "<input type='hidden' value='" + arr[i] + "'>";
+                  /*execute a function when someone clicks on the item value (DIV element):*/
+                  b.addEventListener("click", function(e) {
+                      /*insert the value for the autocomplete text field:*/
+                      inp.value = this.getElementsByTagName("input")[0].value;
+                      /*close the list of autocompleted values,
+                      (or any other open lists of autocompleted values:*/
+                      closeAllLists();
+                  });
+                  a.appendChild(b);
+                }
+              }
+          });
+          /*execute a function presses a key on the keyboard:*/
+          inp.addEventListener("keydown", function(e) {
+              var x = document.getElementById(this.id + "autocomplete-list");
+              if (x) x = x.getElementsByTagName("div");
+              if (e.keyCode == 40) {
+                /*If the arrow DOWN key is pressed,
+                increase the currentFocus variable:*/
+                currentFocus++;
+                /*and and make the current item more visible:*/
+                addActive(x);
+              } else if (e.keyCode == 38) { //up
+                /*If the arrow UP key is pressed,
+                decrease the currentFocus variable:*/
+                currentFocus--;
+                /*and and make the current item more visible:*/
+                addActive(x);
+              } else if (e.keyCode == 13) {
+                /*If the ENTER key is pressed, prevent the form from being submitted,*/
+                e.preventDefault();
+                if (currentFocus > -1) {
+                  /*and simulate a click on the "active" item:*/
+                  if (x) x[currentFocus].click();
+                }
+              }
+          });
+          function addActive(x) {
+            /*a function to classify an item as "active":*/
+            if (!x) return false;
+            /*start by removing the "active" class on all items:*/
+            removeActive(x);
+            if (currentFocus >= x.length) currentFocus = 0;
+            if (currentFocus < 0) currentFocus = (x.length - 1);
+            /*add class "autocomplete-active":*/
+            x[currentFocus].classList.add("autocomplete-active");
+          }
+          function removeActive(x) {
+            /*a function to remove the "active" class from all autocomplete items:*/
+            for (var i = 0; i < x.length; i++) {
+              x[i].classList.remove("autocomplete-active");
+            }
+          }
+          function closeAllLists(elmnt) {
+            /*close all autocomplete lists in the document,
+            except the one passed as an argument:*/
+            var x = document.getElementsByClassName("autocomplete-items");
+            for (var i = 0; i < x.length; i++) {
+              if (elmnt != x[i] && elmnt != inp) {
+                x[i].parentNode.removeChild(x[i]);
+              }
+            }
+          }
+          /*execute a function when someone clicks in the document:*/
+          document.addEventListener("click", function (e) {
+              closeAllLists(e.target);
+              });
+        }
+
+        /*An array containing all the country names in the world:*/
+        var countries = ["Ирак", "Грузия", "Мексика", "Белиз", "Аруба", "Бутан", "Дания", "Монголия", "Монако", "Гаити", "Ирландия", "Мали", "Конго", "Гуам", "Ангола", "Куба", "Лаос", "Ливия", "Гана", "Гамбия", "Бельгия", "Бенин", "Джибути", "Кипр", "Молдова", "Латвия", "Италия", "Китай", "Замбия", "Гвинея", "Макао", "Индия", "Кения", "Малави", "Гайана", "Йемен", "Катар", "Малайзия", "Коморы", "Маврикий", "Мьянма", "Германия", "Науру", "Непал", "Ватикан", "Уганда", "Эстония", "Сингапур", "Ямайка", "Нигер", "Россия", "Никарагуа", "Эфиопия", "Сербия", "Габон", "Турция", "Судан", "Багамы", "Ниуэ", "Того", "Хорватия", "Бахрейн", "Таиланд", "Сомали", "Палау", "Токелау", "Франция", "Финляндия", "Израиль", "Шри-Ланка", "Самоа", "Сенегал", "Свазиленд", "Бермуды", "Словения", "Тайвань", "Чили", "США", "Фиджи", "Тувалу", "Норвегия", "Руанда", "Чад", "Остров Мэн", "Оман", "Панама", "Перу", "Реюньон", "Эквадор", "Кыргызстан", "Иран", "Сейшелы", "Марокко", "Кабо-Верде", "Доминика", "Острова Кайман", "Зимбабве", "Саудовская Аравия", "Гренада", "Монтсеррат", "Мальта", "Таджикистан", "Уругвай", "Казахстан", "Тунис", "Канада", "Восточный Тимор", "Ангилья", "Тонга", "Индонезия", "Синт-Мартен", "Мозамбик", "Болгария", "Иордания", "Греция", "Либерия", "Словакия", "Коста-Рика", "Румыния", "Намибия", "Лесото", "Македония", "Гонконг", "Ливан", "Нигерия", "Танзания", "Тринидад и Тобаго", "Гватемала", "Пакистан", "Кот д`Ивуар", "Япония", "Азербайджан", "Гибралтар", "Западная Сахара", "Мартиника", "Узбекистан", "Венгрия", "Люксембург", "Филиппины", "Бразилия", "Испания", "Уоллис и Футуна", "Австрия", "Мавритания", "Афганистан", "Литва", "Беларусь", "Швейцария", "Новая Каледония", "Кюрасао", "Фарерские острова", "Туркменистан", "Боливия", "Папуа - Новая Гвинея", "Соломоновы Острова", "Великобритания", "Мадагаскар", "Экваториальная Гвинея", "Камерун", "Бруней-Даруссалам", "Украина", "Черногория", "Сьерра-Леоне", "Сальвадор", "Новая Зеландия", "Сирийская Арабская Республика", "Французская Гвиана", "Австралия", "Андорра", "Венесуэла", "Объединенные Арабские Эмираты", "Сан-Марино", "Гвинея-Бисау", "Бангладеш", "Ботсвана", "Албания", "Гренландия", "Южный Судан", "Северная Корея", "Остров Норфолк", "Виргинские острова, США", "Гондурас", "Доминиканская Республика", "Гваделупа", "Кувейт", "Центрально-Африканская Республика", "Северные Марианские острова", "Чехия", "Нидерланды", "Виргинские острова, Британские", "Сан-Томе и Принсипи", "Бурунди", "Суринам", "Острова Кука", "Святая Елена", "Сент-Китс и Невис", "Фолклендские острова", "Вануату", "Южная Корея", "Южно-Африканская Республика", "Вьетнам", "Конго, демократическая республика", "Египет", "Кирибати", "Пуэрто-Рико", "Эритрея", "Французская Полинезия", "Острова Теркс и Кайкос", "Парагвай", "Польша", "Сент-Винсент", "Палестинская автономия", "Шпицберген и Ян Майен", "Алжир", "Барбадос", "Буркина-Фасо", "Колумбия", "Исландия", "Мальдивы", "Маршалловы Острова", "Микронезия, федеративные штаты", "Питкерн", "Сент-Пьер и Микелон", "Швеция", "Американское Самоа", "Антигуа и Барбуда", "Аргентина", "Армения", "Камбоджа", "Бонайре, Синт-Эстатиус и Саба", "Португалия", "Сент-Люсия", "Босния и Герцеговина", "Лихтенштейн"];
+
+        /*initiate the autocomplete function on the "myInput" element, and pass along the countries array as possible autocomplete values:*/
+        autocomplete(document.getElementById("city1"), countries);
+    </script>
+{% endblock %}

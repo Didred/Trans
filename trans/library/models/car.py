@@ -12,6 +12,7 @@ class Car(Base):
     __tablename__ = 'car'
 
     id = Column(Integer, primary_key=True)
+    company_id = Column(Integer)
     body_type = Column(String)
     download_type = Column(String) #?
     carrying_capacity = Column(Integer)
@@ -27,6 +28,7 @@ class Car(Base):
 
     def __init__(
             self,
+            company_id,
             body_type,
             download_type,
             carrying_capacity,
@@ -39,6 +41,7 @@ class Car(Base):
             city_unloading,
             note=None,
             urgently=None):
+        self.company_id = company_id
         self.body_type = body_type
         self.download_type = download_type
         self.carrying_capacity = carrying_capacity
@@ -73,11 +76,3 @@ class Car(Base):
             result += "Срочно!"
 
         return result
-
-
-if __name__ == "__main__":
-    car = Car("Тент", ["Задняя", "Передняя"], 200, 10, "04.03.2020", "05.03.2020", "Беларусь", "Минск", "Россия", "Москва", "Примечание!", urgently=True)
-    print(car)
-
-
-

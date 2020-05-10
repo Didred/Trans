@@ -41,9 +41,9 @@ class API:
             loading_date_from,
             loading_date_by,
             country_loading,
-            city_loading,
             country_unloading,
-            city_unloading,
+            city_loading=None,
+            city_unloading=None,
             note=None,
             urgently=None):
 
@@ -72,6 +72,16 @@ class API:
                     .filter(Car.id == car_id).one_or_none())
         except sqlalchemy.orm.exc.NoResultFound:
             raise Exception("Car not found")
+
+    def get_cars(self, company_id):
+        _filter = and_(
+            or_(company_id is None, Car.company_id == company_id)
+        )
+
+        cars = self._session.query(Car).filter(_filter).all()
+        self._session.commit()
+
+        return cars
 
     def edit_car(
             self,
