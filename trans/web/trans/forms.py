@@ -11,7 +11,7 @@ from . import get_api
 from library.models.review import Rating
 
 
-DATE_FORMAT = '%Y-%m-%d %H:%M'
+DATE_FORMAT = '%Y-%m-%d'
 
 
 class UsernameField(forms.CharField):
@@ -48,17 +48,17 @@ class CarForm(forms.Form):
             attrs={'type': 'datetime'},
             format=DATE_FORMAT
         ),
-        required=False
+        initial=format(datetime.now(), DATE_FORMAT)
     )
     loading_date_by = forms.DateTimeField(
         widget=forms.widgets.DateInput(
             attrs={'type': 'datetime'},
             format=DATE_FORMAT
         ),
-        required=False
+        initial=format(datetime.now(), DATE_FORMAT)
     )
-    country_loading = forms.CharField(max_length=30)
-    country_unloading = forms.CharField(max_length=30)
+    country_loading = forms.CharField(max_length=300)
+    country_unloading = forms.CharField(max_length=300)
     note = forms.CharField(max_length=10000, required=False)
 
 

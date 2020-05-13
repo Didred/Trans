@@ -18,7 +18,9 @@ from sources.templates import (
     RAISING_TO_ADMINISTRATOR,
     LOWERING_FROM_ADMINISTRATOR,
     REMOVE_EMPLOYEE,
-    ADD_EMPLOYEE
+    ADD_EMPLOYEE,
+    CREATE_CAR,
+    REMOVE_CAR
 )
 
 
@@ -34,6 +36,8 @@ class API:
 
     def create_car(
             self,
+            administrator_nickname,
+            company_id,
             body_type,
             download_type,
             carrying_capacity,
@@ -46,25 +50,31 @@ class API:
             city_unloading=None,
             note=None,
             urgently=None):
+        administrator = self.get_user(nickname=administrator_nickname)
 
-        car = Car(
-            body_type,
-            download_type,
-            carrying_capacity,
-            volume,
-            loading_date_from,
-            loading_date_by,
-            country_loading,
-            city_loading,
-            country_unloading,
-            city_unloading,
-            note,
-            urgently
-        )
+        if administrator.role.value > 1 and administrator.company_id == company_id:
+            car = Car(
+                company_id,
+                body_type,
+                download_type,
+                carrying_capacity,
+                volume,
+                loading_date_from,
+                loading_date_by,
+                country_loading,
+                country_unloading,
+                city_loading=city_loading,
+                city_unloading=city_unloading,
+                note=note,
+                urgently=urgently
+            )
 
-        self._add(car)
+            self._add(car)
 
-        return car.id
+            text_log = CREATE_CAR
+            self.create_log(company_id, administrator_nickname, text_log, "автомобиль", car.id)
+
+            return car.id
 
     def get_car(self, car_id):
         try:
@@ -85,6 +95,8 @@ class API:
 
     def edit_car(
             self,
+            administrator_nickname,
+            company_id,
             car_id,
             body_type=None,
             download_type=None,
@@ -98,47 +110,57 @@ class API:
             city_unloading=None,
             note=None,
             urgently=None):
+        administrator = self.get_user(nickname=administrator_nickname)
+
+        if administrator.role.value > 1 and administrator.company_id == company_id:
+            car = self.get_car(car_id)
+
+            if body_type is not None:
+                car.body_type = body_type
+
+            if download_type is not None:
+                car.download_type = download_type
+
+            if carrying_capacity is not None:
+                car.carrying_capacity = carrying_capacity
+
+            if volume is not None:
+                car.volume = volume
+
+            if loading_date_from is not None:
+                car.loading_date_from = loading_date_from
+
+            if loading_date_by is not None:
+                car.loading_date_by = loading_date_by
+
+            if country_loading is not None:
+                car.city_loading = city_loading
+
+            if country_unloading is not None:
+                car.country_unloading = country_unloading
+
+            if city_unloading is not None:
+                car.city_unloading = city_unloading
+
+            if note is not None:
+                car.note = note
+
+            if urgently is not None:
+                car.urgently = urgently
+
+            self._session.commit()
+
+    def delete_car(self, administrator_nickname, company_id, car_id):
+        administrator = self.get_user(nickname=administrator_nickname)
+        company = self.get_company(company_id)
         car = self.get_car(car_id)
 
-        if body_type is not None:
-            car.body_type = body_type
+        if administrator.role.value > 1 and administrator.nickname == company.nickname:
+            self._delete(car)
 
-        if download_type is not None:
-            car.download_type = download_type
+            text_log = REMOVE_CAR
+            self.create_log(administrator.company_id, administrator.nickname, text_log)
 
-        if carrying_capacity is not None:
-            car.carrying_capacity = carrying_capacity
-
-        if volume is not None:
-            car.volume = volume
-
-        if loading_date_from is not None:
-            car.loading_date_from = loading_date_from
-
-        if loading_date_by is not None:
-            car.loading_date_by = loading_date_by
-
-        if country_loading is not None:
-            car.city_loading = city_loading
-
-        if country_unloading is not None:
-            car.country_unloading = country_unloading
-
-        if city_unloading is not None:
-            car.city_unloading = city_unloading
-
-        if note is not None:
-            car.note = note
-
-        if urgently is not None:
-            car.urgently = urgently
-
-        self._session.commit()
-
-    def delete_car(self, car_id):
-        car = self.get_car(car_id)
-
-        self._delete(car)
 
     def create_user(
             self,
@@ -524,13 +546,17 @@ class API:
             self,
             company_id,
             username,
-            text):
+            text,
+            link_text=None,
+            link=None):
 
         log = Log(
             company_id,
             username,
             datetime.datetime.now() + datetime.timedelta(hours=3),
-            text
+            text,
+            link_text,
+            link
         )
 
         self._add(log)

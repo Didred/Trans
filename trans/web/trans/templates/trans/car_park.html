@@ -5,13 +5,48 @@
 {% block company_content %}
     <div class="container">
         <h3 class="text-muted center">Автопарк</h3>
-        {% for car in cars %}
-            {{ car.country_loading }}
-        {% endfor %}
-        {% if is_administrator %}
-            <div class="absolute_center width_car">
-                <a href="{% url 'add_car' company_id=company.id %}"><button type="button" class="btn btn-primary">Добавить авто</button></a>
+        {% for body_type, download_type, car in cars %}
+            <div class="box-shadow container_car">
+                <div style="display: flex;">
+                    <img class="company_car_logo" src="https://i.ibb.co/x6FDdzW/image.png">
+                    {% if is_administrator %}
+                        <div class="add_administrator">
+                            <a href="{% url 'edit_car' company_id=company.id car_id=car.id %}" class="glyphicon glyphicon-pencil"></a>
+                            <a id="remove-{{ car.id }}" class="glyphicon glyphicon-remove"></a>
+                        </div>
+                    {% endif %}
+                </div>
+                <div>
+                    <a><div class="center">Посмотреть описание и ставки</div></a>
+                    <p></p>
+                    Тип кузова: {{ body_type }}
+                    <p></p>
+                    Тип загрузки: {{ download_type }}
+                </div>
             </div>
-        {% endif %}
+        {% endfor %}
     </div>
+    {% if is_administrator %}
+        <div class="absolute_center width_car">
+            <a href="{% url 'add_car' company_id=company.id %}"><button type="button" class="btn btn-primary">Добавить авто</button></a>
+        </div>
+    {% endif %}
+    <script type="text/javascript">
+        Array.prototype.forEach.call(document.querySelectorAll('remove[type=text]'), function (ths) {
+            ths.onclick = event_click;
+        });
+
+        $('a').click(function () {
+            let id = $(this).attr('id').split('-')[1]
+            $.get("remove_car/" + id, function(data) {
+                $.ajax({
+                    url: "carpark",
+                    cache: true,
+                    success: function(html){
+                        $("#content").html(html);
+                    }
+                });
+            });
+        });
+    </script>
 {% endblock %}

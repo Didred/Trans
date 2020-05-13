@@ -36,9 +36,9 @@ class Car(Base):
             loading_date_from,
             loading_date_by,
             country_loading,
-            city_loading,
             country_unloading,
-            city_unloading,
+            city_loading=None,
+            city_unloading=None,
             note=None,
             urgently=None):
         self.company_id = company_id

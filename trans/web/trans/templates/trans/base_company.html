@@ -3,12 +3,12 @@
 {% block content %}
     {% if user.is_authenticated %}
         <div class="container_profile">
-            <a class="test" href="{% url 'profile' nickname=user %}"><img src="https://i.ibb.co/Z1h6fjN/about-us.png" alt="Avatar"></a>
+            <a class="company_picture" href="{% url 'profile' nickname=user %}"><img src="https://i.ibb.co/Z1h6fjN/about-us.png" alt="Avatar"></a>
             {% if show %}
-                <a class="test" href="{% url 'contacts' company_id=company.id %}" ><img src="https://i.ibb.co/SQKdV7x/member.png" alt="Avatar"></a>
-                <a class="test" href="{% url 'car_park' company_id=company.id %}" ><img src="https://i.ibb.co/CVVCnCP/car.png" alt="Avatar"></a>
+                <a class="company_picture" href="{% url 'contacts' company_id=company.id %}" ><img src="https://i.ibb.co/SQKdV7x/member.png" alt="Avatar"></a>
+                <a class="company_picture" href="{% url 'car_park' company_id=company.id %}" ><img src="https://i.ibb.co/CVVCnCP/car.png" alt="Avatar"></a>
                 {% if is_administrator %}
-                    <a class="test" href="{% url 'log' company_id=company.id %}" ><img src="https://i.ibb.co/x6FDdzW/image.png" alt="Avatar"></a>
+                    <a class="company_picture" href="{% url 'log' company_id=company.id %}" ><img src="https://i.ibb.co/x6FDdzW/image.png" alt="Avatar"></a>
                 {% endif %}
             {% endif %}
         </div>

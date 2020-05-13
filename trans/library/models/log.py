@@ -15,14 +15,20 @@ class Log(Base):
     username = Column(String)
     date = Column(DateTime)
     text = Column(String)
+    link_text = Column(String)
+    link = Column(Integer)
 
     def __init__(
             self,
             company_id,
             username,
             date,
-            text):
+            text,
+            link_text,
+            link):
         self.company_id = company_id
         self.username = username
         self.date = date
         self.text = text
+        self.link_text = link_text
+        self.link = link

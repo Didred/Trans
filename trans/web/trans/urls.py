@@ -25,4 +25,6 @@ urlpatterns = [
     url(r'^company/(?P<company_id>[0-9]+)/change_administrator/(?P<user_id>[0-9]+)/$', views.change_administrator, name='change_administrator'),
     url(r'^company/(?P<company_id>[0-9]+)/remove_employee/(?P<user_id>[0-9]+)/$', views.remove_employee, name='remove_employee'),
     url(r'^company/(?P<company_id>[0-9]+)/log$', views.log, name='log'),
+    url(r'^company/(?P<company_id>[0-9]+)/remove_car/(?P<car_id>[0-9]+)/$', views.remove_car, name='remove_car'),
+    url(r'^company/(?P<company_id>[0-9]+)/carpark/(?P<car_id>[0-9]+)/edit$', views.edit_car, name='edit_car'),
 ]

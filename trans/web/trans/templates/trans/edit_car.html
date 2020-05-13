@@ -4,7 +4,7 @@
 
 {% block company_content %}
     <div class="container">
-        <h3 class="text-muted center">Добавить авто</h3>
+        <h3 class="text-muted center">Редактировать авто</h3>
         <div class="col-lg-3"></div>
         <div class="col-lg-6">
             {% for error in form.non_field_errors %}
@@ -15,7 +15,7 @@
             <form method="post">
                 <div class="form-group">
                     <select name="body_type" class="form-control">
-                        <option value="-1" selected="selected" hidden> Тип кузова </option>
+                        <option value="-1" selected="selected" hidden> {{ current_body_type }} </option>
                         <optgroup label="Крытые">
                             {% for body_type in body_type_covered %}
                                 <option value="1{{ forloop.counter0 }}"> {{ body_type }} </option>
@@ -45,7 +45,7 @@
                 {% endfor %}
                 <div class="form-group">
                     <select name="download_type" class="form-control">
-                        <option value="-1" selected="selected" hidden> Тип загрузки </option>
+                        <option value="-1" selected="selected" hidden> {{ current_download_type }} </option>
                         {% for download_type in download_types %}
                             <option value={{ forloop.counter0 }}> {{ download_type }} </option>
                         {% endfor %}
@@ -57,7 +57,7 @@
                     </div>
                 {% endfor %}
                 <div class="form-group">
-                    <input type="text" name="carrying_capacity" class="form-control" placeholder="Грузоподъемность, т" value="{{form.carrying_capacity.value}}">
+                    <input type="text" name="carrying_capacity" class="form-control" placeholder="Грузоподъемность, т" value="{{car.carrying_capacity}}">
                 </div>
                 {% for error in form.carrying_capacity.errors %}
                     <div class="form-group has-errors text-danger">
@@ -65,7 +65,7 @@
                     </div>
                 {% endfor %}
                 <div class="form-group">
-                    <input type="text" name="volume" class="form-control" placeholder="Объем, м³" value="{{form.volume.value}}">
+                    <input type="text" name="volume" class="form-control" placeholder="Объем, м³" value="{{car.volume}}">
                 </div>
                 {% for error in form.volume.errors %}
                     <div class="form-group has-errors text-danger">
@@ -76,9 +76,9 @@
                     <h5 class="center">Дата готовности транспорта к загрузке:</h5>
                     <div class="input-group">
                         <span class="input-group-addon">с</span>
-                        <input id="loading_date_from" name="loading_date_from" type="date" class="form-control" value={{current_date}}>
+                        <input id="loading_date_from" name="loading_date_from" type="date" class="form-control" value={{loading_date_from}}>
                         <span class="input-group-addon">по</span>
-                        <input id="loading_date_by" name="loading_date_by" type="date" class="form-control" value={{current_date}}>
+                        <input id="loading_date_by" name="loading_date_by" type="date" class="form-control" value={{loading_date_by}}>
                     </div>
                 </div>
                 {% for error in form.loading_date_from.errors %}
@@ -87,7 +87,7 @@
                     </div>
                 {% endfor %}
                 <div class="form-group">
-                    <input id="city1" type="text" name="country_loading" class="form-control" placeholder="Место загрузки" value="{{form.country_loading.value}}">
+                    <input id="city1" type="text" name="country_loading" class="form-control" placeholder="Место загрузки" value="{{car.country_loading}}">
                 </div>
                 {% for error in form.country_loading.errors %}
                     <div class="form-group has-errors text-danger">
@@ -95,7 +95,7 @@
                     </div>
                 {% endfor %}
                 <div class="form-group">
-                    <input id="city2" type="text" name="country_unloading" class="form-control" placeholder="Место разгрузки" value="{{form.country_unloading.value}}">
+                    <input id="city2" type="text" name="country_unloading" class="form-control" placeholder="Место разгрузки" value="{{car.country_unloading}}">
                 </div>
                 {% for error in form.country_unloading.errors %}
                     <div class="form-group has-errors text-danger">
@@ -103,7 +103,7 @@
                     </div>
                 {% endfor %}
                 <div class="form-group">
-                    <textarea type="text" style="max-width: 100%; resize: none;" rows="10" name="note" maxlength="10000" class="form-control" placeholder="Примечание">{{form.note.value}}</textarea>
+                    <textarea type="text" style="max-width: 100%; resize: none;" rows="10" name="note" maxlength="10000" class="form-control" placeholder="Примечание">{{car.note}}</textarea>
                 </div>
                 {% for error in form.note.errors %}
                     <div class="form-group has-errors text-danger">
@@ -112,21 +112,21 @@
                 {% endfor %}
                 <div class="form-group">
                     {% csrf_token %}
-                    <input type="submit" class="btn btn-success" value="Разместить заявку">
+                    <input type="submit" class="btn btn-success" value="Сохранить">
                 </div>
             </form>
         </div>
     </div>
     <script>
         var placesAutocomplete1 = places({
-          appId: 'plBHLGW4Z9HR',
-          apiKey: 'a5272e955f50cb23c4b2a8ef4cd63c1d',
-          container: document.querySelector('#city1'),
+        appId: 'plBHLGW4Z9HR',
+        apiKey: 'a5272e955f50cb23c4b2a8ef4cd63c1d',
+        container: document.querySelector('#city1'),
         });
         var placesAutocomplete2 = places({
-          appId: 'plBHLGW4Z9HR',
-          apiKey: 'a5272e955f50cb23c4b2a8ef4cd63c1d',
-          container: document.querySelector('#city2'),
+        appId: 'plBHLGW4Z9HR',
+        apiKey: 'a5272e955f50cb23c4b2a8ef4cd63c1d',
+        container: document.querySelector('#city2'),
         });
-      </script>
+    </script>
 {% endblock %}

@@ -7,8 +7,12 @@
     {% for log, user, date in logs %}
         <div class="container_review box-shadow container_review_normal">
             <img src="https://i.ibb.co/x6FDdzW/image.png" alt="Avatar" style="width:90px">
-            <p><span>{{ user.name }} {{ user.surname }}</span> {{ date }}</p>
-            <p class="font_size_12">{{ log.text }}</p>
+            <p><span>{{ user.name }} {{ user.surname }}</span> {{ date }} </p>
+            {% if log.link %}
+                <p class="font_size_12">{{ log.text }} <a href="#">{{ log.link_text }}</a></p>
+            {% else %}
+                <p class="font_size_12">{{ log.text }}</p>
+            {% endif %}
         </div>
     {% endfor %}
 {% endblock %}

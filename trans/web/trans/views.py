@@ -24,6 +24,7 @@ from library.models.user import Role
 
 from datetime import datetime
 import pytz
+import math
 
 FIELDS = [
     "Перевозчик",
@@ -97,6 +98,11 @@ BODY_TYPE_SPECIAL = [
     "Эвакуатор",
     "Другое"
 ]
+
+BODY_TYPE = BODY_TYPE_COVERED.copy()
+BODY_TYPE.extend(BODY_TYPE_UNCOVERED)
+BODY_TYPE.extend(BODY_TYPE_TANK)
+BODY_TYPE.extend(BODY_TYPE_SPECIAL)
 
 DOWNLOAD_TYPE = [
     "Задняя",
@@ -311,9 +317,30 @@ def car_park(request, company_id):
     check = request.GET.get("login") == owner
     show = not check or company != None
 
-    cars = api.get_cars(company_id)
+    temp_cars = api.get_cars(company_id)
+    cars = []
+
+    for car in temp_cars:
+        body_type = _get_body_type(car.body_type)
+
+        cars.append((body_type, DOWNLOAD_TYPE[int(car.download_type)], car))
 
     return render(request, 'trans/car_park.html', {'company': company, 'show': show, 'is_administrator': is_administrator, 'cars': cars })
+
+
+def _get_body_type(car_body_type):
+    body_type = int(str(car_body_type)[0])
+    return BODY_TYPE[(int(_type(body_type) + int(str(car_body_type)[1:])))]
+
+
+def _type(body_type):
+    return {
+        1: 0,
+        2: len(BODY_TYPE_COVERED),
+        3: len(BODY_TYPE_COVERED) + len(BODY_TYPE_UNCOVERED),
+        4: len(BODY_TYPE_COVERED) + len(BODY_TYPE_UNCOVERED) + len(BODY_TYPE_TANK)
+    }[body_type]
+
 
 
 def add_employee(request, company_id):
@@ -407,34 +434,18 @@ def add_car(request, company_id):
     check = request.GET.get("login") == owner
     show = not check or company != None
     form = None
-    check = True
+
+    current_date = str(datetime.now().date())
 
     if request.method == 'POST':
         form = CarForm(request.POST)
         if form.is_valid():
-            if (form.cleaned_data['loading_date_from'] > form.cleaned_data['loading_date_by'] or
-                form.cleaned_data['loading_date_by'] < pytz.utc.localize(datetime.utcnow())):
-                form.add_error('loading_date_from', "Неверный интервал времени.")
-                check = False
-            if int(form.cleaned_data['body_type']) < 0:
-                form.add_error('body_type', "Тип кузова не выбран.")
-                check = False
-            if int(form.cleaned_data['download_type']) < 0:
-                form.add_error('download_type', "Тип загрузки не выбран.")
-                check = False
-            try:
-                temp = int(form.cleaned_data['carrying_capacity'])
-            except ValueError as e:
-                form.add_error('carrying_capacity', "Неверный формат ввода.")
-                check = False
-            try:
-                temp = int(form.cleaned_data['volume'])
-            except ValueError as e:
-                form.add_error('volume', "Неверный формат ввода.")
-                check = False
+            form, check = _check_car_form(form)
 
             if check:
                 api.create_car(
+                    owner,
+                    int(company_id),
                     form.cleaned_data['body_type'],
                     form.cleaned_data['download_type'],
                     form.cleaned_data['carrying_capacity'],
@@ -447,8 +458,92 @@ def add_car(request, company_id):
                 )
                 return redirect('/company/'+ company_id + '/carpark')
 
-    return render(request, 'trans/add_car.html', {'form': form, 'company': company, 'show': show, 'is_administrator': is_administrator, 'body_type_covered': BODY_TYPE_COVERED, 'body_type_uncovered': BODY_TYPE_UNCOVERED, 'body_type_tank': BODY_TYPE_TANK, 'body_type_special': BODY_TYPE_SPECIAL, 'download_types': DOWNLOAD_TYPE})
+    return render(request, 'trans/add_car.html', {'form': form, 'company': company, 'show': show, 'is_administrator': is_administrator, 'body_type_covered': BODY_TYPE_COVERED, 'body_type_uncovered': BODY_TYPE_UNCOVERED, 'body_type_tank': BODY_TYPE_TANK, 'body_type_special': BODY_TYPE_SPECIAL, 'download_types': DOWNLOAD_TYPE, 'current_date': current_date})
 
+
+def _check_car_form(form, extra=True):
+    check = True
+    if (form.cleaned_data['loading_date_from'] > form.cleaned_data['loading_date_by'] or
+        form.cleaned_data['loading_date_by'].date() < pytz.utc.localize(datetime.utcnow()).date()):
+        form.add_error('loading_date_from', "Неверный интервал времени.")
+        check = False
+    if int(form.cleaned_data['body_type']) < 0 and extra:
+        form.add_error('body_type', "Тип кузова не выбран.")
+        check = False
+    if int(form.cleaned_data['download_type']) < 0 and extra:
+        form.add_error('download_type', "Тип загрузки не выбран.")
+        check = False
+    try:
+        temp = int(form.cleaned_data['carrying_capacity'])
+    except ValueError as e:
+        form.add_error('carrying_capacity', "Неверный формат ввода.")
+        check = False
+    try:
+        temp = int(form.cleaned_data['volume'])
+    except ValueError as e:
+        form.add_error('volume', "Неверный формат ввода.")
+        check = False
+
+    return form, check
+
+
+def edit_car(request, company_id, car_id):
+    api = get_api()
+
+    owner = request.user.username
+    user = api.get_user(nickname=owner)
+
+    company = api.get_company(company_id=company_id)
+    is_administrator = api.is_administrator(user.id, company_id)
+
+    check = request.GET.get("login") == owner
+    show = not check or company != None
+
+    car = api.get_car(car_id)
+
+    current_body_type = _get_body_type(car.body_type)
+    current_download_type = DOWNLOAD_TYPE[int(car.download_type)]
+    loading_date_from = str(car.loading_date_from.date())
+    loading_date_by = str(car.loading_date_by.date())
+
+    form = CarForm()
+
+    if request.method == 'POST':
+        form = CarForm(request.POST)
+        if form.is_valid():
+            form, check = _check_car_form(form, False)
+
+            if check:
+                api.edit_car(
+                    owner,
+                    int(company_id),
+                    car.id,
+                    body_type=form.cleaned_data['body_type'] if int(form.cleaned_data['body_type']) >= 0 else car.body_type,
+                    download_type=form.cleaned_data['download_type'] if int(form.cleaned_data['download_type']) >= 0 else car.download_type,
+                    carrying_capacity=form.cleaned_data['carrying_capacity'],
+                    volume=form.cleaned_data['volume'],
+                    loading_date_from=form.cleaned_data['loading_date_from'],
+                    loading_date_by=form.cleaned_data['loading_date_by'],
+                    country_loading=form.cleaned_data['country_loading'],
+                    country_unloading=form.cleaned_data['country_unloading'],
+                    note=form.cleaned_data['note']
+                )
+                return redirect('/company/'+ company_id + '/carpark')
+
+    return render(request, 'trans/edit_car.html', {'form': form, 'company': company, 'show': show, 'is_administrator': is_administrator, 'body_type_covered': BODY_TYPE_COVERED, 'body_type_uncovered': BODY_TYPE_UNCOVERED, 'body_type_tank': BODY_TYPE_TANK, 'body_type_special': BODY_TYPE_SPECIAL, 'download_types': DOWNLOAD_TYPE, 'current_body_type': current_body_type, 'current_download_type': current_download_type, 'car': car, 'loading_date_from':loading_date_from, 'loading_date_by': loading_date_by })
+
+
+def remove_car(request, company_id, car_id):
+    if request.is_ajax():
+        api = get_api()
+        owner = request.user.username
+
+        api.delete_car(owner, company_id, car_id)
+
+        message = car_id
+    else:
+        message = "Страницы не существует"
+    return HttpResponse(message)
 
 
 def write_file(text):
