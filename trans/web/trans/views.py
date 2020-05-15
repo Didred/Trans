@@ -116,7 +116,13 @@ DOWNLOAD_TYPE = [
 
 def home(request):
     api = get_api()
-    companys = api.get_companys()
+    all_companys = api.get_companys()
+    companys = []
+
+    for company in all_companys:
+        rating = api.get_ratings(company.id)
+
+        companys.append((company, rating[0], rating[1], rating[2]))
 
     return render(request, 'trans/home.html', {'fields': FIELDS, 'companys': companys})
 
@@ -271,7 +277,8 @@ def get_review(request, company_id):
     reviews = []
 
     for review in company_reviews:
-        reviews.append((review, api.get_user(user_id=review.user_id), review.date.strftime("%d.%m.%Y, %H:%M")))
+        if review.review is not None:
+            reviews.append((review, api.get_user(user_id=review.user_id), review.date.strftime("%d.%m.%Y, %H:%M")))
 
     return render(
         request, 'trans/review.html',
@@ -545,6 +552,50 @@ def remove_car(request, company_id, car_id):
         message = "Страницы не существует"
     return HttpResponse(message)
 
+
+def like(request, company_id):
+    if request.is_ajax():
+        api = get_api()
+
+        user = api.get_user(nickname=request.user.username)
+        has_already_rated = api.has_already_rated(company_id, user.id)
+
+        if not has_already_rated:
+            api.create_review(
+                3,
+                None,
+                company_id,
+                user.id
+            )
+        else:
+            api.change_rating(company_id, user.id, 3)
+
+        message = "OK"
+    else:
+        message = "Страницы не существует"
+    return HttpResponse(message)
+
+def dislike(request, company_id):
+    if request.is_ajax():
+        api = get_api()
+
+        user = api.get_user(nickname=request.user.username)
+        has_already_rated = api.has_already_rated(company_id, user.id)
+
+        if not has_already_rated:
+            review_id = api.create_review(
+                1,
+                None,
+                company_id,
+                user.id
+            )
+        else:
+            api.change_rating(company_id, user.id, 1)
+
+        message = "OK"
+    else:
+        message = "Страницы не существует"
+    return HttpResponse(message)
 
 def write_file(text):
     with open("output.txt", "w") as file:

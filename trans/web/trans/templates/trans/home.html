@@ -22,14 +22,13 @@
         <button type="button" class="btn btn-primary" style="width: 8%;">Поиск</button>
     </form>
 
-    {% for company in companys %}
+    {% for company, negative, neutral, positive in companys %}
         <form class="form-inline form-group">
             <div class="form-group company-block box-shadow">
                 <div class="company-name">
                     <label class="company-text"> <a style="text-decoration: none; color: black;" href="{% url 'profile' nickname=company.nickname %}"> {{ company.name }} </a></label>
                     <p class=company-text> {{ company.primary_occupation }}, <span class="company-color"> {{ company.country }}, {{ company.town }} </span></p>
                 </div>
-
                 <div class="company-box">
                     <div class="company-box-logo">
                         <img class="home-company-logo" src="https://i.ibb.co/x6FDdzW/image.png">
@@ -52,8 +51,8 @@
                     <div class="company-box-rating">
                         <div class="company-box-rating-item">
                             <p class="company-rating"> Рейтинг: </p>
-                            <p><a href="#"><img class="like" src="https://i.ibb.co/RCjnKQW/image.png"></a> 0 </p>
-                            <p><a href="#"><img class="like" src="https://i.ibb.co/pRpSXSx/image.png"></a> 0 </p>
+                            <p><a id="like-{{company.id}}"><img class="like" src="https://i.ibb.co/RCjnKQW/image.png"></a> {{ positive }} </p>
+                            <p><a id="dislike-{{company.id}}"><img class="like" src="https://i.ibb.co/pRpSXSx/image.png"></a> {{ negative }} </p>
                             <p><a style="text-decoration: none;" href="{% url 'review' company_id=company.id%}">Смотреть отзывы</a></p>
                             {% if user.is_authenticated %}
                                 <p><a href="{% url 'add_review' company_id=company.id%}" type="button" class="btn btn-warning company-box-rating-button">Добавить отзыв</a></p>
@@ -66,4 +65,32 @@
             </div>
         </form>
     {% endfor %}
+    <script type="text/javascript">
+        $('a').click(function () {
+            let action = $(this).attr('id').split('-')[0]
+            let id = $(this).attr('id').split('-')[1]
+
+            if (action == "like") {
+                $.get("company/" + id + "/like", function(data) {
+                    $.ajax({
+                        url: "/",
+                        cache: true,
+                        success: function(html){
+                            $("#content").html(html);
+                        }
+                    });
+                });
+            } else {
+                $.get("company/" + id + "/dislike", function(data) {
+                    $.ajax({
+                        url: "/",
+                        cache: true,
+                        success: function(html){
+                            $("#content").html(html);
+                        }
+                    });
+                });
+            }
+        });
+    </script>
 {% endblock %}

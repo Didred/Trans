@@ -27,4 +27,7 @@ urlpatterns = [
     url(r'^company/(?P<company_id>[0-9]+)/log$', views.log, name='log'),
     url(r'^company/(?P<company_id>[0-9]+)/remove_car/(?P<car_id>[0-9]+)/$', views.remove_car, name='remove_car'),
     url(r'^company/(?P<company_id>[0-9]+)/carpark/(?P<car_id>[0-9]+)/edit$', views.edit_car, name='edit_car'),
+    url(r'^company/(?P<company_id>[0-9]+)/like$', views.like, name='like'),
+    url(r'^company/(?P<company_id>[0-9]+)/dislike$', views.dislike, name='dislike'),
+
 ]

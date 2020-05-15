@@ -112,6 +112,7 @@ class API:
             urgently=None):
         administrator = self.get_user(nickname=administrator_nickname)
 
+
         if administrator.role.value > 1 and administrator.company_id == company_id:
             car = self.get_car(car_id)
 
@@ -134,6 +135,9 @@ class API:
                 car.loading_date_by = loading_date_by
 
             if country_loading is not None:
+                car.country_loading = country_loading
+
+            if city_loading is not None:
                 car.city_loading = city_loading
 
             if country_unloading is not None:
@@ -525,6 +529,7 @@ class API:
 
         return review.id
 
+
     def get_reviews(self, company_id):
         try:
             return (self._session.query(Review)
@@ -532,6 +537,52 @@ class API:
 
         except sqlalchemy.orm.exc.NoResultFound:
             raise Exception("Review not found")
+
+
+    def get_ratings(self, company_id):
+        rating = []
+        for i in range(1, 4):
+            _filter = and_(
+                or_(Review.company_id == company_id),
+                or_(Review.rating == Rating(i))
+            )
+            rating.append(len(self._session.query(Review).filter(_filter).all()))
+
+        return rating
+
+
+    def get_review(self, company_id, user_id):
+        _filter = and_(
+            or_(Review.company_id == company_id),
+            or_(Review.user_id == user_id)
+        )
+        review = self._session.query(Review).filter(_filter).one_or_none()
+
+        return review
+
+    def has_already_rated(self, company_id, user_id):
+        review = self.get_review(company_id, user_id)
+
+        return review is not None
+
+
+    def change_rating(self, company_id, user_id, rating):
+        review = self.get_review(company_id, user_id)
+
+        if review.review is None:
+            if review.rating != Rating(rating):
+                review.rating = Rating(rating)
+            else:
+                self.delete_review(company_id, user_id)
+
+            self._session.commit()
+
+
+    def delete_review(self, company_id, user_id):
+        review = self.get_review(company_id, user_id)
+
+        self._delete(review)
+
 
     def get_company_rating(self, company_id):
         reviews = self.get_reviews(company_id)
