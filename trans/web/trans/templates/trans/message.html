@@ -13,8 +13,12 @@
             </div>
             <div class="line"></div>
             <div id="block" class="message_content">
-                {% for message in messages %}
-                    <p>{{ message.text }}</p>
+                {% for message, sender, recipient, date_creation in messages %}
+                    <div class="message">
+                        <img id={{recipient.id}} src="https://i.ibb.co/x6FDdzW/image.png" alt="Avatar">
+                        <div>{{ sender.name }} {{ sender.surname }} <span class="font_size_12px">{{ date_creation }}</span></div>
+                        <div>{{ message.text }}</div>
+                    </div>
                 {% endfor %}
             </div>
             <div class="line"></div>
@@ -27,7 +31,6 @@
         console.log(1)
         var block = document.getElementById("block");
         block.scrollTop = block.scrollHeight;
-        console.log(2)
 
         message.onkeydown = message.onkeyup = message.onkeypress = handle;
 

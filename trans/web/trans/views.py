@@ -663,7 +663,11 @@ def message(request):
     user_id = request.GET.get('sel')
     recipient = api.get_user(user_id=user_id)
 
-    messages = api.get_messages(sender.id, recipient.id)
+    all_messages = api.get_messages(sender.id, recipient.id)
+    messages = []
+
+    for message in all_messages:
+        messages.append((message, api.get_user(message.sender_id), api.get_user(message.recipient_id), message.date.strftime("%d.%m.%Y, %H:%M")))
 
     return render(request, 'trans/message.html', {'recipient': recipient, 'messages': messages})
 

@@ -657,9 +657,15 @@ class API:
 
 
     def get_messages(self, sender_id, recipient_id):
-        _filter = and_(
-            or_(Message.sender_id == sender_id),
-            or_(Message.recipient_id == recipient_id)
+        _filter = or_(
+            and_(
+                or_(Message.sender_id == sender_id),
+                or_(Message.recipient_id == recipient_id)
+            ),
+            and_(
+                or_(Message.sender_id == recipient_id),
+                or_(Message.recipient_id == sender_id)
+            )
         )
 
         messages = self._session.query(Message).filter(_filter).all()

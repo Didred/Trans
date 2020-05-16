@@ -448,6 +448,10 @@ p.company-text {
   font-size: 12pt;
 }
 
+.font_size_12px {
+  font-size: 12px;
+}
+
 .autocomplete-items {
   border: 1px solid #d4d4d4;
   border-bottom: none;
@@ -561,4 +565,15 @@ p.company-text {
 
 .message_input {
   margin-top: 10px;
+}
+
+.message {
+  margin: 20px;
+}
+
+.message img {
+  height: 42px;
+  border-radius: 50%;
+  float: left;
+  margin-right: 15px;
 }
