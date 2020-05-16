@@ -14,6 +14,7 @@ from library.models.goods import Goods
 from library.models.company import Company
 from library.models.review import Review, Rating
 from library.models.log import Log
+from library.models.message import Message
 from sources.templates import (
     RAISING_TO_ADMINISTRATOR,
     LOWERING_FROM_ADMINISTRATOR,
@@ -636,6 +637,36 @@ class API:
                     .filter(Log.company_id == company_id).all())
         except sqlalchemy.orm.exc.NoResultFound:
             raise Exception("Log not found")
+
+
+    def create_message(
+            self,
+            sender_id,
+            recipient_id,
+            text):
+
+        message = Message(
+            sender_id,
+            recipient_id,
+            text
+        )
+
+        self._add(message)
+
+        return message.id
+
+
+    def get_messages(self, sender_id, recipient_id):
+        _filter = and_(
+            or_(Message.sender_id == sender_id),
+            or_(Message.recipient_id == recipient_id)
+        )
+
+        messages = self._session.query(Message).filter(_filter).all()
+        self._session.commit()
+
+        return messages
+
 
     def _add(self, object):
         self._session.add(object)

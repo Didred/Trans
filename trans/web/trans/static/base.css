@@ -511,3 +511,54 @@ p.company-text {
   max-width: 89%;
   min-width: 89%;
 }
+
+.container_message {
+  background-color: #ffffff;
+  border-radius: 5px;
+  padding: 0px 16px 16px 16px;
+  margin: 16px 0;
+  border: 1px solid #ccc;
+  max-width: 70%;
+  min-width: 70%;
+  margin: auto;
+}
+
+.message_header {
+  display: flex;
+}
+
+.line {
+  border: 1px solid #ccc;
+}
+
+.message_back {
+  margin: 26px;
+  height: 20px;
+}
+
+.message_user {
+  margin: auto;
+}
+
+.message_action {
+  right: 0;
+  margin: 21px;
+}
+
+.message_avatar {
+  margin: 15px;
+}
+
+.message_avatar img {
+  height: 42px;
+  border-radius: 50%;
+}
+
+.message_content {
+  overflow: auto;
+  height: 65vh;
+}
+
+.message_input {
+  margin-top: 10px;
+}

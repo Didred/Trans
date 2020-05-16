@@ -1,0 +1,52 @@
+{% extends 'trans/base.html' %}
+
+{% block content %}
+    {% if user.is_authenticated %}
+        <div class="container_message">
+            <div class="message_header">
+                <a class="message_back">Назад</a>
+                <div class="message_user"> {{recipient.name}} {{recipient.surname}} </div>
+                <div class="message_action">...</div>
+                <div class="message_avatar">
+                    <img id={{recipient.id}} src="https://sun9-47.userapi.com/c836535/v836535595/360b6/6E96k2hZmdw.jpg?ava=1" alt="Avatar">
+                </div>
+            </div>
+            <div class="line"></div>
+            <div id="block" class="message_content">
+                {% for message in messages %}
+                    <p>{{ message.text }}</p>
+                {% endfor %}
+            </div>
+            <div class="line"></div>
+            <div class="message_input">
+                <input id="message" type="text" name="message" class="form-control" placeholder="Напишите сообщение...">
+            </div>
+        </div>
+    {% endif %}
+    <script type="text/javascript">
+        console.log(1)
+        var block = document.getElementById("block");
+        block.scrollTop = block.scrollHeight;
+        console.log(2)
+
+        message.onkeydown = message.onkeyup = message.onkeypress = handle;
+
+        function handle(e) {
+            let text = e.key
+            if (text == "Enter" && e.type == "keyup") {
+                let recipient_id = document.querySelectorAll('img')[0].id
+                $.get("send?sel=" + recipient_id + "&text=" + $('input#message').val(), function(data) {
+                    $.ajax({
+                        url: "message?sel=" + recipient_id,
+                        cache: true,
+                        success: function(html){
+                            $("#content").html(html);
+                        }
+                    });
+                });
+                var block = document.getElementById("block");
+                block.scrollTop = block.scrollHeight;
+            }
+        }
+    </script>
+{% endblock %}

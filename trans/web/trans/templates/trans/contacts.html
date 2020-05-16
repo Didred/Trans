@@ -18,7 +18,7 @@
                         {{ administrator.email }}
                         <p></p>
                         {% if nickname != administrator.nickname %}
-                            <a>Написать сообщение</a>
+                            <a id="message" href="{% url 'message'%}?sel={{administrator.id}}">Написать сообщение</a>
                         {% endif %}
                     </div>
                     {% if is_administrator and company.nickname != administrator.nickname and nickname != administrator.nickname %}
@@ -43,10 +43,10 @@
                         <p></p>
                         {{ employee.phone }}
                         <p></p>
-                        {{ employee.email }}
+                        {{ employee.email }}{{employee.id}}
                         <p></p>
                         {% if nickname != employee.nickname %}
-                            <a>Написать сообщение</a>
+                            <a id="message" href="{% url 'message'%} sel={{employee.id}}">Написать сообщение</a>
                         {% endif %}
                     </div>
                     {% if is_administrator %}
@@ -105,27 +105,29 @@
 
         $('a').click(function () {
             let action = $(this).attr('id').split('-')[1]
-            let id = $(this).attr('id').split('-')[2]
-            if (action == "administrator") {
-                $.get("change_administrator/" + id, function(data) {
-                    $.ajax({
-                        url: "contacts",
-                        cache: true,
-                        success: function(html){
-                            $("#content").html(html);
-                        }
+            if (action) {
+                let id = $(this).attr('id').split('-')[2]
+                if (action == "administrator") {
+                    $.get("change_administrator/" + id, function(data) {
+                        $.ajax({
+                            url: "contacts",
+                            cache: true,
+                            success: function(html){
+                                $("#content").html(html);
+                            }
+                        });
                     });
-                });
-            } else {
-                $.get("remove_employee/" + id, function(data) {
-                    $.ajax({
-                        url: "contacts",
-                        cache: true,
-                        success: function(html){
-                            $("#content").html(html);
-                        }
+                } else {
+                    $.get("remove_employee/" + id, function(data) {
+                        $.ajax({
+                            url: "contacts",
+                            cache: true,
+                            success: function(html){
+                                $("#content").html(html);
+                            }
+                        });
                     });
-                });
+                }
             }
         });
     </script>

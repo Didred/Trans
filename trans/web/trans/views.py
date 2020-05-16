@@ -630,7 +630,7 @@ def edit_review(request, company_id, review_id):
         text = request.GET.get('text')
 
         if review.id == int(review_id) and len(text) > 0:
-            api.edit_review(company_id, user.id, request.GET.get('text'))
+            api.edit_review(company_id, user.id, text)
             message = "OK"
         else:
             message = "ERROR"
@@ -652,6 +652,31 @@ def remove_review(request, company_id, review_id):
             message = "OK"
         else:
             message = "ERROR"
+    else:
+        message = "Страницы не существует"
+
+    return HttpResponse(message)
+
+def message(request):
+    api = get_api()
+    sender = api.get_user(nickname=request.user.username)
+    user_id = request.GET.get('sel')
+    recipient = api.get_user(user_id=user_id)
+
+    messages = api.get_messages(sender.id, recipient.id)
+
+    return render(request, 'trans/message.html', {'recipient': recipient, 'messages': messages})
+
+
+def message_send(request):
+    if request.is_ajax():
+        api = get_api()
+        sender = api.get_user(nickname=request.user.username)
+        recipient_id = request.GET.get('sel')
+        text = request.GET.get('text')
+
+        api.create_message(sender.id, recipient_id, text)
+        message = "OK"
     else:
         message = "Страницы не существует"
 
