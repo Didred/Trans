@@ -529,6 +529,19 @@ class API:
 
         return review.id
 
+    def edit_review(
+            self,
+            company_id,
+            user_id,
+            text):
+
+        review = self.get_review(company_id, user_id)
+
+        review.review = text
+        review.is_edit = True
+
+        self._session.commit()
+
 
     def get_reviews(self, company_id):
         try:
@@ -551,10 +564,11 @@ class API:
         return rating
 
 
-    def get_review(self, company_id, user_id):
+    def get_review(self, company_id, user_id, review_id=None):
         _filter = and_(
             or_(Review.company_id == company_id),
-            or_(Review.user_id == user_id)
+            or_(Review.user_id == user_id),
+            or_(review_id is None, Review.id == review_id)
         )
         review = self._session.query(Review).filter(_filter).one_or_none()
 

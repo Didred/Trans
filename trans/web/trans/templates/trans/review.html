@@ -22,8 +22,94 @@
             <div class="container_review box-shadow container_review_green">
         {% endif %}
             <img src="https://i.ibb.co/x6FDdzW/image.png" alt="Avatar" style="width:90px">
-            <p><span>{{ user.name }} {{ user.surname }}</span> {{ date_creation }}</p>
-            <p>{{ review.review }}</p>
+            <div class="review_box">
+                <p>
+                    <span class="container_review_span">{{ user.name }} {{ user.surname }}</span>
+                    {{ date_creation }}
+                    <span class="italic">{% if review.edit %} (ред.) {% endif %}</span>
+                </p>
+                <p id="review-{{review.id}}">{{ review.review }}</p>
+            </div>
+            {% if nickname == user.nickname %}
+                <div class="review_button">
+                    <a id="edit-{{review.id}}" class="glyphicon glyphicon-pencil"></a>
+                    <a id="remove-{{review.id}}"class="glyphicon glyphicon-remove"></a>
+                </div>
+            {% endif %}
         </div>
     {% endfor %}
+    <script type="text/javascript">
+        $('a').click(function () {
+            let action = $(this).attr('id').split('-')[0]
+            let id = $(this).attr('id').split('-')[1]
+
+            if (action == "edit") {
+                let tag_p = document.querySelectorAll('p')
+                let tag_textarea = document.querySelectorAll('textarea')
+
+                for (let i = 0; i < tag_p.length; i++) {
+                    if (tag_p[i].id.split('-')[1] == id) {
+                        let message = $.get("review/" + id + "/verification", function(data) {
+                            $.ajax();
+                        });
+                        setTimeout(function () {
+                            if (message.responseText == "OK") {
+                                $('p#review-' + id).replaceWith(function(index, oldHTML){
+                                    return $("<textarea type='text' id='review' style='max-width: 100%; resize: none;' rows='9' name='description' maxlength='10000' class='form-control'/>").html(oldHTML);
+                                });
+                            }
+                        }, 100)
+
+                        setTimeout(function () {
+                            content.onkeydown = content.onkeyup = content.onkeypress = handle;
+
+                            let lastTime = Date.now();
+
+                            function handle(e) {
+                                let text = e.key
+                                if (text == "Escape") {
+                                    content.onkeydown = content.onkeyup = content.onkeypress = NaN
+                                    $('textarea#review').replaceWith(function(index, oldHTML){
+                                        return $("<p id='review-" + id + "' />").html(oldHTML);
+                                    });
+                                }
+                            }
+                        }, 500)
+
+                        return
+                    }
+                }
+
+                if (tag_textarea) {
+                    console.log($('textarea#review').val())
+                    let message = $.get("review/" + id + "/edit?text=" + $('textarea#review').val(), function(data) {
+                        $.ajax({
+                            url: "review",
+                            cache: true,
+                            success: function(html){
+                                $("#content").html(html);
+                            }
+                            });
+                    });
+                    setTimeout(function () {
+                        if (message.responseText == "OK") {
+                            $('textarea#review').replaceWith(function(index, oldHTML){
+                                return $("<p id='review-" + id +"' />").html(oldHTML);
+                            });
+                        }
+                    }, 100)
+                }
+            } else {
+                $.get("remove_review/" + id, function(data) {
+                    $.ajax({
+                        url: "review",
+                        cache: true,
+                        success: function(html){
+                            $("#content").html(html);
+                        }
+                    });
+                });
+            }
+        });
+    </script>
 {% endblock %}

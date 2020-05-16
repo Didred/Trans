@@ -119,10 +119,13 @@ def home(request):
     all_companys = api.get_companys()
     companys = []
 
+    user = api.get_user(nickname=request.user.username)
+
     for company in all_companys:
         rating = api.get_ratings(company.id)
+        review = api.get_review(company.id, user.id) if user else None
 
-        companys.append((company, rating[0], rating[1], rating[2]))
+        companys.append((company, rating[0], rating[1], rating[2], True if review else False))
 
     return render(request, 'trans/home.html', {'fields': FIELDS, 'companys': companys})
 
@@ -270,6 +273,7 @@ def add_review(request, company_id):
 
 def get_review(request, company_id):
     api = get_api()
+    user = request.user.username
 
     company = api.get_company(company_id=company_id)
     company_reviews = api.get_reviews(company_id)
@@ -287,7 +291,8 @@ def get_review(request, company_id):
             'company': company,
             'negative': negative,
             'neutral': neutral,
-            'positive': positive
+            'positive': positive,
+            'nickname': user
         })
 
 
@@ -595,6 +600,61 @@ def dislike(request, company_id):
         message = "OK"
     else:
         message = "Страницы не существует"
+    return HttpResponse(message)
+
+
+def verification(request, company_id, review_id):
+    if request.is_ajax():
+        api = get_api()
+        user = api.get_user(nickname=request.user.username)
+
+        review = api.get_review(company_id, user.id, review_id)
+
+        if review.id == int(review_id):
+            message = "OK"
+        else:
+            message = "ERROR"
+    else:
+        message = "Страницы не существует"
+
+    return HttpResponse(message)
+
+
+def edit_review(request, company_id, review_id):
+    if request.is_ajax():
+        api = get_api()
+        user = api.get_user(nickname=request.user.username)
+        print(review_id)
+
+        review = api.get_review(company_id, user.id, review_id)
+        text = request.GET.get('text')
+
+        if review.id == int(review_id) and len(text) > 0:
+            api.edit_review(company_id, user.id, request.GET.get('text'))
+            message = "OK"
+        else:
+            message = "ERROR"
+    else:
+        message = "Страницы не существует"
+
+    return HttpResponse(message)
+
+
+def remove_review(request, company_id, review_id):
+    if request.is_ajax():
+        api = get_api()
+        user = api.get_user(nickname=request.user.username)
+
+        review = api.get_review(company_id, user.id)
+
+        if review.id == int(review_id):
+            api.delete_review(company_id, user.id)
+            message = "OK"
+        else:
+            message = "ERROR"
+    else:
+        message = "Страницы не существует"
+
     return HttpResponse(message)
 
 def write_file(text):

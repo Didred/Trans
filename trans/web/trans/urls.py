@@ -29,5 +29,7 @@ urlpatterns = [
     url(r'^company/(?P<company_id>[0-9]+)/carpark/(?P<car_id>[0-9]+)/edit$', views.edit_car, name='edit_car'),
     url(r'^company/(?P<company_id>[0-9]+)/like$', views.like, name='like'),
     url(r'^company/(?P<company_id>[0-9]+)/dislike$', views.dislike, name='dislike'),
-
+    url(r'^company/(?P<company_id>[0-9]+)/review/(?P<review_id>[0-9]+)/verification/$', views.verification, name='verification'),
+    url(r'^company/(?P<company_id>[0-9]+)/review/(?P<review_id>[0-9]+)/edit/$', views.edit_review, name='edit_review'),
+    url(r'^company/(?P<company_id>[0-9]+)/remove_review/(?P<review_id>[0-9]+)/$', views.remove_review, name='remove_review'),
 ]

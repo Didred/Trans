@@ -22,7 +22,7 @@
         <button type="button" class="btn btn-primary" style="width: 8%;">Поиск</button>
     </form>
 
-    {% for company, negative, neutral, positive in companys %}
+    {% for company, negative, neutral, positive, has_review in companys %}
         <form class="form-inline form-group">
             <div class="form-group company-block box-shadow">
                 <div class="company-name">
@@ -55,7 +55,11 @@
                             <p><a id="dislike-{{company.id}}"><img class="like" src="https://i.ibb.co/pRpSXSx/image.png"></a> {{ negative }} </p>
                             <p><a style="text-decoration: none;" href="{% url 'review' company_id=company.id%}">Смотреть отзывы</a></p>
                             {% if user.is_authenticated %}
-                                <p><a href="{% url 'add_review' company_id=company.id%}" type="button" class="btn btn-warning company-box-rating-button">Добавить отзыв</a></p>
+                                {% if not has_review %}
+                                    <p><a href="{% url 'add_review' company_id=company.id%}" type="button" class="btn btn-warning company-box-rating-button">Добавить отзыв</a></p>
+                                {% else %}
+                                    <p><a href="{% url 'review' company_id=company.id%}" type="button" class="btn btn-warning company-box-rating-button">Добавить отзыв</a></p>
+                                {% endif %}
                             {% else %}
                                 <p><a href="{% url 'signup'%}" type="button" class="btn btn-warning company-box-rating-button">Добавить отзыв</a></p>
                             {% endif %}

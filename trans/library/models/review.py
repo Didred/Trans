@@ -7,7 +7,8 @@ from sqlalchemy import (
     Integer,
     DateTime,
     Enum,
-    ForeignKey
+    ForeignKey,
+    Boolean
 )
 from sqlalchemy.orm import (
     relationship,
@@ -31,6 +32,7 @@ class Review(Base):
     company_id = Column(Integer)
     user_id = Column(Integer)
     date = Column(DateTime)
+    is_edit = Column(Boolean)
 
     def __init__(
             self,
@@ -44,3 +46,4 @@ class Review(Base):
         self.company_id = company_id
         self.user_id = user_id
         self.date = date
+        self.is_edit = None
