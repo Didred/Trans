@@ -24,6 +24,7 @@ class EditUserForm(forms.Form):
     surname = forms.CharField(max_length=30)
     email = forms.EmailField(max_length=30)
     phone = forms.CharField(max_length=30)
+    avatar = forms.ImageField(required=False)
 
 
 class CompanyForm(forms.Form):

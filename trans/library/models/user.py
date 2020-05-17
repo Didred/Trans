@@ -5,7 +5,8 @@ from sqlalchemy import (
     Column,
     String,
     Integer,
-    Enum
+    Enum,
+    BLOB
 )
 from sqlalchemy.orm import (
     relationship,
@@ -31,6 +32,7 @@ class User(Base):
     phone = Column(String)
     company_id = Column(Integer)
     role = Column(Enum(Role))
+    avatar = Column(BLOB)
 
     def __init__(
             self,
@@ -48,6 +50,8 @@ class User(Base):
         self.phone = phone
         self.company_id = company_id
         self.role = role
+        with open("../sources/default.txt", "rb+") as f:
+            self.avatar = f.read()
 
     def add_company(self, company_id):
         self.company_id = company_id

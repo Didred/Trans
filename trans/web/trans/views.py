@@ -25,6 +25,8 @@ from library.models.user import Role
 from datetime import datetime
 import pytz
 import math
+import requests
+import base64
 
 FIELDS = [
     "Перевозчик",
@@ -197,21 +199,21 @@ def add_company(request):
 def edit_profile(request):
     api = get_api()
     user = request.user.username
+    member = api.get_user(nickname=user)
 
     if request.method == 'POST':
-        form = EditUserForm(request.POST)
+        form = EditUserForm(request.POST, request.FILES)
         if form.is_valid():
+            avatar = request.FILES['avatar'].file.getvalue() if request.FILES else None
             api.edit_user(
                 user,
                 form.cleaned_data['name'],
                 form.cleaned_data['surname'],
                 form.cleaned_data['email'],
                 form.cleaned_data['phone'],
+                avatar,
             )
             return redirect('/profile/' + user)
-
-    else:
-        member = api.get_user(nickname=user)
 
     return render(request, 'trans/edit_profile.html', {'form': member})
 
@@ -273,7 +275,6 @@ def add_review(request, company_id):
 
 def get_review(request, company_id):
     api = get_api()
-    user = request.user.username
 
     company = api.get_company(company_id=company_id)
     company_reviews = api.get_reviews(company_id)
@@ -282,7 +283,12 @@ def get_review(request, company_id):
 
     for review in company_reviews:
         if review.review is not None:
-            reviews.append((review, api.get_user(user_id=review.user_id), review.date.strftime("%d.%m.%Y, %H:%M")))
+            user = api.get_user(user_id=review.user_id)
+            avatar = _get_avatar(user.avatar)
+
+            reviews.append((review, user, review.date.strftime("%d.%m.%Y, %H:%M"), avatar))
+
+    user = request.user.username
 
     return render(
         request, 'trans/review.html',
@@ -304,8 +310,17 @@ def contacts(request, company_id):
 
     company = api.get_company(company_id=company_id)
 
-    administrators = api.get_users(company_id=company_id, role=Role(2))
-    employees = api.get_users(company_id=company_id, role=Role(1))
+    all_administrators = api.get_users(company_id=company_id, role=Role(2))
+    administrators = []
+
+    for administrator in all_administrators:
+        administrators.append((administrator, _get_avatar(administrator.avatar)))
+
+    all_employees = api.get_users(company_id=company_id, role=Role(1))
+    employees = []
+
+    for employee in all_employees:
+        employees.append((employee, _get_avatar(employee.avatar)))
 
     is_administrator = api.is_administrator(user.id, company_id)
     is_employee = api.is_employee(user.id, company_id)
@@ -657,6 +672,10 @@ def remove_review(request, company_id, review_id):
 
     return HttpResponse(message)
 
+
+def _get_avatar(sender):
+    return str(base64.b64encode(sender))[2: -1]
+
 def message(request):
     api = get_api()
     sender = api.get_user(nickname=request.user.username)
@@ -669,11 +688,20 @@ def message(request):
         messages = []
 
         for message in all_messages:
-            messages.append((message, api.get_user(message.sender_id), api.get_user(message.recipient_id), message.date.strftime("%d.%m.%Y, %H:%M")))
+            sender = api.get_user(message.sender_id)
+            recipient = api.get_user(message.recipient_id)
+            avatar = _get_avatar(sender.avatar)
 
-        return render(request, 'trans/message.html', {'recipient': recipient, 'messages': messages})
+            messages.append((message, sender, recipient, message.date.strftime("%d.%m.%Y, %H:%M"), avatar))
+
+        recipient = recipient if recipient.id == int(user_id) else sender
+
+        avatar = _get_avatar(recipient.avatar)
+
+        return render(request, 'trans/message.html', {'recipient': recipient, 'messages': messages, 'recipient': recipient, 'avatar': avatar})
     elif sender:
         dialogs = api.get_messages(sender.id, distinct=True)
+        my_avatar = _get_avatar(sender.avatar)
 
         messages = []
 
@@ -681,9 +709,11 @@ def message(request):
             recipient = api.get_user(message.recipient_id) if message.recipient_id != sender.id else api.get_user(message.sender_id)
             date = message.date.strftime("%d.%m.%Y, %H:%M")
             is_avatar = True if message.sender_id == sender.id else False
-            messages.append((message, recipient, date, is_avatar))
+            avatar = _get_avatar(recipient.avatar)
 
-        return render(request, 'trans/list_message.html', {'messages': messages})
+            messages.append((message, recipient, date, is_avatar, avatar))
+
+        return render(request, 'trans/list_message.html', {'messages': messages, 'my_avatar': my_avatar })
     else:
         return render(request, 'trans/list_message.html')
 

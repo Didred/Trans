@@ -6,9 +6,9 @@
     {% if is_employee %}
         <div class="container">
             <h3 class="text-muted center">Администраторы</h3>
-            {% for administrator in administrators %}
+            {% for administrator, avatar in administrators %}
                 <div class="box-shadow container_contact">
-                    <img class="company_contact_logo" src="https://i.ibb.co/x6FDdzW/image.png">
+                    <img class="company_contact_logo" src="data:image/gif;base64,{{avatar}}">
                     <div>
                         {{ administrator.surname }}
                         {{ administrator.name }}
@@ -34,9 +34,9 @@
             {% if employees %}
                 <h3 class="text-muted center">Сотрудники</h3>
             {% endif %}
-            {% for employee in employees %}
+            {% for employee, avatar in employees %}
                 <div class="box-shadow container_contact">
-                    <img class="company_contact_logo" src="https://i.ibb.co/x6FDdzW/image.png">
+                    <img class="company_contact_logo" src="data:image/gif;base64,{{avatar}}">
                     <div>
                         {{ employee.surname }}
                         {{ employee.name }}
@@ -61,9 +61,9 @@
     {% else %}
         <div class="container">
             <h3 class="text-muted center">Сотрудники</h3>
-            {% for employee in administrators %}
+            {% for employee, avatar in administrators %}
                 <div class="box-shadow container_contact">
-                    <img class="company_contact_logo" src="https://i.ibb.co/x6FDdzW/image.png">
+                    <img class="company_contact_logo" src="data:image/gif;base64,{{avatar}}">
                     <div>
                         {{ employee.surname }}
                         {{ employee.name }}
@@ -76,9 +76,9 @@
                     </div>
                 </div>
             {% endfor %}
-            {% for employee in employees %}
+            {% for employee, avatar in employees %}
                 <div class="box-shadow container_contact">
-                    <img class="company_contact_logo" src="https://i.ibb.co/x6FDdzW/image.png">
+                    <img class="company_contact_logo" src="data:image/gif;base64,{{avatar}}">
                     <div>
                         {{ employee.surname }}
                         {{ employee.name }}

@@ -1,6 +1,7 @@
 import os
 import re
 import sqlalchemy
+import imgurpython
 
 import datetime
 from sqlalchemy import (
@@ -29,6 +30,8 @@ DEFAULT_CONFIG_DIRECTORY = os.path.expanduser("~/Documents/Диплом/.trans/"
 DEFAULT_DATABASE_URL = ''.join(["sqlite:///",
                                 DEFAULT_CONFIG_DIRECTORY,
                                 "trans.db"])
+CLIENT_ID = "d67dc6e4d99cc43"
+CLIENT_SECRET = "9c8ac0ca9381ac32be63715b26dbd5d8db52911e"
 
 
 class API:
@@ -242,7 +245,8 @@ class API:
             name=None,
             surname=None,
             email=None,
-            phone=None):
+            phone=None,
+            avatar=None):
         user = self.get_user(nickname=nickname)
 
         if name is not None:
@@ -256,6 +260,9 @@ class API:
 
         if phone is not None:
             user.phone = phone
+
+        if avatar is not None:
+            user.avatar = avatar
 
         self._session.commit()
 

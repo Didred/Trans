@@ -13,7 +13,7 @@
             <label class="rating_text">Нейтральные: {{ neutral }}</label>
             <label class="green rating_text">Положительные: {{ positive }}</label>
         </div>
-    {% for review, user, date_creation in reviews %}
+    {% for review, user, date_creation, avatar in reviews %}
         {% if review.rating.value == 1%}
             <div class="container_review box-shadow container_review_red">
         {% elif review.rating.value == 2%}
@@ -21,7 +21,7 @@
         {% elif review.rating.value == 3%}
             <div class="container_review box-shadow container_review_green">
         {% endif %}
-            <img src="https://i.ibb.co/x6FDdzW/image.png" alt="Avatar" style="width:90px">
+            <img src="data:image/gif;base64,{{avatar}}" alt="Avatar" style="width:90px">
             <div class="review_box">
                 <p>
                     <span class="container_review_span">{{ user.name }} {{ user.surname }}</span>

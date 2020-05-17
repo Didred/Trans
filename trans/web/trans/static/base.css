@@ -642,9 +642,16 @@ p.company-text {
 .sender_avatar {
   height: 25px;
   margin-right: 5px;
+  border-radius: 50%;
 }
 
 .message_back:hover {
   background: 15px 16px no-repeat, linear-gradient(90deg,#f0f2f5 50%,#fff);
   text-decoration: none;
+}
+
+.message_text {
+  word-wrap: break-word;
+  padding-left: 65px;
+  margin-top: 10px;
 }

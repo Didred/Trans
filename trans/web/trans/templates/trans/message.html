@@ -10,16 +10,16 @@
                     <img id={{recipient.id}} src="https://i.ibb.co/Fz3z6f4/post-more.png" alt="Avatar">
                 </div>
                 <div class="message_avatar">
-                    <img id={{recipient.id}} src="https://i.ibb.co/x6FDdzW/image.png" alt="Avatar">
+                    <img id={{recipient.id}} src="data:image/gif;base64,{{avatar}}" alt="Avatar">
                 </div>
             </div>
             <div class="line"></div>
             <div id="block" class="message_content">
-                {% for message, sender, recipient, date_creation in messages %}
+                {% for message, sender, recipient, date_creation, avatar in messages %}
                     <div class="message">
-                        <img id={{recipient.id}} src="https://i.ibb.co/x6FDdzW/image.png" alt="Avatar">
+                        <img id={{recipient.id}} src="data:image/gif;base64,{{avatar}}" alt="Avatar">
                         <div>{{ sender.name }} {{ sender.surname }} <span class="font_size_12px">{{ date_creation }}</span></div>
-                        <div>{{ message.text }}</div>
+                        <div class="message_text">{{ message.text }}</div>
                     </div>
                 {% endfor %}
             </div>
@@ -30,7 +30,6 @@
         </div>
     {% endif %}
     <script type="text/javascript">
-        console.log(1)
         var block = document.getElementById("block");
         block.scrollTop = block.scrollHeight;
 
