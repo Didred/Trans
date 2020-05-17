@@ -33,6 +33,7 @@ urlpatterns = [
     url(r'^company/(?P<company_id>[0-9]+)/review/(?P<review_id>[0-9]+)/edit/$', views.edit_review, name='edit_review'),
     url(r'^company/(?P<company_id>[0-9]+)/remove_review/(?P<review_id>[0-9]+)/$', views.remove_review, name='remove_review'),
     url(r'^message$', views.message, name='message'),
+    url(r'^message$', views.message, name='list_message'),
     url(r'^send$', views.message_send, name='send'),
 
 ]

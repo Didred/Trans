@@ -1,0 +1,28 @@
+{% extends 'trans/base.html' %}
+
+{% block content %}
+    {% if user.is_authenticated %}
+        <div class="container_messages">
+            <div class=container_search>
+                <input id="message" class="message_search" type="text" name="message"  placeholder="Поиск">
+            </div>
+            <div class="line"></div>
+            <div id="block" class="messages_list">
+                {% for message, recipient, date_creation, is_avatar in messages %}
+                    <div class="hover">
+                        <a href="{% url 'message' %}?sel={{recipient.id}}"><div id="{{recipient.id}}" class="messages">
+                            <img class="messages_img" src="https://i.ibb.co/x6FDdzW/image.png" alt="Avatar">
+                            <div>
+                                <p>{{ recipient.name }} {{ recipient.surname }} <span class="font_size_12px messages_date">{{ date_creation }}</span></p>
+                                {% if is_avatar %}
+                                    <img class="sender_avatar" src="https://i.ibb.co/x6FDdzW/image.png" alt="Avatar">
+                                {% endif %}
+                                {{ message.text }}
+                            </div>
+                        </div></a>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    {% endif %}
+{% endblock %}

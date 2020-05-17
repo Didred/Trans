@@ -661,15 +661,31 @@ def message(request):
     api = get_api()
     sender = api.get_user(nickname=request.user.username)
     user_id = request.GET.get('sel')
-    recipient = api.get_user(user_id=user_id)
 
-    all_messages = api.get_messages(sender.id, recipient.id)
-    messages = []
+    if user_id:
+        recipient = api.get_user(user_id=user_id)
 
-    for message in all_messages:
-        messages.append((message, api.get_user(message.sender_id), api.get_user(message.recipient_id), message.date.strftime("%d.%m.%Y, %H:%M")))
+        all_messages = api.get_messages(sender.id, recipient.id)
+        messages = []
 
-    return render(request, 'trans/message.html', {'recipient': recipient, 'messages': messages})
+        for message in all_messages:
+            messages.append((message, api.get_user(message.sender_id), api.get_user(message.recipient_id), message.date.strftime("%d.%m.%Y, %H:%M")))
+
+        return render(request, 'trans/message.html', {'recipient': recipient, 'messages': messages})
+    elif sender:
+        dialogs = api.get_messages(sender.id, distinct=True)
+
+        messages = []
+
+        for message in dialogs:
+            recipient = api.get_user(message.recipient_id) if message.recipient_id != sender.id else api.get_user(message.sender_id)
+            date = message.date.strftime("%d.%m.%Y, %H:%M")
+            is_avatar = True if message.sender_id == sender.id else False
+            messages.append((message, recipient, date, is_avatar))
+
+        return render(request, 'trans/list_message.html', {'messages': messages})
+    else:
+        return render(request, 'trans/list_message.html')
 
 
 def message_send(request):

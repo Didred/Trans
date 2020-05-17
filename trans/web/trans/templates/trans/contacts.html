@@ -46,7 +46,7 @@
                         {{ employee.email }}{{employee.id}}
                         <p></p>
                         {% if nickname != employee.nickname %}
-                            <a id="message" href="{% url 'message'%} sel={{employee.id}}">Написать сообщение</a>
+                            <a id="message" href="{% url 'message'%}?sel={{employee.id}}">Написать сообщение</a>
                         {% endif %}
                     </div>
                     {% if is_administrator %}
@@ -72,7 +72,7 @@
                         <p></p>
                         {{ employee.email }}
                         <p></p>
-                        <a>Написать сообщение</a>
+                        <a id="message" href="{% url 'message'%}?sel={{employee.id}}">Написать сообщение</a>
                     </div>
                 </div>
             {% endfor %}
@@ -87,7 +87,7 @@
                         <p></p>
                         {{ employee.email }}
                         <p></p>
-                        <a>Написать сообщение</a>
+                        <a id="message" href="{% url 'message'%}?sel={{employee.id}}">Написать сообщение</a>
                     </div>
                 </div>
             {% endfor %}

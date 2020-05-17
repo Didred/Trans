@@ -656,21 +656,39 @@ class API:
         return message.id
 
 
-    def get_messages(self, sender_id, recipient_id):
+    def get_messages(self, sender_id, recipient_id=None, distinct=False):
         _filter = or_(
             and_(
                 or_(Message.sender_id == sender_id),
-                or_(Message.recipient_id == recipient_id)
+                or_(recipient_id is None, Message.recipient_id == recipient_id)
             ),
             and_(
-                or_(Message.sender_id == recipient_id),
+                or_(recipient_id is None, Message.sender_id == recipient_id),
                 or_(Message.recipient_id == sender_id)
             )
         )
 
-        messages = self._session.query(Message).filter(_filter).all()
-        self._session.commit()
+        if distinct:
+            temp_messages = self._session.query(Message).filter(_filter).distinct(Message.recipient_id).group_by(Message.recipient_id).all()
+            self._session.commit()
+            messages = self._remove_repeat_messages(temp_messages)
+        else:
+            messages = self._session.query(Message).filter(_filter).all()
+            self._session.commit()
 
+        return messages
+
+
+    def _remove_repeat_messages(self, messages):
+        for i in reversed(range(len(messages))):
+            for j in reversed(range(len(messages))):
+                if messages[i].sender_id == messages[j].recipient_id and messages[i].recipient_id == messages[j].sender_id and i != j:
+                    if messages[i].id > messages[j].id:
+                        del messages[j]
+                    else:
+                        del messages[i]
+
+        messages = sorted(messages, key=lambda message: message.id, reverse=True)
         return messages
 
 

@@ -108,6 +108,7 @@ div.wrapper {
 
 .navbar-brand {
   margin-left: -15px;
+  margin-right: 50px;
 }
 
 .navbar-nav {
@@ -519,7 +520,7 @@ p.company-text {
 .container_message {
   background-color: #ffffff;
   border-radius: 5px;
-  padding: 0px 16px 16px 16px;
+  padding: 0px 16px 16px 0px;
   margin: 16px 0;
   border: 1px solid #ccc;
   max-width: 70%;
@@ -535,9 +536,13 @@ p.company-text {
   border: 1px solid #ccc;
 }
 
-.message_back {
-  margin: 26px;
-  height: 20px;
+.message_back{
+  padding: 21px 100px 21px 26px;
+  height: 62px;
+}
+
+.message_header a {
+  color: #333;
 }
 
 .message_user {
@@ -546,34 +551,100 @@ p.company-text {
 
 .message_action {
   right: 0;
-  margin: 21px;
+  margin: 11px;
+  align-items: center;
+  display: flex;
 }
 
 .message_avatar {
-  margin: 15px;
+  margin: 5px 15px;
 }
 
 .message_avatar img {
-  height: 42px;
+  height: 52px;
   border-radius: 50%;
 }
 
 .message_content {
   overflow: auto;
   height: 65vh;
+  padding-left: 16px;
 }
 
 .message_input {
   margin-top: 10px;
+  padding-left: 16px;
 }
 
 .message {
   margin: 20px;
 }
 
+.container_messages {
+  background-color: #ffffff;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+  max-width: 70%;
+  min-width: 70%;
+  margin: auto;
+}
+
+.messages {
+  padding: 15px 20px;
+  border-bottom: 1px solid #ccc;
+}
+
 .message img {
-  height: 42px;
+  height: 50px;
   border-radius: 50%;
   float: left;
   margin-right: 15px;
+}
+
+.messages_img {
+  height: 50px;
+  border-radius: 50%;
+  float: left;
+  margin-right: 15px;
+}
+
+.message_search {
+  height: 45px;
+  border: none;
+  width: 100%;
+  border-radius: 5px;
+  outline: none;
+  padding: 0px 20px;
+}
+
+.container_search {
+}
+
+.messages_list {
+  overflow: auto;
+  height: 78vh;
+}
+
+.messages_date {
+  float: right;
+}
+
+.hover :hover
+{
+    background: #f5f7fa;
+}
+
+.hover a {
+  color: #333;
+  text-decoration: none;
+}
+
+.sender_avatar {
+  height: 25px;
+  margin-right: 5px;
+}
+
+.message_back:hover {
+  background: 15px 16px no-repeat, linear-gradient(90deg,#f0f2f5 50%,#fff);
+  text-decoration: none;
 }

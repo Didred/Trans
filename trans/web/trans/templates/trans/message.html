@@ -4,11 +4,13 @@
     {% if user.is_authenticated %}
         <div class="container_message">
             <div class="message_header">
-                <a class="message_back">Назад</a>
+                <a href="{% url 'list_message' %}" class="message_back">Назад</a>
                 <div class="message_user"> {{recipient.name}} {{recipient.surname}} </div>
-                <div class="message_action">...</div>
+                <div class="message_action">
+                    <img id={{recipient.id}} src="https://i.ibb.co/Fz3z6f4/post-more.png" alt="Avatar">
+                </div>
                 <div class="message_avatar">
-                    <img id={{recipient.id}} src="https://sun9-47.userapi.com/c836535/v836535595/360b6/6E96k2hZmdw.jpg?ava=1" alt="Avatar">
+                    <img id={{recipient.id}} src="https://i.ibb.co/x6FDdzW/image.png" alt="Avatar">
                 </div>
             </div>
             <div class="line"></div>
