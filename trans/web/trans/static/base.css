@@ -520,7 +520,7 @@ p.company-text {
 .container_message {
   background-color: #ffffff;
   border-radius: 5px;
-  padding: 0px 16px 16px 0px;
+  padding: 0px 0px 16px 0px;
   margin: 16px 0;
   border: 1px solid #ccc;
   max-width: 70%;
@@ -568,12 +568,12 @@ p.company-text {
 .message_content {
   overflow: auto;
   height: 65vh;
-  padding-left: 16px;
+  padding: 0px 16px;
 }
 
 .message_input {
   margin-top: 10px;
-  padding-left: 16px;
+  padding: 0px 16px;
 }
 
 .message {

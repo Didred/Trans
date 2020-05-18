@@ -442,7 +442,9 @@ def log(request, company_id):
 
     for log in temp_logs:
         user = api.get_user(nickname=log.username)
-        logs.append((log, user, log.date.strftime("%d.%m.%Y, %H:%M")))
+        avatar = _get_avatar(user.avatar)
+
+        logs.append((log, user, log.date.strftime("%d.%m.%Y, %H:%M"), avatar))
 
     logs.reverse()
 
