@@ -1,0 +1,36 @@
+{% extends 'trans/base.html' %}
+{% block title %}Грузы{% endblock %}
+
+{% block content %}
+    {% for car, date, car_info in cars %}
+        <div class="container_goods box-shadow">
+            <div class="car_6">
+                <div class="goods_text">Место загрузки</div>
+                <div>{{car.country_loading}}</div>
+            </div>
+            <div class="car_6">
+                <div class="goods_text">Место разгрузки</div>
+                <div>{{car.country_unloading}}</div>
+            </div>
+            <div class="car_6">
+                <div class="goods_text">Дата</div>
+                <div>{{date}}</div>
+            </div>
+            <div class="car_6">
+                <div class="goods_text">Транспорт</div>
+                <div>{{car_info}}</div>
+            </div>
+            <div class="car_6">
+                <div class="goods_text">Оплата</div>
+                {% for price in prices %}
+                    <div>{{price}}</div>
+                {% endfor %}
+            </div>
+            <div class="car_6">
+                <div class="goods_text">Контакты</div>
+                <div><a href="{% url 'profile' nickname=user %}">{{user}}</a></div>
+                <div><a>Подать заявку</a></div>
+            </div>
+        </div>
+    {% endfor %}
+{% endblock %}

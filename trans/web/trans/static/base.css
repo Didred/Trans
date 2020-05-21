@@ -715,3 +715,11 @@ p.company-text {
 .goods_7 a {
   text-decoration: none;
 }
+
+.car_6 {
+  width: 14.66%;
+  float: left;
+  margin: 1%;
+  text-align: center;
+  line-height: 1.8;
+}

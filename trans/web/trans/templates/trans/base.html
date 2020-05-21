@@ -35,7 +35,7 @@
                                 {% if my_company %}
                                     <li><a href="{% url 'add_car' company_id=my_company.id %}"> Добавить транспорт </a></li>
                                 {% endif %}
-                                <li><a> Найти транспорт </a></li>
+                                <li><a href="{% url 'list_car' %}"> Найти транспорт </a></li>
                             </ul>
                         </li>
                         <li class="dropdown">

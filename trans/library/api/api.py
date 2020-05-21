@@ -87,7 +87,7 @@ class API:
         except sqlalchemy.orm.exc.NoResultFound:
             raise Exception("Car not found")
 
-    def get_cars(self, company_id):
+    def get_cars(self, company_id=None):
         _filter = and_(
             or_(company_id is None, Car.company_id == company_id)
         )

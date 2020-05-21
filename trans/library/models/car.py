@@ -55,24 +55,5 @@ class Car(Base):
         self.note = note if note is not None else None
         self.urgently = True if urgently is not None else False
 
-    def __str__(self):
-        result = "\nТип кузова: %s\n" % self.body_type
-        result += "Тип загрузки: "
-
-        for i in self.download_type:
-            result += i + ", "
-        result = result[:-2] + "\n"
-
-        result += "Грузоподъемность, т.: %d\n" % self.carrying_capacity
-        result += "Объем, м3: %d\n" % self.volume
-        result += "Дата готовности транспорта к загрузке: c %s по %s\n" % (self.loading_date_from, self.loading_date_by) # заменить на объект
-        result += "Место загрузки (страна): %s\n" % self.country_loading
-        result += "Место загрузки (город): %s\n" % self.city_loading
-        result += "Место разгрузки (страна): %s\n" % self.country_unloading
-        result += "Место разгрузки (город): %s\n" % self.city_unloading
-        if self.note is not None:
-            result += "Примечания: %s\n" % self.note
-        if self.urgently is not None:
-            result += "Срочно!"
-
-        return result
+    def get_date(self):
+        return self.loading_date_from.strftime("%d.%m.%Y") + " - " + self.loading_date_by.strftime("%d.%m.%Y")

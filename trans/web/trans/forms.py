@@ -28,7 +28,7 @@ class EditUserForm(forms.Form):
 
 
 class CompanyForm(forms.Form):
-    name = forms.CharField(max_length=30)
+    name = forms.CharField(max_length=25)
     UNP = forms.CharField(max_length=30)
     primary_occupation = forms.CharField(max_length=30)
     license = forms.CharField(max_length=30)

@@ -820,6 +820,7 @@ def add_goods(request):
 
 def list_goods(request):
     api = get_api()
+    user = api.get_user(nickname=request.user.username)
 
     search_goods = api.get_search_goods()
     goods = []
@@ -840,7 +841,30 @@ def list_goods(request):
 
         goods.append((_goods, date, car, this_goods, price, user))
 
-    return render(request, 'trans/list_goods.html', {'search_goods': goods})
+    return render(request, 'trans/list_goods.html', {'search_goods': goods, 'my_company': is_add_car(user)})
+
+
+def list_car(request):
+    api = get_api()
+
+    search_cars = api.get_cars()
+    cars = []
+
+    for car in search_cars:
+        date = car.get_date()
+
+        body_type = _get_body_type(car.body_type)
+        download_type = DOWNLOAD_TYPE[int(car.download_type)]
+
+        car_info = body_type + ", " + download_type
+
+        # price = [str(car.rate) + " " + PRICES[int(car.price)], FORM_PRICES[int(car.form_price)]]
+
+        # user = api.get_user(user_id=car.user_id)
+
+        cars.append((car, date, car_info))
+
+    return render(request, 'trans/list_car.html', {'cars': cars})
 
 
 def write_file(text):
