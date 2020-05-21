@@ -796,6 +796,7 @@ def add_goods(request):
 
             if check:
                 api.create_goods(
+                    user.id,
                     form.cleaned_data['name'],
                     form.cleaned_data['body_type'],
                     form.cleaned_data['car_count'],
@@ -815,6 +816,31 @@ def add_goods(request):
                 return redirect('/')
 
     return render(request, 'trans/add_goods.html', {'form': form, 'body_type_covered': BODY_TYPE_COVERED, 'body_type_uncovered': BODY_TYPE_UNCOVERED, 'body_type_tank': BODY_TYPE_TANK, 'body_type_special': BODY_TYPE_SPECIAL, 'download_types': DOWNLOAD_TYPE, 'prices': PRICES, 'form_prices': FORM_PRICES, 'my_company': is_add_car(user)})
+
+
+def list_goods(request):
+    api = get_api()
+
+    search_goods = api.get_search_goods()
+    goods = []
+
+    for _goods in search_goods:
+        date = _goods.get_date()
+
+        body_type = _get_body_type(_goods.body_type)
+        download_type = DOWNLOAD_TYPE[int(_goods.download_type)]
+
+        car = body_type + ", " + download_type
+
+        this_goods = [_goods.name, str(_goods.weigh) + " т., " + str(_goods.volume) + " м³"]
+
+        price = [str(_goods.rate) + " " + PRICES[int(_goods.price)], FORM_PRICES[int(_goods.form_price)]]
+
+        user = api.get_user(user_id=_goods.user_id)
+
+        goods.append((_goods, date, car, this_goods, price, user))
+
+    return render(request, 'trans/list_goods.html', {'search_goods': goods})
 
 
 def write_file(text):

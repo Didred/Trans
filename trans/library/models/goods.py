@@ -12,6 +12,7 @@ class Goods(Base):
     __tablename__ = 'goods'
 
     id = Column(Integer, primary_key=True)
+    user_id = Column(Integer)
     name = Column(String)
     body_type = Column(String)
     car_count = Column(Integer)
@@ -31,6 +32,7 @@ class Goods(Base):
 
     def __init__(
             self,
+            user_id,
             name,
             body_type,
             car_count,
@@ -47,6 +49,7 @@ class Goods(Base):
             form_price,
             note=None,
             urgently=None):
+        self.user_id = user_id
         self.name = name
         self.body_type = body_type
         self.car_count = car_count
@@ -63,3 +66,7 @@ class Goods(Base):
         self.form_price = form_price
         self.note = note if note is not None else None
         self.urgently = True if urgently is not None else False
+
+
+    def get_date(self):
+        return self.loading_date_from.strftime("%d.%m.%Y") + " - " + self.loading_date_by.strftime("%d.%m.%Y")

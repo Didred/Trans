@@ -319,6 +319,7 @@ class API:
 
     def create_goods(
             self,
+            user_id,
             name,
             body_type,
             car_count,
@@ -337,6 +338,7 @@ class API:
             urgently=None):
 
         goods = Goods(
+            user_id,
             name,
             body_type,
             car_count,
@@ -358,6 +360,17 @@ class API:
         self._add(goods)
 
         return goods.id
+
+    def get_search_goods(self):
+        # _filter = and_(
+        #     or_(company_id is None, Car.company_id == company_id)
+        # )
+
+        # cars = self._session.query(Goods).filter(_filter).all()
+        goods = self._session.query(Goods).all()
+        self._session.commit()
+
+        return goods
 
     def get_goods(self, goods_id):
         try:
