@@ -20,7 +20,8 @@ from .forms import (
     EmployeeForm,
     CarForm,
     GoodsForm,
-    SearchCarForm
+    SearchCarForm,
+    SearchGoodsForm
 )
 from library.models.user import Role
 
@@ -834,8 +835,29 @@ def list_goods(request):
     api = get_api()
     user = api.get_user(nickname=request.user.username)
 
-    search_goods = api.get_search_goods()
+    current_date = str(datetime.now().date())
+    search_goods = []
     goods = []
+    form = SearchGoodsForm()
+
+    if request.method == "POST":
+        form = SearchGoodsForm(request.POST)
+
+        if form.is_valid():
+            search_goods = api.get_search_goods(
+                form.cleaned_data['body_type'],
+                form.cleaned_data['download_type'],
+                form.cleaned_data['weigh_min'],
+                form.cleaned_data['weigh_max'],
+                form.cleaned_data['volume_min'],
+                form.cleaned_data['volume_max'],
+                form.cleaned_data['loading_date_from'],
+                form.cleaned_data['loading_date_by'],
+                form.cleaned_data['country_loading'],
+                form.cleaned_data['country_unloading']
+            )
+    else:
+        search_goods = api.get_search_goods()
 
     for _goods in search_goods:
         date = _goods.get_date()
@@ -853,7 +875,7 @@ def list_goods(request):
 
         goods.append((_goods, date, car, this_goods, price, user))
 
-    return render(request, 'trans/list_goods.html', {'search_goods': goods, 'my_company': is_add_car(user)})
+    return render(request, 'trans/list_goods.html', {'form': form, 'search_goods': goods, 'body_type_covered': BODY_TYPE_COVERED, 'body_type_uncovered': BODY_TYPE_UNCOVERED, 'body_type_tank': BODY_TYPE_TANK, 'body_type_special': BODY_TYPE_SPECIAL, 'download_types': DOWNLOAD_TYPE, 'current_date': current_date, 'my_company': is_add_car(user)})
 
 
 def list_car(request):

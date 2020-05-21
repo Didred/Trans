@@ -452,16 +452,100 @@ class API:
 
         return goods.id
 
-    def get_search_goods(self):
-        # _filter = and_(
-        #     or_(company_id is None, Car.company_id == company_id)
-        # )
+    def get_search_goods(
+            self,
+            body_type=None,
+            download_type=None,
+            weigh_min=None,
+            weigh_max=None,
+            volume_min=None,
+            volume_max=None,
+            loading_date_from=None,
+            loading_date_by=None,
+            country_loading=None,
+            country_unloading=None,
+            user_id=None):
+        if body_type and int(body_type) == -1:
+            body_type = None
 
-        # cars = self._session.query(Goods).filter(_filter).all()
-        goods = self._session.query(Goods).all()
+        if download_type and int(download_type) == -1:
+            download_type = None
+
+        if not country_loading:
+            country_loading = None
+
+        if not country_unloading:
+            country_unloading = None
+
+        _filter = and_(
+            or_(body_type is None, Goods.body_type == body_type),
+            or_(download_type is None, Goods.download_type == download_type),
+            or_(country_loading is None, Goods.country_loading == country_loading),
+            or_(country_unloading is None, Goods.country_unloading == country_unloading),
+            or_(user_id is None, Goods.user_id == user_id)
+        )
+
+        search_goods = self._session.query(Goods).filter(_filter).all()
         self._session.commit()
 
-        return goods
+        result_goods = []
+
+        for good in search_goods:
+            if weigh_min:
+                print(type(good.weigh))
+                print(int(weigh_min))
+                if good.weigh >= int(weigh_min):
+                    result_goods.append(good)
+            else:
+                result_goods.append(good)
+
+        search_goods = result_goods.copy()
+        result_goods = []
+        for good in search_goods:
+            if weigh_max:
+                if good.weigh <= int(weigh_max):
+                    result_goods.append(good)
+            else:
+                result_goods.append(good)
+
+        search_goods = result_goods.copy()
+        result_goods = []
+        for good in search_goods:
+            if volume_min:
+                if good.volume >= int(volume_min):
+                    result_goods.append(good)
+            else:
+                result_goods.append(good)
+
+        search_goods = result_goods.copy()
+        result_goods = []
+        for good in search_goods:
+            if volume_max:
+                if good.volume <= int(volume_max):
+                    result_goods.append(good)
+            else:
+                result_goods.append(good)
+
+        utc=pytz.UTC
+        search_goods = result_goods.copy()
+        result_goods = []
+        for good in search_goods:
+            if loading_date_from:
+                if good.loading_date_from.replace(tzinfo=utc) >= loading_date_from:
+                    result_goods.append(good)
+            else:
+                result_goods.append(good)
+
+        search_goods = result_goods.copy()
+        result_goods = []
+        for good in search_goods:
+            if loading_date_by:
+                if good.loading_date_by.replace(tzinfo=utc) <= loading_date_by:
+                    result_goods.append(good)
+            else:
+                result_goods.append(good)
+
+        return result_goods
 
     def get_goods(self, goods_id):
         try:
