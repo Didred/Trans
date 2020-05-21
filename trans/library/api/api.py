@@ -321,28 +321,36 @@ class API:
             self,
             name,
             body_type,
+            car_count,
+            download_type,
+            belt_count,
             weigh,
             volume,
             loading_date_from,
             loading_date_by,
             country_loading,
-            city_loading,
             country_unloading,
-            city_unloading,
+            rate,
+            price,
+            form_price,
             note=None,
             urgently=None):
 
         goods = Goods(
             name,
             body_type,
+            car_count,
+            download_type,
+            belt_count,
             weigh,
             volume,
             loading_date_from,
             loading_date_by,
             country_loading,
-            city_loading,
             country_unloading,
-            city_unloading,
+            rate,
+            price,
+            form_price,
             note,
             urgently
         )
@@ -676,7 +684,8 @@ class API:
         )
 
         if distinct:
-            temp_messages = self._session.query(Message).filter(_filter).distinct(Message.recipient_id).group_by(Message.recipient_id).all()
+            temp_messages = self._session.query(Message).filter(_filter).distinct(Message.recipient_id).group_by(Message.sender_id, Message.recipient_id).all()
+            print(self._session.query(Message).filter(_filter).distinct(Message.recipient_id).group_by(Message.sender_id, Message.recipient_id))
             self._session.commit()
             messages = self._remove_repeat_messages(temp_messages)
         else:
@@ -687,13 +696,21 @@ class API:
 
 
     def _remove_repeat_messages(self, messages):
+        delete_list = set()
         for i in reversed(range(len(messages))):
             for j in reversed(range(len(messages))):
                 if messages[i].sender_id == messages[j].recipient_id and messages[i].recipient_id == messages[j].sender_id and i != j:
+                    print(1)
                     if messages[i].id > messages[j].id:
-                        del messages[j]
+                        delete_list.add(j)
+                        break
                     else:
-                        del messages[i]
+                        delete_list.add(i)
+                        break
+
+        delete_list = sorted(delete_list, reverse=True)
+        for i in delete_list:
+            del messages[i]
 
         messages = sorted(messages, key=lambda message: message.id, reverse=True)
         return messages

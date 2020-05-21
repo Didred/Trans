@@ -162,6 +162,12 @@ div.wrapper {
   width: 30%;
 }
 
+.container_home {
+  display: flex;
+  justify-content: center;
+}
+
+
 .company-block {
   width: 100%;
   overflow: auto;
@@ -322,6 +328,7 @@ p.company-text {
   padding: 16px;
   margin: 16px 0;
   border: 1px solid #ccc;
+  width: 70%;
 }
 
 .container_profile_box::after {
@@ -654,4 +661,30 @@ p.company-text {
   word-wrap: break-word;
   padding-left: 65px;
   margin-top: 10px;
+}
+
+.home_button {
+  width: 170px;
+}
+
+.company-box-help-p {
+  margin: 15px 0px;
+}
+
+.company-box-help-p a {
+  text-decoration: none;
+}
+
+.dropdown-menu li a {
+  padding: 10px 20px;
+}
+
+.goods_left {
+  float: left;
+  width: 49%;
+  margin-right: 2%;
+}
+
+.goods_right {
+  width: 49%;
 }

@@ -63,6 +63,36 @@ class CarForm(forms.Form):
     note = forms.CharField(max_length=10000, required=False)
 
 
+class GoodsForm(forms.Form):
+    name = forms.CharField(max_length=30)
+    body_type = forms.CharField(max_length=30)
+    car_count = forms.CharField(max_length=30)
+    download_type = forms.CharField(max_length=30)
+    belt_count = forms.CharField(max_length=30)
+    weigh = forms.CharField(max_length=30)
+    volume = forms.CharField(max_length=30)
+    loading_date_from = forms.DateTimeField(
+        widget=forms.widgets.DateInput(
+            attrs={'type': 'datetime'},
+            format=DATE_FORMAT
+        ),
+        initial=format(datetime.now(), DATE_FORMAT)
+    )
+    loading_date_by = forms.DateTimeField(
+        widget=forms.widgets.DateInput(
+            attrs={'type': 'datetime'},
+            format=DATE_FORMAT
+        ),
+        initial=format(datetime.now(), DATE_FORMAT)
+    )
+    country_loading = forms.CharField(max_length=300)
+    country_unloading = forms.CharField(max_length=300)
+    rate = forms.CharField(max_length=30)
+    price = forms.CharField(max_length=30)
+    form_price = forms.CharField(max_length=30)
+    note = forms.CharField(max_length=10000, required=False)
+
+
 CHOICES = [
     (1, 'Отрицательный'),
     (2, 'Нейтральный'),

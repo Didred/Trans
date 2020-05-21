@@ -1,5 +1,5 @@
-RAISING_TO_ADMINISTRATOR = "Назначил администратором пользователя %s"
-LOWERING_FROM_ADMINISTRATOR = "Разжаловал пользователя %s"
+RAISING_TO_ADMINISTRATOR = "Изменил права с Сотрудника на Администратора для пользователя %s"
+LOWERING_FROM_ADMINISTRATOR = "Изменил права с Администратора на Сотрудника для пользователя %s"
 REMOVE_EMPLOYEE = "Выгнал пользователя %s"
 ADD_EMPLOYEE = "Пригласил пользователя %s"
 CREATE_CAR = "Добавил "

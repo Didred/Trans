@@ -1,11 +1,9 @@
-{% extends 'trans/base_company.html' %}
+{% extends 'trans/base.html' %}
+{% block title %}Добавить груз{% endblock %}
 
-{% block title %}Добавить авто{% endblock %}
-
-{% block company_content %}
+{% block content %}
     <div class="container">
-        {% if is_administrator %}
-        <h3 class="text-muted center">Добавить авто</h3>
+        <h3 class="text-muted center">Добавить груз</h3>
         <div class="col-lg-3"></div>
         <div class="col-lg-6">
             {% for error in form.non_field_errors %}
@@ -15,7 +13,15 @@
             {% endfor %}
             <form method="post">
                 <div class="form-group">
-                    <select name="body_type" class="form-control">
+                    <input type="text" name="name" class="form-control" placeholder="Наименование груза" value="{{form.name.value}}">
+                </div>
+                {% for error in form.name.errors %}
+                    <div class="form-group has-errors text-danger">
+                        {{ error }}
+                    </div>
+                {% endfor %}
+                <div class="form-group">
+                    <select name="body_type" class="form-control goods_left">
                         <option value="-1" selected="selected" hidden> Тип кузова </option>
                         <optgroup label="Крытые">
                             {% for body_type in body_type_covered %}
@@ -45,7 +51,15 @@
                     </div>
                 {% endfor %}
                 <div class="form-group">
-                    <select name="download_type" class="form-control">
+                    <input type="text" name="car_count" class="form-control goods_right" placeholder="Кол-во машин, шт." value="{{form.car_count.value}}">
+                </div>
+                {% for error in form.car_count.errors %}
+                    <div class="form-group has-errors text-danger">
+                        {{ error }}
+                    </div>
+                {% endfor %}
+                <div class="form-group">
+                    <select name="download_type" class="form-control goods_left">
                         <option value="-1" selected="selected" hidden> Тип загрузки </option>
                         {% for download_type in download_types %}
                             <option value={{ forloop.counter0 }}> {{ download_type }} </option>
@@ -58,21 +72,31 @@
                     </div>
                 {% endfor %}
                 <div class="form-group">
-                    <input type="text" name="carrying_capacity" class="form-control" placeholder="Грузоподъемность, т" value="{{form.carrying_capacity.value}}">
+                    <input type="text" name="belt_count" class="form-control goods_right" placeholder="Кол-во ремней, шт." value="{{form.belt_count.value}}">
                 </div>
-                {% for error in form.carrying_capacity.errors %}
+                {% for error in form.belt_count.errors %}
                     <div class="form-group has-errors text-danger">
                         {{ error }}
                     </div>
                 {% endfor %}
                 <div class="form-group">
-                    <input type="text" name="volume" class="form-control" placeholder="Объем, м³" value="{{form.volume.value}}">
+                    <input type="text" name="weigh" class="form-control goods_left" placeholder="Вес, т" value="{{form.weigh.value}}">
                 </div>
-                {% for error in form.volume.errors %}
-                    <div class="form-group has-errors text-danger">
+                <div class="form-group">
+                    <input type="text" name="volume" class="form-control goods_right" placeholder="Объем, м³" value="{{form.volume.value}}">
+                </div>
+                <div style="display: flex;">
+                {% for error in form.weigh.errors %}
+                    <div class="form-group has-errors text-danger goods_left">
                         {{ error }}
                     </div>
                 {% endfor %}
+                {% for error in form.volume.errors %}
+                    <div class="form-group has-errors text-danger goods_right">
+                        {{ error }}
+                    </div>
+                {% endfor %}
+                </div>
                 <div class="form-group">
                     <h5 class="center">Дата готовности транспорта к загрузке:</h5>
                     <div class="input-group">
@@ -103,6 +127,48 @@
                         {{ error }}
                     </div>
                 {% endfor %}
+                <div style="display: flex">
+                    <div class="form-group goods_left">
+                        <h5 class="center">Желаемая ставка:</h5>
+                        <input type="text" name="rate" class="form-control goods_left" placeholder="0" value="{{form.rate.value}}">
+                        <select name="price" class="form-control goods_right">
+                            {% for price in prices %}
+                                {% if forloop.counter0 == 0 %}
+                                    <option value={{ forloop.counter0 }} selected> {{ price }} </option>
+                                {% else %}
+                                    <option value={{ forloop.counter0 }}> {{ price }} </option>
+                                {% endif %}
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="form-group goods_right">
+                        <h5 class="center">Форма оплаты:</h5>
+                        <select name="form_price" class="form-control" style="width: 100%;">
+                            {% for form_price in form_prices %}
+                                {% if forloop.counter0 == 0 %}
+                                    <option value={{ forloop.counter0 }} selected> {{ form_price }} </option>
+                                {% else %}
+                                    <option value={{ forloop.counter0 }}> {{ form_price }} </option>
+                                {% endif %}
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+                {% for error in form.rate.errors %}
+                    <div class="form-group has-errors text-danger">
+                        {{ error }}
+                    </div>
+                {% endfor %}
+                {% for error in form.price.errors %}
+                    <div class="form-group has-errors text-danger">
+                        {{ error }}
+                    </div>
+                {% endfor %}
+                {% for error in form.form_price.errors %}
+                    <div class="form-group has-errors text-danger">
+                        {{ error }}
+                    </div>
+                {% endfor %}
                 <div class="form-group">
                     <textarea type="text" style="max-width: 100%; resize: none;" rows="10" name="note" maxlength="10000" class="form-control" placeholder="Примечание">{{form.note.value}}</textarea>
                 </div>
@@ -117,20 +183,17 @@
                 </div>
             </form>
         </div>
-        {% else %}
-            <h3 class="text-muted center">Недостаточно прав для просмотра данной страницы</h3>
-        {% endif %}
     </div>
     <script>
         var placesAutocomplete1 = places({
-          appId: 'plBHLGW4Z9HR',
-          apiKey: 'a5272e955f50cb23c4b2a8ef4cd63c1d',
-          container: document.querySelector('#city1'),
+        appId: 'plBHLGW4Z9HR',
+        apiKey: 'a5272e955f50cb23c4b2a8ef4cd63c1d',
+        container: document.querySelector('#city1'),
         });
         var placesAutocomplete2 = places({
-          appId: 'plBHLGW4Z9HR',
-          apiKey: 'a5272e955f50cb23c4b2a8ef4cd63c1d',
-          container: document.querySelector('#city2'),
+        appId: 'plBHLGW4Z9HR',
+        apiKey: 'a5272e955f50cb23c4b2a8ef4cd63c1d',
+        container: document.querySelector('#city2'),
         });
-      </script>
+    </script>
 {% endblock %}

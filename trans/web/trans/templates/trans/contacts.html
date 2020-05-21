@@ -43,7 +43,7 @@
                         <p></p>
                         {{ employee.phone }}
                         <p></p>
-                        {{ employee.email }}{{employee.id}}
+                        {{ employee.email }}
                         <p></p>
                         {% if nickname != employee.nickname %}
                             <a id="message" href="{% url 'message'%}?sel={{employee.id}}">Написать сообщение</a>

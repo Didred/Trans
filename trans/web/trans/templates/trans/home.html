@@ -34,11 +34,10 @@
                         <img class="home-company-logo" src="https://i.ibb.co/x6FDdzW/image.png">
                     </div>
                     <div class="company-box-help">
-                        <p><button type="button" class="btn btn-primary">in developing</button></p>
-                        <p><button type="button" class="btn btn-primary">in developing</button></p>
-                        <p> in developing </p>
-                        <p> in developing </p>
-                        <p><a style="text-decoration: none;" href="{% url 'profile' nickname=company.nickname %}"> {{ company.nickname }} </a></p>
+                        <p><a id="contacts" href="{% url 'contacts' company_id=company.id %}" ><button type="button" class="btn btn-primary home_button">Открыть контакты</button></a></p>
+                        <p><button type="button" class="btn btn-primary home_button">Отправить запрос</button></p>
+                        <p class="company-box-help-p"><a>География перевозок</a></p>
+                        <p class="company-box-help-p"><a>Автопарк предприятия</a></p>
                     </div>
                     {% if company.description %}
                         <div class="company-box-description">
@@ -72,9 +71,9 @@
     <script type="text/javascript">
         $('a').click(function () {
             let action = $(this).attr('id').split('-')[0]
-            let id = $(this).attr('id').split('-')[1]
 
             if (action == "like") {
+                let id = $(this).attr('id').split('-')[1]
                 $.get("company/" + id + "/like", function(data) {
                     $.ajax({
                         url: "/",
@@ -84,7 +83,8 @@
                         }
                     });
                 });
-            } else {
+            } else if (action == "dislike") {
+                let id = $(this).attr('id').split('-')[1]
                 $.get("company/" + id + "/dislike", function(data) {
                     $.ajax({
                         url: "/",

@@ -35,5 +35,5 @@ urlpatterns = [
     url(r'^message$', views.message, name='message'),
     url(r'^message$', views.message, name='list_message'),
     url(r'^send$', views.message_send, name='send'),
-
+    url(r'^goods/add$', views.add_goods, name='add_goods'),
 ]
