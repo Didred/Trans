@@ -723,3 +723,59 @@ p.company-text {
   text-align: center;
   line-height: 1.8;
 }
+
+.search_4 {
+  width: 22%;
+  float: left;
+  margin: 15px 3%;
+  text-align: center;
+  line-height: 1.8;
+}
+
+.search_4_place {
+  width: 22%;
+  float: left;
+  margin: 15px 3%;
+  line-height: 1.8;
+}
+
+.search_2 {
+  width: 44%;
+  float: left;
+  margin: 15px 3%;
+  text-align: center;
+  line-height: 1.8;
+}
+
+.search_item {
+  margin: 10px 0px;
+}
+
+.search_2_4 {
+  width: 50%;
+  float: left;
+  text-align: center;
+  line-height: 1.8;
+}
+
+.search_4_2 {
+  width: 19%;
+  float: left;
+  margin: 0px 3%;
+  text-align: center;
+  line-height: 1.8;
+}
+
+.search_button {
+  margin-top: 20px;
+  width: 100%;
+}
+
+.search_4 a {
+  text-decoration: none;
+}
+
+.reset_search {
+  margin-top: 26px;
+  padding: 10px 20px 0px 20px;
+}

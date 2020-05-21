@@ -2,6 +2,7 @@ import os
 import re
 import sqlalchemy
 import imgurpython
+import pytz
 
 import datetime
 from sqlalchemy import (
@@ -50,8 +51,9 @@ class API:
             loading_date_by,
             country_loading,
             country_unloading,
-            city_loading=None,
-            city_unloading=None,
+            rate,
+            price,
+            form_price,
             note=None,
             urgently=None):
         administrator = self.get_user(nickname=administrator_nickname)
@@ -67,8 +69,9 @@ class API:
                 loading_date_by,
                 country_loading,
                 country_unloading,
-                city_loading=city_loading,
-                city_unloading=city_unloading,
+                rate,
+                price,
+                form_price,
                 note=note,
                 urgently=urgently
             )
@@ -87,15 +90,99 @@ class API:
         except sqlalchemy.orm.exc.NoResultFound:
             raise Exception("Car not found")
 
-    def get_cars(self, company_id=None):
+    def get_cars(self,
+            body_type=None,
+            download_type=None,
+            carrying_capacity_min=None,
+            carrying_capacity_max=None,
+            volume_min=None,
+            volume_max=None,
+            loading_date_from=None,
+            loading_date_by=None,
+            country_loading=None,
+            country_unloading=None,
+            company_id=None):
+        if body_type and int(body_type) == -1:
+            body_type = None
+
+        if download_type and int(download_type) == -1:
+            download_type = None
+
+        if not country_loading:
+            country_loading = None
+
+        if not country_unloading:
+            country_unloading = None
+
         _filter = and_(
+            or_(body_type is None, Car.body_type == body_type),
+            or_(download_type is None, Car.download_type == download_type),
+            or_(country_loading is None, Car.country_loading == country_loading),
+            or_(country_unloading is None, Car.country_unloading == country_unloading),
             or_(company_id is None, Car.company_id == company_id)
         )
 
         cars = self._session.query(Car).filter(_filter).all()
         self._session.commit()
 
-        return cars
+        result_cars = []
+
+        for car in cars:
+            if carrying_capacity_min:
+                print(result_cars)
+                if car.carrying_capacity >= int(carrying_capacity_min):
+                    result_cars.append(car)
+            else:
+                result_cars.append(car)
+
+        cars = result_cars.copy()
+        result_cars = []
+        for car in cars:
+            if carrying_capacity_max:
+                if car.carrying_capacity <= int(carrying_capacity_max):
+                    result_cars.append(car)
+            else:
+                result_cars.append(car)
+
+        cars = result_cars.copy()
+        result_cars = []
+        for car in cars:
+            if volume_min:
+                if car.volume >= int(volume_min):
+                    result_cars.append(car)
+            else:
+                result_cars.append(car)
+
+        cars = result_cars.copy()
+        result_cars = []
+        for car in cars:
+            if volume_max:
+                if car.volume <= int(volume_max):
+                    result_cars.append(car)
+            else:
+                result_cars.append(car)
+
+        utc=pytz.UTC
+        cars = result_cars.copy()
+        result_cars = []
+        for car in cars:
+            if loading_date_from:
+                if car.loading_date_from.replace(tzinfo=utc) >= loading_date_from:
+                    result_cars.append(car)
+            else:
+                result_cars.append(car)
+
+        cars = result_cars.copy()
+        result_cars = []
+        for car in cars:
+            if loading_date_by:
+                if car.loading_date_by.replace(tzinfo=utc) <= loading_date_by:
+                    result_cars.append(car)
+            else:
+                result_cars.append(car)
+
+        return result_cars
+
 
     def edit_car(
             self,
@@ -109,9 +196,10 @@ class API:
             loading_date_from=None,
             loading_date_by=None,
             country_loading=None,
-            city_loading=None,
             country_unloading=None,
-            city_unloading=None,
+            rate=None,
+            price=None,
+            form_price=None,
             note=None,
             urgently=None):
         administrator = self.get_user(nickname=administrator_nickname)
@@ -141,14 +229,17 @@ class API:
             if country_loading is not None:
                 car.country_loading = country_loading
 
-            if city_loading is not None:
-                car.city_loading = city_loading
-
             if country_unloading is not None:
                 car.country_unloading = country_unloading
 
-            if city_unloading is not None:
-                car.city_unloading = city_unloading
+            if rate is not None:
+                car.rate = rate
+
+            if price is not None:
+                car.price = price
+
+            if form_price is not None:
+                car.form_price = form_price
 
             if note is not None:
                 car.note = note

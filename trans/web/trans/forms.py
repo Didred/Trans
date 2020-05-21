@@ -60,6 +60,9 @@ class CarForm(forms.Form):
     )
     country_loading = forms.CharField(max_length=300)
     country_unloading = forms.CharField(max_length=300)
+    rate = forms.CharField(max_length=30)
+    price = forms.CharField(max_length=30)
+    form_price = forms.CharField(max_length=30)
     note = forms.CharField(max_length=10000, required=False)
 
 
@@ -91,6 +94,31 @@ class GoodsForm(forms.Form):
     price = forms.CharField(max_length=30)
     form_price = forms.CharField(max_length=30)
     note = forms.CharField(max_length=10000, required=False)
+
+
+class SearchCarForm(forms.Form):
+    body_type = forms.CharField(max_length=30, required=False)
+    download_type = forms.CharField(max_length=30, required=False)
+    carrying_capacity_min = forms.CharField(max_length=30, required=False, initial="")
+    carrying_capacity_max = forms.CharField(max_length=30, required=False, initial="")
+    volume_min = forms.CharField(max_length=30, required=False, initial="")
+    volume_max = forms.CharField(max_length=30, required=False, initial="")
+    loading_date_from = forms.DateTimeField(
+        widget=forms.widgets.DateInput(
+            attrs={'type': 'datetime'},
+            format=DATE_FORMAT
+        ),
+        required=False
+    )
+    loading_date_by = forms.DateTimeField(
+        widget=forms.widgets.DateInput(
+            attrs={'type': 'datetime'},
+            format=DATE_FORMAT
+        ),
+        required=False
+    )
+    country_loading = forms.CharField(max_length=300, required=False)
+    country_unloading = forms.CharField(max_length=300, required=False)
 
 
 CHOICES = [

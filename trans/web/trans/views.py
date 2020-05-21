@@ -19,7 +19,8 @@ from .forms import (
     ReviewForm,
     EmployeeForm,
     CarForm,
-    GoodsForm
+    GoodsForm,
+    SearchCarForm
 )
 from library.models.user import Role
 
@@ -521,11 +522,14 @@ def add_car(request, company_id):
                     form.cleaned_data['loading_date_by'],
                     form.cleaned_data['country_loading'],
                     form.cleaned_data['country_unloading'],
+                    form.cleaned_data['rate'],
+                    form.cleaned_data['price'],
+                    form.cleaned_data['form_price'],
                     note=form.cleaned_data['note']
                 )
                 return redirect('/company/'+ company_id + '/carpark')
 
-    return render(request, 'trans/add_car.html', {'form': form, 'company': company, 'show': show, 'is_administrator': is_administrator, 'body_type_covered': BODY_TYPE_COVERED, 'body_type_uncovered': BODY_TYPE_UNCOVERED, 'body_type_tank': BODY_TYPE_TANK, 'body_type_special': BODY_TYPE_SPECIAL, 'download_types': DOWNLOAD_TYPE, 'current_date': current_date, 'my_company': is_add_car(user)})
+    return render(request, 'trans/add_car.html', {'form': form, 'company': company, 'show': show, 'is_administrator': is_administrator, 'body_type_covered': BODY_TYPE_COVERED, 'body_type_uncovered': BODY_TYPE_UNCOVERED, 'body_type_tank': BODY_TYPE_TANK, 'body_type_special': BODY_TYPE_SPECIAL, 'download_types': DOWNLOAD_TYPE, 'current_date': current_date, 'prices': PRICES, 'form_prices': FORM_PRICES, 'my_company': is_add_car(user)})
 
 
 def _check_car_form(form, extra=True, weigh=False):
@@ -546,7 +550,6 @@ def _check_car_form(form, extra=True, weigh=False):
         else:
             temp = int(form.cleaned_data['carrying_capacity'])
     except ValueError as e:
-        print(weigh, 12312312312312312312)
         if weigh:
             form.add_error('weigh', "Неверный формат ввода.")
         else:
@@ -577,8 +580,14 @@ def edit_car(request, company_id, car_id):
 
     current_body_type = _get_body_type(car.body_type)
     current_download_type = DOWNLOAD_TYPE[int(car.download_type)]
+    current_download_type_count = DOWNLOAD_TYPE.index(current_download_type)
     loading_date_from = str(car.loading_date_from.date())
     loading_date_by = str(car.loading_date_by.date())
+    current_price = PRICES[int(car.price)]
+    current_price_count = PRICES.index(current_price)
+    current_form_price = FORM_PRICES[int(car.form_price)]
+    current_form_price_count = FORM_PRICES.index(current_form_price)
+
 
     form = CarForm()
 
@@ -600,11 +609,14 @@ def edit_car(request, company_id, car_id):
                     loading_date_by=form.cleaned_data['loading_date_by'],
                     country_loading=form.cleaned_data['country_loading'],
                     country_unloading=form.cleaned_data['country_unloading'],
+                    rate=form.cleaned_data['rate'],
+                    price=form.cleaned_data['price'],
+                    form_price=form.cleaned_data['form_price'],
                     note=form.cleaned_data['note']
                 )
                 return redirect('/company/'+ company_id + '/carpark')
 
-    return render(request, 'trans/edit_car.html', {'form': form, 'company': company, 'show': show, 'is_administrator': is_administrator, 'body_type_covered': BODY_TYPE_COVERED, 'body_type_uncovered': BODY_TYPE_UNCOVERED, 'body_type_tank': BODY_TYPE_TANK, 'body_type_special': BODY_TYPE_SPECIAL, 'download_types': DOWNLOAD_TYPE, 'current_body_type': current_body_type, 'current_download_type': current_download_type, 'car': car, 'loading_date_from':loading_date_from, 'loading_date_by': loading_date_by, 'my_company': is_add_car(user) })
+    return render(request, 'trans/edit_car.html', {'form': form, 'company': company, 'show': show, 'is_administrator': is_administrator, 'body_type_covered': BODY_TYPE_COVERED, 'body_type_uncovered': BODY_TYPE_UNCOVERED, 'body_type_tank': BODY_TYPE_TANK, 'body_type_special': BODY_TYPE_SPECIAL, 'download_types': DOWNLOAD_TYPE, 'current_body_type': current_body_type, 'current_download_type': current_download_type, 'car': car, 'loading_date_from':loading_date_from, 'loading_date_by': loading_date_by,'prices': PRICES, 'form_prices': FORM_PRICES, 'current_price': current_price, 'current_price_count': current_price_count, 'current_form_price': current_form_price, 'current_form_price_count': current_form_price_count, 'current_download_type_count': current_download_type_count, 'my_company': is_add_car(user) })
 
 
 def remove_car(request, company_id, car_id):
@@ -815,7 +827,7 @@ def add_goods(request):
                 )
                 return redirect('/')
 
-    return render(request, 'trans/add_goods.html', {'form': form, 'body_type_covered': BODY_TYPE_COVERED, 'body_type_uncovered': BODY_TYPE_UNCOVERED, 'body_type_tank': BODY_TYPE_TANK, 'body_type_special': BODY_TYPE_SPECIAL, 'download_types': DOWNLOAD_TYPE, 'prices': PRICES, 'form_prices': FORM_PRICES, 'my_company': is_add_car(user)})
+    return render(request, 'trans/add_goods.html', {'form': form, 'body_type_covered': BODY_TYPE_COVERED, 'body_type_uncovered': BODY_TYPE_UNCOVERED, 'body_type_tank': BODY_TYPE_TANK, 'body_type_special': BODY_TYPE_SPECIAL, 'download_types': DOWNLOAD_TYPE, 'current_date': current_date, 'prices': PRICES, 'form_prices': FORM_PRICES, 'my_company': is_add_car(user)})
 
 
 def list_goods(request):
@@ -846,9 +858,31 @@ def list_goods(request):
 
 def list_car(request):
     api = get_api()
+    user = api.get_user(nickname=request.user.username)
 
-    search_cars = api.get_cars()
+    current_date = str(datetime.now().date())
+    search_cars = []
     cars = []
+    form = SearchCarForm()
+
+    if request.method == "POST":
+        form = SearchCarForm(request.POST)
+
+        if form.is_valid():
+            search_cars = api.get_cars(
+                form.cleaned_data['body_type'],
+                form.cleaned_data['download_type'],
+                form.cleaned_data['carrying_capacity_min'],
+                form.cleaned_data['carrying_capacity_max'],
+                form.cleaned_data['volume_min'],
+                form.cleaned_data['volume_max'],
+                form.cleaned_data['loading_date_from'],
+                form.cleaned_data['loading_date_by'],
+                form.cleaned_data['country_loading'],
+                form.cleaned_data['country_unloading']
+            )
+    else:
+        search_cars = api.get_cars()
 
     for car in search_cars:
         date = car.get_date()
@@ -856,15 +890,15 @@ def list_car(request):
         body_type = _get_body_type(car.body_type)
         download_type = DOWNLOAD_TYPE[int(car.download_type)]
 
-        car_info = body_type + ", " + download_type
+        car_info = [body_type + ", " + download_type, str(car.carrying_capacity) + " т., " + str(car.volume) + " м³"]
 
-        # price = [str(car.rate) + " " + PRICES[int(car.price)], FORM_PRICES[int(car.form_price)]]
+        price = [str(car.rate) + " " + PRICES[int(car.price)], FORM_PRICES[int(car.form_price)]]
 
         # user = api.get_user(user_id=car.user_id)
 
-        cars.append((car, date, car_info))
+        cars.append((car, date, car_info, price))
 
-    return render(request, 'trans/list_car.html', {'cars': cars})
+    return render(request, 'trans/list_car.html', {'form': form, 'cars': cars, 'body_type_covered': BODY_TYPE_COVERED, 'body_type_uncovered': BODY_TYPE_UNCOVERED, 'body_type_tank': BODY_TYPE_TANK, 'body_type_special': BODY_TYPE_SPECIAL, 'download_types': DOWNLOAD_TYPE, 'current_date': current_date, 'my_company': is_add_car(user)})
 
 
 def write_file(text):

@@ -2,7 +2,81 @@
 {% block title %}Грузы{% endblock %}
 
 {% block content %}
-    {% for car, date, car_info in cars %}
+    <form method="post">
+        {% csrf_token %}
+        <div class="container_goods box-shadow">
+            <div class="search_4_place">
+                <div class="center">Место загрузки</div>
+                    {% if form.country_loading.value %}
+                        <input id="city1" type="text" name="country_loading" class="form-control search_item" placeholder="Место загрузки" value="{{form.country_loading.value}}">
+                    {% else %}
+                        <input id="city1" type="text" name="country_loading" class="form-control search_item" placeholder="Место загрузки">
+                    {% endif %}
+                <div class="center">Тип кузова</div>
+                <select name="body_type" class="form-control search_item">
+                    <option value="-1" selected="selected" hidden> Выберите здесь </option>
+                    <optgroup label="Крытые">
+                        {% for body_type in body_type_covered %}
+                            <option value="1{{ forloop.counter0 }}"> {{ body_type }} </option>
+                        {% endfor %}
+                    </optgroup>
+                    <optgroup label="Открытые">
+                        {% for body_type in body_type_uncovered %}
+                            <option value="2{{ forloop.counter0 }}"> {{ body_type }} </option>
+                        {% endfor %}
+                    </optgroup>
+                    <optgroup label="Цистерны">
+                        {% for body_type in body_type_tank %}
+                            <option value="3{{ forloop.counter0 }}"> {{ body_type }} </option>
+                        {% endfor %}
+                    </optgroup>
+                    <optgroup label="Специальный транспорт">
+                        {% for body_type in body_type_special %}
+                            <option value="4{{ forloop.counter0 }}"> {{ body_type }} </option>
+                        {% endfor %}
+                    </optgroup>
+                </select>
+                <a href="{% url 'list_car' %}"><button class="btn btn-primary form-control search_button">Применить фильтр</button></a>
+            </div>
+            <div class="search_4_place">
+                <div class="center">Место разгрузки</div>
+                {% if form.country_unloading.value %}
+                    <input id="city2" type="text" name="country_unloading" class="form-control search_item" placeholder="Место разгрузки" value="{{form.country_unloading.value}}">
+                {% else %}
+                    <input id="city2" type="text" name="country_unloading" class="form-control search_item" placeholder="Место разгрузки">
+                {% endif %}
+                <div class="center">Тип загрузки</div>
+                <select name="download_type" class="form-control search_item">
+                    {{form.download_types}}
+                    <option value="-1" selected="selected" hidden> Выберите здесь </option>
+                    {% for download_type in download_types %}
+                        <option value={{ forloop.counter0 }}> {{ download_type }} </option>
+                    {% endfor %}
+                </select>
+                <a href="{% url 'list_car' %}"><div class="reset_search">Сбросить фильтр</div></a>
+            </div>
+            <div class="search_2">
+                <div>Интервал поиска</div>
+                <input id="loading_date_from" name="loading_date_from" type="date" class="form-control search_2" style="margin-top: 10px; margin-bottom: 10px;" value={{form.loading_date_from.value}}>
+                <input id="loading_date_from" name="loading_date_by" type="date" class="form-control search_2" style="margin-top: 10px; margin-bottom: 10px;" value={{form.loading_date_by.value}}>
+                <div class="search_2_4">Грузоподъемность, т.</div>
+                <div class="search_2_4">Объем, м³</div>
+                <div class="search_4_2">
+                    <input type="text" name="carrying_capacity_min" class="form-control search_item" placeholder="От" value="{{form.carrying_capacity_min.value}}">
+                </div>
+                <div class="search_4_2">
+                    <input type="text" name="carrying_capacity_max" class="form-control search_item" placeholder="До" value="{{form.carrying_capacity_max.value}}">
+                </div>
+                <div class="search_4_2">
+                    <input type="text" name="volume_min" class="form-control search_item" placeholder="От" value="{{form.volume_min.value}}">
+                </div>
+                <div class="search_4_2">
+                    <input type="text" name="volume_max" class="form-control search_item" placeholder="До" value="{{form.volume_max.value}}">
+                </div>
+            </div>
+        </div>
+    </form>
+    {% for car, date, car_info, prices in cars %}
         <div class="container_goods box-shadow">
             <div class="car_6">
                 <div class="goods_text">Место загрузки</div>
@@ -18,7 +92,9 @@
             </div>
             <div class="car_6">
                 <div class="goods_text">Транспорт</div>
-                <div>{{car_info}}</div>
+                {% for info in car_info %}
+                    <div>{{info}}</div>
+                {% endfor %}
             </div>
             <div class="car_6">
                 <div class="goods_text">Оплата</div>
@@ -33,4 +109,16 @@
             </div>
         </div>
     {% endfor %}
+    <script>
+        var placesAutocomplete1 = places({
+          appId: 'plBHLGW4Z9HR',
+          apiKey: 'a5272e955f50cb23c4b2a8ef4cd63c1d',
+          container: document.querySelector('#city1'),
+        });
+        var placesAutocomplete2 = places({
+          appId: 'plBHLGW4Z9HR',
+          apiKey: 'a5272e955f50cb23c4b2a8ef4cd63c1d',
+          container: document.querySelector('#city2'),
+        });
+      </script>
 {% endblock %}

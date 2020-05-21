@@ -20,9 +20,10 @@ class Car(Base):
     loading_date_from = Column(DateTime)
     loading_date_by = Column(DateTime)
     country_loading = Column(String)
-    city_loading = Column(String)
     country_unloading = Column(String)
-    city_unloading = Column(String)
+    rate = Column(Integer)
+    price = Column(String)
+    form_price = Column(String)
     note = Column(String)
     urgently = Column(Boolean)
 
@@ -37,8 +38,9 @@ class Car(Base):
             loading_date_by,
             country_loading,
             country_unloading,
-            city_loading=None,
-            city_unloading=None,
+            rate,
+            price,
+            form_price,
             note=None,
             urgently=None):
         self.company_id = company_id
@@ -49,9 +51,10 @@ class Car(Base):
         self.loading_date_from = loading_date_from
         self.loading_date_by = loading_date_by
         self.country_loading = country_loading
-        self.city_loading = city_loading
         self.country_unloading = country_unloading
-        self.city_unloading = city_unloading
+        self.rate = rate
+        self.price = price
+        self.form_price = form_price
         self.note = note if note is not None else None
         self.urgently = True if urgently is not None else False
 
