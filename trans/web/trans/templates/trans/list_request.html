@@ -1,0 +1,107 @@
+{% extends 'trans/base.html' %}
+{% block title %}Запросы{% endblock %}
+
+{% block content %}
+    {% for car, date, car_info, prices, request in cars %}
+        <div class="container_goods box-shadow">
+            <div class="car_6">
+                <div class="goods_text">Место загрузки</div>
+                <div>{{car.country_loading}}</div>
+            </div>
+            <div class="car_6">
+                <div class="goods_text">Место разгрузки</div>
+                <div>{{car.country_unloading}}</div>
+            </div>
+            <div class="car_6">
+                <div class="goods_text">Дата</div>
+                <div>{{date}}</div>
+            </div>
+            <div class="car_6">
+                <div class="goods_text">Транспорт</div>
+                {% for info in car_info %}
+                    <div>{{info}}</div>
+                {% endfor %}
+            </div>
+            <div class="car_6">
+                <div class="goods_text">Оплата</div>
+                {% for price in prices %}
+                    <div>{{price}}</div>
+                {% endfor %}
+            </div>
+            {% if check %}
+                <div class="car_6">
+                    <div class="goods_text">Заявка</div>
+                    {% if not request and check %}
+                        <a href="{% url 'request_car' car_id=car.id %}"><label class="label label-info">Подать заявку</label></a>
+                    {% elif request.status.value == 1%}
+                        <label class="label label-warning">Заявка на рассмотрении</label>
+                        <a href="{% url 'withdraw_request_car' car_id=car.id %}"><label>Отозвать заявку</label></a>
+                    {% elif request.status.value == 2%}
+                        <label class="label label-success">Заявка одобрена</label>
+                    {% elif request.status.value == 3%}
+                        <label class="label label-danger">Заявка отклонена</label>
+                    {% endif %}
+                </div>
+            {% endif %}
+        </div>
+    {% endfor %}
+    {% for goods, date, car, this_goods, prices, user, request in search_goods %}
+        <div class="container_goods box-shadow">
+            <div class="goods_7">
+                <div class="goods_text">Место загрузки</div>
+                <div>{{goods.country_loading}}</div>
+            </div>
+            <div class="goods_7">
+                <div class="goods_text">Место разгрузки</div>
+                <div>{{goods.country_unloading}}</div>
+            </div>
+            <div class="goods_7">
+                <div class="goods_text">Дата</div>
+                <div>{{date}}</div>
+            </div>
+            <div class="goods_7">
+                <div class="goods_text">Транспорт</div>
+                <div>{{car}}</div>
+            </div>
+            <div class="goods_7">
+                <div class="goods_text">Груз</div>
+                {% for this in this_goods %}
+                    <div>{{this}}</div>
+                {% endfor %}
+            </div>
+            <div class="goods_7">
+                <div class="goods_text">Оплата</div>
+                {% for price in prices %}
+                    <div>{{price}}</div>
+                {% endfor %}
+            </div>
+            {% if check %}
+                <div class="goods_7">
+                    <div class="goods_text">Заявка</div>
+                    {% if not request and check %}
+                        <a href="{% url 'request_goods' goods_id=goods.id %}"><label class="label label-info">Подать заявку</label></a>
+                    {% elif request.status.value == 1%}
+                        <label class="label label-warning" style="font: 10pt sans-serif;">Заявка на рассмотрении</label>
+                        <a href="{% url 'withdraw_request_goods' goods_id=goods.id %}"><label>Отозвать заявку</label></a>
+                    {% elif request.status.value == 2%}
+                        <label class="label label-success">Заявка одобрена</label>
+                    {% elif request.status.value == 3%}
+                        <label class="label label-danger">Заявка отклонена</label>
+                    {% endif %}
+                </div>
+            {% endif %}
+        </div>
+    {% endfor %}
+    <script>
+        var placesAutocomplete1 = places({
+          appId: 'plBHLGW4Z9HR',
+          apiKey: 'a5272e955f50cb23c4b2a8ef4cd63c1d',
+          container: document.querySelector('#city1'),
+        });
+        var placesAutocomplete2 = places({
+          appId: 'plBHLGW4Z9HR',
+          apiKey: 'a5272e955f50cb23c4b2a8ef4cd63c1d',
+          container: document.querySelector('#city2'),
+        });
+      </script>
+{% endblock %}

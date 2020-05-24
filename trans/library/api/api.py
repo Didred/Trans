@@ -966,26 +966,28 @@ class API:
         return request
 
 
-    def accept_request(self, company_id, administrator_nickname, car_id, request_id):
+    def accept_request(self, company_id, administrator_nickname, car_id, request_id, log=True):
         request = self.get_request(request_id=request_id)
 
         request.status = Status(2)
         request.date = datetime.datetime.now() + datetime.timedelta(hours=3)
 
-        text_log = ACCEPT_REQUEST
-        self.create_log(company_id, administrator_nickname, text_log, "машины", car_id)
+        if log:
+            text_log = ACCEPT_REQUEST
+            self.create_log(company_id, administrator_nickname, text_log, "машины", car_id)
 
         self._session.commit()
 
 
-    def reject_request(self, company_id, administrator_nickname, car_id, request_id):
+    def reject_request(self, company_id, administrator_nickname, car_id, request_id, log=True):
         request = self.get_request(request_id=request_id)
 
         request.status = Status(3)
         request.date = datetime.datetime.now() + datetime.timedelta(hours=3)
 
-        text_log = REJECT_REQUEST
-        self.create_log(company_id, administrator_nickname, text_log, "машины", car_id)
+        if log:
+            text_log = REJECT_REQUEST
+            self.create_log(company_id, administrator_nickname, text_log, "машины", car_id)
 
         self._session.commit()
 

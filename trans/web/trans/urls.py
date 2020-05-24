@@ -28,8 +28,8 @@ urlpatterns = [
     url(r'^company/(?P<company_id>[0-9]+)/remove_car/(?P<car_id>[0-9]+)/$', views.remove_car, name='remove_car'),
     url(r'^company/(?P<company_id>[0-9]+)/carpark/(?P<car_id>[0-9]+)/edit$', views.edit_car, name='edit_car'),
     url(r'^company/(?P<company_id>[0-9]+)/carpark/(?P<car_id>[0-9]+)/info$', views.car_info, name='car_info'),
-    url(r'^company/(?P<company_id>[0-9]+)/carpark/(?P<car_id>[0-9]+)/accept/(?P<request_id>[0-9]+)$', views.accept_request, name='accept_request'),
-    url(r'^company/(?P<company_id>[0-9]+)/carpark/(?P<car_id>[0-9]+)/reject/(?P<request_id>[0-9]+)$', views.reject_request, name='reject_request'),
+    url(r'^company/(?P<company_id>[0-9]+)/carpark/(?P<id>[0-9]+)/accept/(?P<request_id>[0-9]+)/(?P<log>[0-9]+)$', views.accept_request, name='accept_request'),
+    url(r'^company/(?P<company_id>[0-9]+)/carpark/(?P<id>[0-9]+)/reject/(?P<request_id>[0-9]+)/(?P<log>[0-9]+)$', views.reject_request, name='reject_request'),
     url(r'^company/(?P<company_id>[0-9]+)/like$', views.like, name='like'),
     url(r'^company/(?P<company_id>[0-9]+)/dislike$', views.dislike, name='dislike'),
     url(r'^company/(?P<company_id>[0-9]+)/review/(?P<review_id>[0-9]+)/verification/$', views.verification, name='verification'),
@@ -49,4 +49,5 @@ urlpatterns = [
     url(r'^profile/goods/(?P<goods_id>[0-9]+)/edit$', views.edit_goods, name='edit_goods'),
     url(r'^profile/goods/(?P<goods_id>[0-9]+)/info$', views.goods_info, name='goods_info'),
     url(r'^profile/goods/remove_goods/(?P<goods_id>[0-9]+)/$', views.remove_goods, name='remove_goods'),
+    url(r'^profile/requests/$', views.list_request, name='list_request'),
 ]

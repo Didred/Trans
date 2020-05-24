@@ -30,8 +30,10 @@
                 {% endfor %}
             </div>
         </div>
-        <div class="car_note goods_text">Примечание:</div>
-        <div class="car_note"><em>{{car.note}}</em></div>
+        {% if car.note %}
+            <div class="car_note goods_text">Примечание:</div>
+            <div class="car_note"><em>{{car.note}}</em></div>
+        {% endif %}
     </div>
     {% for request, user, avatar, date_create, request_date in requests %}
         {% if request.status.value == 1 %}
@@ -51,14 +53,14 @@
             <p> Телефон: {{user.phone}}</p>
             <div><a id="message" class="button_request" href="{% url 'message'%}?sel={{user.id}}" style="padding: 15px">Написать сообщение</a></div>
             {% if request.status.value == 1 %}
-                <div><a href="{% url 'accept_request' request_id=request.id company_id=company.id car_id=request.car_id %}"><label class="label label-success button_request">Принять</label></a></div>
-                <div><a href="{% url 'reject_request' request_id=request.id company_id=company.id car_id=request.car_id %}"><label class="label label-danger button_request">Отклонить</label></a></div>
+                <div><a href="{% url 'accept_request' request_id=request.id company_id=company.id id=request.car_id log=1 %}"><label class="label label-success button_request">Принять</label></a></div>
+                <div><a href="{% url 'reject_request' request_id=request.id company_id=company.id id=request.car_id log=1 %}"><label class="label label-danger button_request">Отклонить</label></a></div>
             {% elif request.status.value == 2 %}
                 <div style="margin: 9px 0px; text-align: center; color: green">Принято {{request_date}}</div>
-                <div><a href="{% url 'reject_request' request_id=request.id company_id=company.id car_id=request.car_id %}"><label class="label label-danger button_request">Отклонить</label></a></div>
+                <div><a href="{% url 'reject_request' request_id=request.id company_id=company.id id=request.car_id log=1 %}"><label class="label label-danger button_request">Отклонить</label></a></div>
             {% elif request.status.value == 3 %}
                 <div style="margin: 9px 0px; text-align: center; color: red">Отклонено {{request_date}}</div>
-                <div><a href="{% url 'accept_request' request_id=request.id company_id=company.id car_id=request.car_id %}"><label class="label label-success button_request">Принять</label></a></div>
+                <div><a href="{% url 'accept_request' request_id=request.id company_id=company.id id=request.car_id log=1 %}"><label class="label label-success button_request">Принять</label></a></div>
             {% endif %}
         </div>
     {% endfor %}

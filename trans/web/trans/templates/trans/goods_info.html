@@ -1,0 +1,67 @@
+{% extends 'trans/base_company.html' %}
+
+{% block title %}Автопарк{% endblock %}
+
+{% block company_content %}
+    <div class="container_car_info box-shadow">
+        <div style="display: flex;">
+            <div class="car_5">
+                <div class="goods_text">Место загрузки</div>
+                <div>{{goods.country_loading}}</div>
+            </div>
+            <div class="car_5">
+                <div class="goods_text">Место разгрузки</div>
+                <div>{{goods.country_unloading}}</div>
+            </div>
+            <div class="car_5">
+                <div class="goods_text">Дата готовности к загрузке</div>
+                <div>{{date}}</div>
+            </div>
+            <div class="car_5">
+                <div class="goods_text">Транспорт</div>
+                {% for info in goods_info %}
+                    <div>{{info}}</div>
+                {% endfor %}
+            </div>
+            <div class="car_5">
+                <div class="goods_text">Оплата</div>
+                {% for price in prices %}
+                    <div>{{price}}</div>
+                {% endfor %}
+            </div>
+        </div>
+        {% if goods.note %}
+            <div class="car_note goods_text">Примечание:</div>
+            <div class="car_note"><em>{{goods.note}}</em></div>
+        {% endif %}
+    </div>
+    {% for request, user, avatar, date_create, request_date in requests %}
+        {% if request.status.value == 1 %}
+            <div class="container_request box-shadow container_review_normal">
+        {% elif request.status.value == 2 %}
+            <div class="container_request box-shadow container_review_green">
+        {% elif request.status.value == 3 %}
+            <div class="container_request box-shadow container_review_red">
+        {% endif %}
+
+            <img src="data:image/gif;base64,{{avatar}}" alt="Avatar" style="width:90px">
+            <p>
+                <span class="container_review_span">{{ user.name }} {{ user.surname }}</span>
+                {{ date_create }}
+            </p>
+            <p> Почта: {{user.email}}</p>
+            <p> Телефон: {{user.phone}}</p>
+            <div><a id="message" class="button_request" href="{% url 'message'%}?sel={{user.id}}" style="padding: 15px">Написать сообщение</a></div>
+            {% if request.status.value == 1 %}
+                <div><a href="{% url 'accept_request' request_id=request.id company_id=company.id id=request.goods_id log=0 %}"><label class="label label-success button_request">Принять</label></a></div>
+                <div><a href="{% url 'reject_request' request_id=request.id company_id=company.id id=request.goods_id log=0 %}"><label class="label label-danger button_request">Отклонить</label></a></div>
+            {% elif request.status.value == 2 %}
+                <div style="margin: 9px 0px; text-align: center; color: green">Принято {{request_date}}</div>
+                <div><a href="{% url 'reject_request' request_id=request.id company_id=company.id id=request.goods_id log=0 %}"><label class="label label-danger button_request">Отклонить</label></a></div>
+            {% elif request.status.value == 3 %}
+                <div style="margin: 9px 0px; text-align: center; color: red">Отклонено {{request_date}}</div>
+                <div><a href="{% url 'accept_request' request_id=request.id company_id=company.id id=request.goods_id log=0 %}"><label class="label label-success button_request">Принять</label></a></div>
+            {% endif %}
+        </div>
+    {% endfor %}
+{% endblock %}

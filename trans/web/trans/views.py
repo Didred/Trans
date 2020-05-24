@@ -602,6 +602,8 @@ def edit_car(request, company_id, car_id):
 
     check = request.GET.get("login") == owner
     show = not check or company != None
+    is_my_company = True if user.company_id == company.id else False
+
 
     car = api.get_car(car_id)
 
@@ -643,7 +645,7 @@ def edit_car(request, company_id, car_id):
                 )
                 return redirect('/company/'+ company_id + '/carpark')
 
-    return render(request, 'trans/edit_car.html', {'form': form, 'company': company, 'show': show, 'is_administrator': is_administrator, 'body_type_covered': BODY_TYPE_COVERED, 'body_type_uncovered': BODY_TYPE_UNCOVERED, 'body_type_tank': BODY_TYPE_TANK, 'body_type_special': BODY_TYPE_SPECIAL, 'download_types': DOWNLOAD_TYPE, 'current_body_type': current_body_type, 'current_download_type': current_download_type, 'car': car, 'loading_date_from':loading_date_from, 'loading_date_by': loading_date_by,'prices': PRICES, 'form_prices': FORM_PRICES, 'current_price': current_price, 'current_price_count': current_price_count, 'current_form_price': current_form_price, 'current_form_price_count': current_form_price_count, 'current_download_type_count': current_download_type_count, 'my_company': is_add_car(user) })
+    return render(request, 'trans/edit_car.html', {'form': form, 'is_my_company': is_my_company, 'company': company, 'show': show, 'is_administrator': is_administrator, 'body_type_covered': BODY_TYPE_COVERED, 'body_type_uncovered': BODY_TYPE_UNCOVERED, 'body_type_tank': BODY_TYPE_TANK, 'body_type_special': BODY_TYPE_SPECIAL, 'download_types': DOWNLOAD_TYPE, 'current_body_type': current_body_type, 'current_download_type': current_download_type, 'car': car, 'loading_date_from':loading_date_from, 'loading_date_by': loading_date_by,'prices': PRICES, 'form_prices': FORM_PRICES, 'current_price': current_price, 'current_price_count': current_price_count, 'current_form_price': current_form_price, 'current_form_price_count': current_form_price_count, 'current_download_type_count': current_download_type_count, 'my_company': is_add_car(user) })
 
 
 def remove_car(request, company_id, car_id):
@@ -975,6 +977,8 @@ def car_info(request, company_id, car_id):
 
     check = request.GET.get("login") == owner
     show = not check or company != None
+    is_my_company = True if user.company_id == company.id else False
+
 
     car = api.get_car(car_id)
     date = car.get_date()
@@ -998,7 +1002,7 @@ def car_info(request, company_id, car_id):
 
         requests.append((_request, user_request, avatar, date_create, request_date))
 
-    return render(request, 'trans/car_info.html', {'company': company, 'requests': requests, 'car': car, 'date': date, 'car_info': car_info, 'prices': price, 'is_administrator': is_administrator, 'is_employee': is_employee, 'show': show, 'nickname': user.nickname, 'my_company': is_add_car(user) })
+    return render(request, 'trans/car_info.html', {'company': company, 'is_my_company': is_my_company, 'requests': requests, 'car': car, 'date': date, 'car_info': car_info, 'prices': price, 'is_administrator': is_administrator, 'is_employee': is_employee, 'show': show, 'nickname': user.nickname, 'my_company': is_add_car(user) })
 
 
 def request_car(request, car_id):
@@ -1042,20 +1046,26 @@ def withdraw_request_goods(request, goods_id):
     return redirect('/goods')
 
 
-def accept_request(request, company_id, car_id, request_id):
+def accept_request(request, company_id, id, request_id, log):
     api = get_api()
 
-    api.accept_request(company_id, request.user.username, car_id, request_id)
+    api.accept_request(company_id, request.user.username, id, request_id, log=log)
 
-    return redirect('/company/' + company_id + '/carpark/' + car_id + '/info')
+    if log == 1:
+        return redirect('/company/' + company_id + '/carpark/' + id + '/info')
+    else:
+        return redirect('/profile/goods/' + id + '/info')
 
 
-def reject_request(request, company_id, car_id, request_id):
+def reject_request(request, company_id, id, request_id, log):
     api = get_api()
 
-    api.reject_request(company_id, request.user.username, car_id, request_id)
+    api.reject_request(company_id, request.user.username, id, request_id, log=log)
 
-    return redirect('/company/' + company_id + '/carpark/' + car_id + '/info')
+    if log == 1:
+        return redirect('/company/' + company_id + '/carpark/' + id + '/info')
+    else:
+        return redirect('/profile/goods/' + id + '/info')
 
 
 def goods(request):
@@ -1089,7 +1099,43 @@ def edit_goods(request, goods_id):
 
 
 def goods_info(request, goods_id):
-    pass
+    api = get_api()
+    owner = api.get_user(nickname=request.user.username)
+    nickname = owner.nickname
+
+    user = api.get_user(nickname=nickname)
+    company = api.get_company(company_id=user.company_id)
+    is_administrator = False
+    if company:
+        is_administrator = api.is_administrator(owner.id, company.id)
+
+    check = nickname == request.user.username
+    show = not check or company != None
+    is_my_company = True
+
+    goods = api.get_goods(goods_id)
+    date = goods.get_date()
+
+    body_type = _get_body_type(goods.body_type)
+    download_type = DOWNLOAD_TYPE[int(goods.download_type)]
+    goods_info = [body_type + ", " + download_type, str(goods.weigh) + " т., " + str(goods.volume) + " м³, количество ремней: " + str(goods.belt_count), "Количество машин: " + str(goods.car_count)]
+
+    price = [str(goods.rate) + " " + PRICES[int(goods.price)], FORM_PRICES[int(goods.form_price)]]
+
+    requests = []
+    all_request = api.get_requests(goods_id=goods.id)
+    for _request in all_request:
+        user_request = api.get_user(_request.user_id)
+        avatar = _get_avatar(user_request.avatar)
+
+        date_create = _request.date_create.strftime("%d.%m.%Y, %H:%M")
+        request_date = None
+        if _request.date:
+            request_date = _request.date.strftime("%d.%m.%Y, %H:%M")
+
+        requests.append((_request, user_request, avatar, date_create, request_date))
+
+    return render(request, 'trans/goods_info.html', {'company': company, 'is_my_company': is_my_company, 'requests': requests, 'goods': goods, 'date': date, 'goods_info': goods_info, 'prices': price, 'is_administrator': is_administrator, 'show': show, 'nickname': user.nickname, 'my_company': is_add_car(user) })
 
 
 def remove_goods(request, goods_id):
@@ -1103,6 +1149,10 @@ def remove_goods(request, goods_id):
     else:
         message = "Страницы не существует"
     return HttpResponse(message)
+
+
+def list_request(request):
+    return render(request, 'trans/list_request.html')
 
 
 def write_file(text):

@@ -17,7 +17,7 @@
                     {% endif %}
                 </div>
                 <div>
-                    <a href="{% url 'edit_car' company_id=company.id car_id=car.id %}"><div class="center">Посмотреть описание и ставки</div></a>
+                    <a href="{% url 'car_info' company_id=company.id car_id=car.id %}"><div class="center">Посмотреть описание и ставки</div></a>
                     <p></p>
                     Тип кузова: {{ body_type }}
                     <p></p>
