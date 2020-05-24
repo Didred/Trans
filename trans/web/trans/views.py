@@ -24,6 +24,7 @@ from .forms import (
     SearchGoodsForm
 )
 from library.models.user import Role
+from library.models.request import Status
 
 from datetime import datetime
 import pytz
@@ -204,8 +205,28 @@ def profile(request, nickname):
 
     check = nickname == request.user.username
     show = not check or company != None
+    is_my_company = True
 
-    return render(request, 'trans/profile.html', {'member': user, 'company': company, 'check': check, 'show': show, 'is_administrator': is_administrator, 'my_company': is_add_car(user)})
+    avatar = _get_avatar(user.avatar)
+
+    return render(request, 'trans/profile.html', {'member': user, 'avatar': avatar, 'is_my_company': is_my_company, 'company': company, 'check': check, 'show': show, 'is_administrator': is_administrator, 'my_company': is_add_car(user)})
+
+
+def company_profile(request, company_id):
+    api = get_api()
+    owner = api.get_user(nickname=request.user.username)
+
+    company = api.get_company(company_id=company_id)
+    is_administrator = False
+    if company:
+        is_administrator = api.is_administrator(owner.id, company.id)
+
+    is_my_company = True if owner.company_id == company.id else False
+    show = True
+
+    date = company.date_registration.strftime("%d.%m.%Y")
+
+    return render(request, 'trans/company_profile.html', {'company': company, 'date': date, 'show': show, 'is_my_company': is_my_company, 'is_administrator': is_administrator})
 
 
 def add_company(request):
@@ -368,8 +389,9 @@ def contacts(request, company_id):
 
     check = request.GET.get("login") == owner
     show = not check or company != None
+    is_my_company = True if user.company_id == company.id else False
 
-    return render(request, 'trans/contacts.html', {'company': company, 'administrators': administrators, 'is_administrator': is_administrator, 'is_employee': is_employee, 'employees': employees, 'show': show, 'nickname': user.nickname, 'my_company': is_add_car(user) })
+    return render(request, 'trans/contacts.html', {'company': company, 'is_my_company': is_my_company, 'administrators': administrators, 'is_administrator': is_administrator, 'is_employee': is_employee, 'employees': employees, 'show': show, 'nickname': user.nickname, 'my_company': is_add_car(user) })
 
 
 def car_park(request, company_id):
@@ -383,8 +405,9 @@ def car_park(request, company_id):
 
     check = request.GET.get("login") == owner
     show = not check or company != None
+    is_my_company = True if user.company_id == company.id else False
 
-    temp_cars = api.get_cars(company_id)
+    temp_cars = api.get_cars(company_id=company_id)
     cars = []
 
     for car in temp_cars:
@@ -392,7 +415,7 @@ def car_park(request, company_id):
 
         cars.append((body_type, DOWNLOAD_TYPE[int(car.download_type)], car))
 
-    return render(request, 'trans/car_park.html', {'company': company, 'show': show, 'is_administrator': is_administrator, 'cars': cars, 'my_company': is_add_car(user) })
+    return render(request, 'trans/car_park.html', {'company': company, 'is_my_company': is_my_company, 'show': show, 'is_administrator': is_administrator, 'cars': cars, 'my_company': is_add_car(user) })
 
 
 def _get_body_type(car_body_type):
@@ -420,6 +443,7 @@ def add_employee(request, company_id):
 
     check = request.GET.get("login") == owner
     show = not check or company != None
+    is_my_company = True if user.company_id == company.id else False
 
     if request.method == 'POST':
         form = EmployeeForm(request.POST)
@@ -436,7 +460,7 @@ def add_employee(request, company_id):
                 error = "Пользователь уже состоит в предприятии."
                 return render(request, 'trans/add_employee.html', {'company': company, 'show': show, 'error': error})
 
-    return render(request, 'trans/add_employee.html', {'company': company, 'show': show, 'is_administrator': is_administrator, 'my_company': is_add_car(user) })
+    return render(request, 'trans/add_employee.html', {'company': company, 'is_my_company': is_my_company, 'show': show, 'is_administrator': is_administrator, 'my_company': is_add_car(user) })
 
 
 def change_administrator(request, company_id, user_id):
@@ -476,6 +500,7 @@ def log(request, company_id):
 
     check = request.GET.get("login") == owner
     show = not check or company != None
+    is_my_company = True if user.company_id == company.id else False
 
     logs = []
     temp_logs = api.get_logs(company_id)
@@ -488,7 +513,7 @@ def log(request, company_id):
 
     logs.reverse()
 
-    return render(request, 'trans/company_log.html', {'company': company, 'show': show, 'logs': logs, 'is_administrator': is_administrator, 'my_company': is_add_car(user) })
+    return render(request, 'trans/company_log.html', {'company': company, 'is_my_company': is_my_company, 'show': show, 'logs': logs, 'is_administrator': is_administrator, 'my_company': is_add_car(user) })
 
 
 def add_car(request, company_id):
@@ -699,7 +724,6 @@ def edit_review(request, company_id, review_id):
     if request.is_ajax():
         api = get_api()
         user = api.get_user(nickname=request.user.username)
-        print(review_id)
 
         review = api.get_review(company_id, user.id, review_id)
         text = request.GET.get('text')
@@ -871,11 +895,16 @@ def list_goods(request):
 
         price = [str(_goods.rate) + " " + PRICES[int(_goods.price)], FORM_PRICES[int(_goods.form_price)]]
 
-        user = api.get_user(user_id=_goods.user_id)
+        _user = api.get_user(user_id=_goods.user_id)
+        _request = api.get_request(user_id=user.id, goods_id=_goods.id)
 
-        goods.append((_goods, date, car, this_goods, price, user))
+        check = True
+        if _goods.user_id == user.id:
+            check = False
 
-    return render(request, 'trans/list_goods.html', {'form': form, 'search_goods': goods, 'body_type_covered': BODY_TYPE_COVERED, 'body_type_uncovered': BODY_TYPE_UNCOVERED, 'body_type_tank': BODY_TYPE_TANK, 'body_type_special': BODY_TYPE_SPECIAL, 'download_types': DOWNLOAD_TYPE, 'current_date': current_date, 'my_company': is_add_car(user)})
+        goods.append((_goods, date, car, this_goods, price, _user, _request))
+
+    return render(request, 'trans/list_goods.html', {'form': form, 'check': check, 'search_goods': goods})
 
 
 def list_car(request):
@@ -916,11 +945,115 @@ def list_car(request):
 
         price = [str(car.rate) + " " + PRICES[int(car.price)], FORM_PRICES[int(car.form_price)]]
 
-        # user = api.get_user(user_id=car.user_id)
+        # _user = api.get_user(user_id=car.user_id)
 
-        cars.append((car, date, car_info, price))
+        _request = api.get_request(user_id=user.id, car_id=car.id)
 
-    return render(request, 'trans/list_car.html', {'form': form, 'cars': cars, 'body_type_covered': BODY_TYPE_COVERED, 'body_type_uncovered': BODY_TYPE_UNCOVERED, 'body_type_tank': BODY_TYPE_TANK, 'body_type_special': BODY_TYPE_SPECIAL, 'download_types': DOWNLOAD_TYPE, 'current_date': current_date, 'my_company': is_add_car(user)})
+        check = True
+        if car.company_id == user.company_id:
+            check = False
+
+        cars.append((car, date, car_info, price, _request))
+
+    return render(request, 'trans/list_car.html', {'form': form, 'cars': cars, 'check': check, 'body_type_covered': BODY_TYPE_COVERED, 'body_type_uncovered': BODY_TYPE_UNCOVERED, 'body_type_tank': BODY_TYPE_TANK, 'body_type_special': BODY_TYPE_SPECIAL, 'download_types': DOWNLOAD_TYPE, 'current_date': current_date, 'my_company': is_add_car(user)})
+
+
+def car_info(request, company_id, car_id):
+    api = get_api()
+
+    owner = request.user.username
+    user = api.get_user(nickname=owner)
+
+    company = api.get_company(company_id=company_id)
+
+    all_administrators = api.get_users(company_id=company_id, role=Role(2))
+    administrators = []
+
+    is_administrator = api.is_administrator(user.id, company_id)
+    is_employee = api.is_employee(user.id, company_id)
+
+    check = request.GET.get("login") == owner
+    show = not check or company != None
+
+    car = api.get_car(car_id)
+    date = car.get_date()
+
+    body_type = _get_body_type(car.body_type)
+    download_type = DOWNLOAD_TYPE[int(car.download_type)]
+    car_info = [body_type + ", " + download_type, str(car.carrying_capacity) + " т., " + str(car.volume) + " м³"]
+
+    price = [str(car.rate) + " " + PRICES[int(car.price)], FORM_PRICES[int(car.form_price)]]
+
+    requests = []
+    all_request = api.get_requests(car_id=car.id)
+    for _request in all_request:
+        user_request = api.get_user(_request.user_id)
+        avatar = _get_avatar(user_request.avatar)
+
+        date_create = _request.date_create.strftime("%d.%m.%Y, %H:%M")
+        request_date = None
+        if _request.date:
+            request_date = _request.date.strftime("%d.%m.%Y, %H:%M")
+
+        requests.append((_request, user_request, avatar, date_create, request_date))
+
+    return render(request, 'trans/car_info.html', {'company': company, 'requests': requests, 'car': car, 'date': date, 'car_info': car_info, 'prices': price, 'is_administrator': is_administrator, 'is_employee': is_employee, 'show': show, 'nickname': user.nickname, 'my_company': is_add_car(user) })
+
+
+def request_car(request, car_id):
+    api = get_api()
+    user = api.get_user(nickname=request.user.username)
+
+    api.create_request(user.id, car_id=car_id)
+
+    return redirect('/cars')
+
+
+def request_goods(request, goods_id):
+    api = get_api()
+    user = api.get_user(nickname=request.user.username)
+
+    api.create_request(user.id, goods_id=goods_id)
+
+    return redirect('/goods')
+
+
+def withdraw_request_car(request, car_id):
+    api = get_api()
+    user = api.get_user(nickname=request.user.username)
+
+    _request = api.get_request(user_id=user.id, car_id=car_id)
+
+    api.delete_request(_request.id)
+
+    return redirect('/cars')
+
+
+def withdraw_request_goods(request, goods_id):
+    api = get_api()
+    user = api.get_user(nickname=request.user.username)
+
+    _request = api.get_request(user_id=user.id, goods_id=goods_id)
+
+    api.delete_request(_request.id)
+
+    return redirect('/goods')
+
+
+def accept_request(request, company_id, car_id, request_id):
+    api = get_api()
+
+    api.accept_request(company_id, request.user.username, car_id, request_id)
+
+    return redirect('/company/' + company_id + '/carpark/' + car_id + '/info')
+
+
+def reject_request(request, company_id, car_id, request_id):
+    api = get_api()
+
+    api.reject_request(company_id, request.user.username, car_id, request_id)
+
+    return redirect('/company/' + company_id + '/carpark/' + car_id + '/info')
 
 
 def write_file(text):

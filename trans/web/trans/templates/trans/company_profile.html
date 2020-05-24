@@ -1,0 +1,52 @@
+{% extends 'trans/base_company.html' %}
+
+{% block title %}{{ company.name }}{% endblock %}
+
+{% block company_content %}
+    <div class="container_home">
+        <div class="container_profile_box box-shadow">
+            <div class="center">
+                <div style="margin-bottom: 40px">
+                    <h3 class="text-muted">Предприятие</h3>
+                </div>
+                {% for error in form.non_field_errors %}
+                    <div class="form-group has-errors text-danger">
+                        {{ error }}
+                    </div>
+                {% endfor %}
+                <div class="form-group">
+                    <em>Наименование: </em><label> {{ company.name }} </label>
+                </div>
+                <div class="form-group">
+                    <em>УНН/ИНН: </em><label> УНП {{ company.UNP }} </label>
+                </div>
+                <div class="form-group">
+                    <em>Основной вид деятельности: </em><label> {{ company.primary_occupation }} </label>
+                </div>
+                <div class="form-group">
+                    <em>Лицензия: </em><label> {{ company.license }} </label>
+                </div>
+                <div class="form-group">
+                    <em>Страна, город: </em><label> {{ company.country }}, {{ company.town }} </label>
+                </div>
+                <div class="form-group">
+                    <em>Адрес: </em><label> {{ company.address }} </label>
+                </div>
+                <div class="form-group">
+                    <em>Телефон: </em><label> {{ company.phone }} </label>
+                </div>
+                <div class="form-group">
+                    <em>Дата регистрации на сайте: </em><label> {{ date }} </label>
+                </div>
+                <div class="form-group">
+                    <em>Подробная информация: </em><p><label style="display: flex;"> {{ company.description }} </label></p>
+                </div>
+                {% if is_administrator %}
+                    <div class="form-group">
+                        <a href="{% url 'edit_company' %}" value="Login">Редактировать данные</a>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+{% endblock %}

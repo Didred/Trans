@@ -17,13 +17,16 @@ from library.models.company import Company
 from library.models.review import Review, Rating
 from library.models.log import Log
 from library.models.message import Message
+from library.models.request import Request, Status
 from sources.templates import (
     RAISING_TO_ADMINISTRATOR,
     LOWERING_FROM_ADMINISTRATOR,
     REMOVE_EMPLOYEE,
     ADD_EMPLOYEE,
     CREATE_CAR,
-    REMOVE_CAR
+    REMOVE_CAR,
+    ACCEPT_REQUEST,
+    REJECT_REQUEST
 )
 
 
@@ -79,7 +82,7 @@ class API:
             self._add(car)
 
             text_log = CREATE_CAR
-            self.create_log(company_id, administrator_nickname, text_log, "автомобиль", car.id)
+            self.create_log(company_id, administrator_nickname, text_log, "машину", car.id)
 
             return car.id
 
@@ -873,7 +876,6 @@ class API:
 
         if distinct:
             temp_messages = self._session.query(Message).filter(_filter).distinct(Message.recipient_id).group_by(Message.sender_id, Message.recipient_id).all()
-            print(self._session.query(Message).filter(_filter).distinct(Message.recipient_id).group_by(Message.sender_id, Message.recipient_id))
             self._session.commit()
             messages = self._remove_repeat_messages(temp_messages)
         else:
@@ -902,6 +904,82 @@ class API:
 
         messages = sorted(messages, key=lambda message: message.id, reverse=True)
         return messages
+
+
+    def create_request(
+            self,
+            user_id,
+            car_id=None,
+            goods_id=None):
+
+        if (car_id and not self.get_requests(user_id, car_id=car_id)) or (goods_id and not self.get_requests(user_id, goods_id==goods_id)):
+            request = Request(
+                user_id,
+                car_id,
+                goods_id,
+                datetime.datetime.now() + datetime.timedelta(hours=3)
+            )
+
+            self._add(request)
+
+            return request.id
+
+
+    def get_request(self, request_id=None, user_id=None, car_id=None, goods_id=None):
+        _filter = and_(
+            or_(request_id is None, Request.id == request_id),
+            or_(user_id is None, Request.user_id == user_id),
+            or_(car_id is None, Request.car_id == car_id),
+            or_(goods_id is None, Request.goods_id == goods_id)
+        )
+        try:
+            return (self._session.query(Request)
+                    .filter(_filter).one_or_none())
+        except sqlalchemy.orm.exc.NoResultFound:
+            raise Exception("Request not found")
+
+
+    def get_requests(self, user_id=None, car_id=None, goods_id=None):
+        _filter = and_(
+            or_(user_id is None, Request.user_id == user_id),
+            or_(car_id is None, Request.car_id == car_id),
+            or_(goods_id is None, Request.goods_id == goods_id)
+        )
+
+        request = self._session.query(Request).filter(_filter).all()
+        self._session.commit()
+
+        return request
+
+
+    def accept_request(self, company_id, administrator_nickname, car_id, request_id):
+        request = self.get_request(request_id=request_id)
+
+        request.status = Status(2)
+        request.date = datetime.datetime.now() + datetime.timedelta(hours=3)
+
+        text_log = ACCEPT_REQUEST
+        self.create_log(company_id, administrator_nickname, text_log, "машины", car_id)
+
+        self._session.commit()
+
+
+    def reject_request(self, company_id, administrator_nickname, car_id, request_id):
+        request = self.get_request(request_id=request_id)
+
+        request.status = Status(3)
+        request.date = datetime.datetime.now() + datetime.timedelta(hours=3)
+
+        text_log = REJECT_REQUEST
+        self.create_log(company_id, administrator_nickname, text_log, "машины", car_id)
+
+        self._session.commit()
+
+
+    def delete_request(self, request_id):
+        request = self.get_request(request_id)
+
+        self._delete(request)
 
 
     def _add(self, object):

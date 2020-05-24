@@ -26,7 +26,7 @@
         <form class="form-inline form-group">
             <div class="form-group company-block box-shadow">
                 <div class="company-name">
-                    <label class="company-text"> <a style="text-decoration: none; color: black;" href="{% url 'profile' nickname=company.nickname %}"> {{ company.name }} </a></label>
+                    <label class="company-text"> <a style="text-decoration: none; color: black;" href="{% url 'company_profile' company_id=company.id %}"> {{ company.name }} </a></label>
                     <p class=company-text> {{ company.primary_occupation }}, <span class="company-color"> {{ company.country }}, {{ company.town }} </span></p>
                 </div>
                 <div class="company-box">

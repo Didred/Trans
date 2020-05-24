@@ -5,8 +5,7 @@
 {% block company_content %}
     <div class="container container_home">
         <div class="container_profile_box box-shadow">
-            <div class="col-lg-1"></div>
-            <div class="col-lg-4">
+            <div class="center">
                 <div style="margin-bottom: 40px">
                     <h3 class="text-muted">Контактное лицо</h3>
                 </div>
@@ -16,63 +15,26 @@
                     </div>
                 {% endfor %}
                 <div class="form-group">
-                    <label> {{ member.name }} {{ member.surname }} </label>
+                    <img style="width: 300px;" src="data:image/gif;base64,{{avatar}}">
                 </div>
                 <div class="form-group">
-                    <label> {{ member.email }} </label>
+                    <em>Фамилия, имя: </em><label> {{ member.surname }} {{ member.name }} </label>
                 </div>
                 <div class="form-group">
-                    <label> {{ member.phone }} </label>
+                    <em>Адрес электронной почты: </em><label> {{ member.email }} </label>
+                </div>
+                <div class="form-group">
+                    <em>Номер телефона: </em><label> {{ member.phone }} </label>
                 </div>
                 {% if check %}
                     <div class="form-group">
                         <a href="{% url 'edit_profile' %}" value="Login">Редактировать данные</a>
                     </div>
                 {% endif %}
-            </div>
-            <div class="col-lg-2"></div>
-            <div class="col-lg-4">
-                <div style="margin-bottom: 40px">
-                    <h3 class="text-muted">Предприятие</h3>
-                </div>
-                {% for error in form.non_field_errors %}
-                    <div class="form-group has-errors text-danger">
-                        {{ error }}
-                    </div>
-                {% endfor %}
-                {% if company %}
+                {% if not company %}
                     <div class="form-group">
-                        <label> {{ company.name }} </label>
+                        <a href="{% url 'add_company' %}" value="Login">Зарегистрировать предприятие</a>
                     </div>
-                    <div class="form-group">
-                        <label> УНП {{ company.UNP }} </label>
-                    </div>
-                    <div class="form-group">
-                        <label> {{ company.primary_occupation }} </label>
-                    </div>
-                    <div class="form-group">
-                        <label> Лицензия {{ company.license }} </label>
-                    </div>
-                    <div class="form-group">
-                        <label> {{ company.country }}, {{ company.town }} </label>
-                    </div>
-                    <div class="form-group">
-                        <label> {{ company.address }} </label>
-                    </div>
-                    <div class="form-group">
-                        <label> {{ company.phone }} </label>
-                    </div>
-                    {% if check %}
-                        <div class="form-group">
-                            <a href="{% url 'edit_company' %}" value="Login">Редактировать данные</a>
-                        </div>
-                    {% endif %}
-                {% else %}
-                    {% if check %}
-                        <div class="form-group">
-                            <a href="{% url 'add_company' %}" value="Login">Зарегистрировать предприятие</a>
-                        </div>
-                    {% endif %}
                 {% endif %}
             </div>
         </div>

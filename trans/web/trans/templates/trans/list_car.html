@@ -1,5 +1,5 @@
 {% extends 'trans/base.html' %}
-{% block title %}Грузы{% endblock %}
+{% block title %}Транспорт{% endblock %}
 
 {% block content %}
     <form method="post">
@@ -76,7 +76,7 @@
             </div>
         </div>
     </form>
-    {% for car, date, car_info, prices in cars %}
+    {% for car, date, car_info, prices, request in cars %}
         <div class="container_goods box-shadow">
             <div class="car_6">
                 <div class="goods_text">Место загрузки</div>
@@ -102,11 +102,21 @@
                     <div>{{price}}</div>
                 {% endfor %}
             </div>
-            <div class="car_6">
-                <div class="goods_text">Контакты</div>
-                <div><a href="{% url 'profile' nickname=user %}">{{user}}</a></div>
-                <div><a>Подать заявку</a></div>
-            </div>
+            {% if check %}
+                <div class="car_6">
+                    <div class="goods_text">Заявка</div>
+                    {% if not request and check %}
+                        <a href="{% url 'request_car' car_id=car.id %}"><label class="label label-info">Подать заявку</label></a>
+                    {% elif request.status.value == 1%}
+                        <label class="label label-warning">Заявка на рассмотрении</label>
+                        <a href="{% url 'withdraw_request_car' car_id=car.id %}"><label>Отозвать заявку</label></a>
+                    {% elif request.status.value == 2%}
+                        <label class="label label-success">Заявка одобрена</label>
+                    {% elif request.status.value == 3%}
+                        <label class="label label-danger">Заявка отклонена</label>
+                    {% endif %}
+                </div>
+            {% endif %}
         </div>
     {% endfor %}
     <script>

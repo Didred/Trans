@@ -26,7 +26,7 @@
                 <p>
                     <span class="container_review_span">{{ user.name }} {{ user.surname }}</span>
                     {{ date_creation }}
-                    <span class="italic">{% if review.edit %} (ред.) {% endif %}</span>
+                    <span class="italic" style="margin-left: 5px;">{% if review.is_edit %} (ред.) {% endif %}</span>
                 </p>
                 <p id="review-{{review.id}}">{{ review.review }}</p>
             </div>
@@ -81,7 +81,6 @@
                 }
 
                 if (tag_textarea) {
-                    console.log($('textarea#review').val())
                     let message = $.get("review/" + id + "/edit?text=" + $('textarea#review').val(), function(data) {
                         $.ajax({
                             url: "review",
@@ -91,13 +90,6 @@
                             }
                             });
                     });
-                    setTimeout(function () {
-                        if (message.responseText == "OK") {
-                            $('textarea#review').replaceWith(function(index, oldHTML){
-                                return $("<p id='review-" + id +"' />").html(oldHTML);
-                            });
-                        }
-                    }, 100)
                 }
             } else {
                 $.get("remove_review/" + id, function(data) {
