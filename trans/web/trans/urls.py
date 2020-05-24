@@ -46,4 +46,7 @@ urlpatterns = [
     url(r'^request/car/(?P<car_id>[0-9]+)/delete$', views.withdraw_request_car, name='withdraw_request_car'),
     url(r'^request/goods/(?P<goods_id>[0-9]+)/$', views.request_goods, name='request_goods'),
     url(r'^request/goods/(?P<goods_id>[0-9]+)/delete$', views.withdraw_request_goods, name='withdraw_request_goods'),
+    url(r'^profile/(?P<nickname>.+?)/goods$', views.goods, name='goods'),
+    url(r'^profile/(?P<nickname>.+?)/goods/(?P<goods_id>[0-9]+)/edit$', views.edit_goods, name='edit_goods'),
+    url(r'^profile/(?P<nickname>.+?)/goods/(?P<goods_id>[0-9]+)/info$', views.goods_info, name='goods_info'),
 ]

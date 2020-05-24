@@ -5,6 +5,7 @@
         <div class="container_profile">
             {% if is_my_company %}
                 <a class="company_picture" href="{% url 'profile' nickname=user %}"><img src="https://i.ibb.co/Z1h6fjN/about-us.png" alt="Avatar"><p class="center">Профиль</p></a>
+                <a class="company_picture" href="{% url 'goods' nickname=user %}"><img src="https://i.ibb.co/Z1h6fjN/about-us.png" alt="Avatar"><p class="center">Грузы</p></a>
                 <a class="company_picture" href="#"><img src="https://i.ibb.co/Z1h6fjN/about-us.png" alt="Avatar"><p class="center">Запросы</p></a>
             {% endif %}
             {% if show %}

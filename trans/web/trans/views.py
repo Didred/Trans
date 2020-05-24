@@ -1056,6 +1056,39 @@ def reject_request(request, company_id, car_id, request_id):
     return redirect('/company/' + company_id + '/carpark/' + car_id + '/info')
 
 
+def goods(request, nickname):
+    api = get_api()
+    owner = api.get_user(nickname=request.user.username)
+
+    user = api.get_user(nickname=nickname)
+    company = api.get_company(company_id=user.company_id)
+    is_administrator = False
+    if company:
+        is_administrator = api.is_administrator(owner.id, company.id)
+
+    check = nickname == request.user.username
+    show = not check or company != None
+    is_my_company = True
+
+    temp_goods = api.get_search_goods(user_id=user.id)
+    goods = []
+
+    for _goods in temp_goods:
+        body_type = _get_body_type(_goods.body_type)
+
+        goods.append((body_type, DOWNLOAD_TYPE[int(_goods.download_type)], _goods))
+
+    return render(request, 'trans/goods.html', {'company': company, 'is_my_company': is_my_company, 'show': show, 'is_administrator': is_administrator, 'goods': goods, 'my_company': is_add_car(user) })
+
+
+def edit_goods(request, nickname, goods_id):
+    pass
+
+
+def goods_info(request, nickname, goods_id):
+    pass
+
+
 def write_file(text):
     with open("output.txt", "w") as file:
         file.write(str(text))
