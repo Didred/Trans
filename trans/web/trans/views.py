@@ -193,9 +193,10 @@ def signup(request):
     return render(request, 'registration/signup.html', {'form': form})
 
 
-def profile(request, nickname):
+def profile(request):
     api = get_api()
     owner = api.get_user(nickname=request.user.username)
+    nickname = owner.nickname
 
     user = api.get_user(nickname=nickname)
     company = api.get_company(company_id=user.company_id)
@@ -850,7 +851,7 @@ def add_goods(request):
                     form.cleaned_data['form_price'],
                     note=form.cleaned_data['note']
                 )
-                return redirect('/')
+                return redirect('/profile/goods')
 
     return render(request, 'trans/add_goods.html', {'form': form, 'body_type_covered': BODY_TYPE_COVERED, 'body_type_uncovered': BODY_TYPE_UNCOVERED, 'body_type_tank': BODY_TYPE_TANK, 'body_type_special': BODY_TYPE_SPECIAL, 'download_types': DOWNLOAD_TYPE, 'current_date': current_date, 'prices': PRICES, 'form_prices': FORM_PRICES, 'my_company': is_add_car(user)})
 
@@ -1013,6 +1014,7 @@ def request_goods(request, goods_id):
     api = get_api()
     user = api.get_user(nickname=request.user.username)
 
+    print(goods_id)
     api.create_request(user.id, goods_id=goods_id)
 
     return redirect('/goods')
@@ -1056,9 +1058,10 @@ def reject_request(request, company_id, car_id, request_id):
     return redirect('/company/' + company_id + '/carpark/' + car_id + '/info')
 
 
-def goods(request, nickname):
+def goods(request):
     api = get_api()
     owner = api.get_user(nickname=request.user.username)
+    nickname = owner.nickname
 
     user = api.get_user(nickname=nickname)
     company = api.get_company(company_id=user.company_id)
@@ -1081,12 +1084,25 @@ def goods(request, nickname):
     return render(request, 'trans/goods.html', {'company': company, 'is_my_company': is_my_company, 'show': show, 'is_administrator': is_administrator, 'goods': goods, 'my_company': is_add_car(user) })
 
 
-def edit_goods(request, nickname, goods_id):
+def edit_goods(request, goods_id):
     pass
 
 
-def goods_info(request, nickname, goods_id):
+def goods_info(request, goods_id):
     pass
+
+
+def remove_goods(request, goods_id):
+    if request.is_ajax():
+        api = get_api()
+        owner = api.get_user(nickname=request.user.username)
+
+        api.delete_goods(owner.id, goods_id)
+
+        message = goods_id
+    else:
+        message = "Страницы не существует"
+    return HttpResponse(message)
 
 
 def write_file(text):

@@ -11,7 +11,6 @@ urlpatterns = [
 
     url(r'^signup/$', views.signup, name='signup'),
     url(r'^profile$', views.profile, name='profile'),
-    url(r'^profile/(?P<nickname>.+?)/$', views.profile, name='profile'),
     url(r'^add_company/$', views.add_company, name='add_company'),
     url(r'^profile/edit$', views.edit_profile, name='edit_profile'),
     url(r'^profile/edit/password$', views.edit_password, name='edit_password'),
@@ -46,7 +45,8 @@ urlpatterns = [
     url(r'^request/car/(?P<car_id>[0-9]+)/delete$', views.withdraw_request_car, name='withdraw_request_car'),
     url(r'^request/goods/(?P<goods_id>[0-9]+)/$', views.request_goods, name='request_goods'),
     url(r'^request/goods/(?P<goods_id>[0-9]+)/delete$', views.withdraw_request_goods, name='withdraw_request_goods'),
-    url(r'^profile/(?P<nickname>.+?)/goods$', views.goods, name='goods'),
-    url(r'^profile/(?P<nickname>.+?)/goods/(?P<goods_id>[0-9]+)/edit$', views.edit_goods, name='edit_goods'),
-    url(r'^profile/(?P<nickname>.+?)/goods/(?P<goods_id>[0-9]+)/info$', views.goods_info, name='goods_info'),
+    url(r'^profile/goods/$', views.goods, name='goods'),
+    url(r'^profile/goods/(?P<goods_id>[0-9]+)/edit$', views.edit_goods, name='edit_goods'),
+    url(r'^profile/goods/(?P<goods_id>[0-9]+)/info$', views.goods_info, name='goods_info'),
+    url(r'^profile/goods/remove_goods/(?P<goods_id>[0-9]+)/$', views.remove_goods, name='remove_goods'),
 ]

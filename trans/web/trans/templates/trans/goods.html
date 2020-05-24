@@ -9,7 +9,7 @@
             <div class="box-shadow container_car">
                 <div style="display: flex;">
                     <div class="add_administrator">
-                        <a href="{% url 'edit_goods' nickname=user goods_id=goods.id %}" class="glyphicon glyphicon-pencil"></a>
+                        <a href="#" class="glyphicon glyphicon-pencil"></a>
                         <a id="remove-{{ goods.id }}" class="glyphicon glyphicon-remove"></a>
                     </div>
                 </div>
@@ -20,7 +20,7 @@
                     <p></p>
                     Тип загрузки: {{ download_type }}
                     <p></p>
-                    <a href="{% url 'goods_info' nickname=user goods_id=goods.id %}"><div class="center">Посмотреть описание и ставки</div></a>
+                    <a href="{% url 'goods_info' goods_id=goods.id %}"><div class="center">Посмотреть описание и ставки</div></a>
                 </div>
             </div>
         {% endfor %}
@@ -37,9 +37,9 @@
 
         $('a').click(function () {
             let id = $(this).attr('id').split('-')[1]
-            $.get("remove_car/" + id, function(data) {
+            $.get("remove_goods/" + id, function(data) {
                 $.ajax({
-                    url: "carpark",
+                    url: "",
                     cache: true,
                     success: function(html){
                         $("#content").html(html);

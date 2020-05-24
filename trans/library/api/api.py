@@ -258,6 +258,12 @@ class API:
         car = self.get_car(car_id)
 
         if administrator.role.value > 1 and administrator.nickname == company.nickname:
+            requests = self.get_requests(car_id=car.id)
+
+            for request in requests:
+                if request.status.value == 1:
+                    request.status = Status(3)
+
             self._delete(car)
 
             text_log = REMOVE_CAR
@@ -610,10 +616,17 @@ class API:
 
         self._session.commit()
 
-    def delete_goods(self, goods_id):
+    def delete_goods(self, user_id, goods_id):
         goods = self.get_goods(goods_id)
 
-        self._delete(goods)
+        if goods.user_id == user_id:
+            requests = self.get_requests(goods_id=goods.id)
+
+            for request in requests:
+                if request.status.value == 1:
+                    request.status = Status(3)
+
+            self._delete(goods)
 
     def create_company(
             self,
@@ -912,7 +925,7 @@ class API:
             car_id=None,
             goods_id=None):
 
-        if (car_id and not self.get_requests(user_id, car_id=car_id)) or (goods_id and not self.get_requests(user_id, goods_id==goods_id)):
+        if (car_id and not self.get_requests(user_id, car_id=car_id)) or (goods_id and not self.get_requests(user_id, goods_id=goods_id)):
             request = Request(
                 user_id,
                 car_id,
@@ -947,6 +960,7 @@ class API:
         )
 
         request = self._session.query(Request).filter(_filter).all()
+        print(self._session.query(Request).filter(_filter))
         self._session.commit()
 
         return request
