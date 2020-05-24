@@ -132,7 +132,6 @@ class API:
 
         for car in cars:
             if carrying_capacity_min:
-                print(result_cars)
                 if car.carrying_capacity >= int(carrying_capacity_min):
                     result_cars.append(car)
             else:
@@ -501,8 +500,6 @@ class API:
 
         for good in search_goods:
             if weigh_min:
-                print(type(good.weigh))
-                print(int(weigh_min))
                 if good.weigh >= int(weigh_min):
                     result_goods.append(good)
             else:
@@ -903,7 +900,6 @@ class API:
         for i in reversed(range(len(messages))):
             for j in reversed(range(len(messages))):
                 if messages[i].sender_id == messages[j].recipient_id and messages[i].recipient_id == messages[j].sender_id and i != j:
-                    print(1)
                     if messages[i].id > messages[j].id:
                         delete_list.add(j)
                         break
@@ -960,7 +956,6 @@ class API:
         )
 
         request = self._session.query(Request).filter(_filter).all()
-        print(self._session.query(Request).filter(_filter))
         self._session.commit()
 
         return request

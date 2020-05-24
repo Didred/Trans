@@ -25,11 +25,9 @@
             </div>
         {% endfor %}
     </div>
-    {% if is_administrator %}
-        <div class="absolute_center width_car">
-            <a href="{% url 'add_goods' %}"><button type="button" class="btn btn-primary">Добавить груз</button></a>
-        </div>
-    {% endif %}
+    <div class="absolute_center width_car">
+        <a href="{% url 'add_goods' %}"><button type="button" class="btn btn-primary">Добавить груз</button></a>
+    </div>
     <script type="text/javascript">
         Array.prototype.forEach.call(document.querySelectorAll('remove[type=text]'), function (ths) {
             ths.onclick = event_click;

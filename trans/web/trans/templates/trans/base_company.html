@@ -6,7 +6,7 @@
             {% if is_my_company %}
                 <a class="company_picture" href="{% url 'profile' %}"><img src="https://i.ibb.co/Z1h6fjN/about-us.png" alt="Avatar"><p class="center">Профиль</p></a>
                 <a class="company_picture" href="{% url 'goods' %}"><img src="https://i.ibb.co/Z1h6fjN/about-us.png" alt="Avatar"><p class="center">Грузы</p></a>
-                <a class="company_picture" href="#"><img src="https://i.ibb.co/Z1h6fjN/about-us.png" alt="Avatar"><p class="center">Запросы</p></a>
+                <a class="company_picture" href="{% url 'requests' %}"><img src="https://i.ibb.co/Z1h6fjN/about-us.png" alt="Avatar"><p class="center">Запросы</p></a>
             {% endif %}
             {% if show %}
                 <a class="company_picture" href="{% url 'company_profile' company_id=company.id %}"><img src="https://i.ibb.co/Z1h6fjN/about-us.png" alt="Avatar"><p class="center">Компания</p></a>

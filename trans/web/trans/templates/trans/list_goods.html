@@ -110,10 +110,10 @@
                 <div class="goods_7">
                     <div class="goods_text">Заявка</div>
                     {% if not request and check %}
-                        <a href="{% url 'request_goods' goods_id=goods.id %}"><label class="label label-info">Подать заявку</label></a>
+                        <a href="{% url 'request_goods' goods_id=goods.id %}?check=1"><label class="label label-info">Подать заявку</label></a>
                     {% elif request.status.value == 1%}
                         <label class="label label-warning" style="font: 10pt sans-serif;">Заявка на рассмотрении</label>
-                        <a href="{% url 'withdraw_request_goods' goods_id=goods.id %}"><label>Отозвать заявку</label></a>
+                        <a href="{% url 'withdraw_request_goods' goods_id=goods.id %}?check=1"><label>Отозвать заявку</label></a>
                     {% elif request.status.value == 2%}
                         <label class="label label-success">Заявка одобрена</label>
                     {% elif request.status.value == 3%}

@@ -46,6 +46,7 @@
                             </ul>
                         </li>
                         {% if user.is_authenticated %}
+                            <li><a href="{% url 'requests' %}" class="navbar-nav">Запросы</a></li>
                             <li><a href="{% url 'list_message' %}" class="navbar-nav">Сообщения</a></li>
                         {% endif %}
                     </ul>

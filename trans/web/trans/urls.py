@@ -49,5 +49,5 @@ urlpatterns = [
     url(r'^profile/goods/(?P<goods_id>[0-9]+)/edit$', views.edit_goods, name='edit_goods'),
     url(r'^profile/goods/(?P<goods_id>[0-9]+)/info$', views.goods_info, name='goods_info'),
     url(r'^profile/goods/remove_goods/(?P<goods_id>[0-9]+)/$', views.remove_goods, name='remove_goods'),
-    url(r'^profile/requests/$', views.list_request, name='list_request'),
+    url(r'^profile/requests/$', views.list_request, name='requests'),
 ]

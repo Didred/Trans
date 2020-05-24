@@ -1,7 +1,8 @@
-{% extends 'trans/base.html' %}
+{% extends 'trans/base_company.html' %}
 {% block title %}Запросы{% endblock %}
 
-{% block content %}
+{% block company_content %}
+    <h3 class="text-muted center">Заявки на транспорт</h3>
     {% for car, date, car_info, prices, request in cars %}
         <div class="container_goods box-shadow">
             <div class="car_6">
@@ -32,10 +33,10 @@
                 <div class="car_6">
                     <div class="goods_text">Заявка</div>
                     {% if not request and check %}
-                        <a href="{% url 'request_car' car_id=car.id %}"><label class="label label-info">Подать заявку</label></a>
+                        <a href="{% url 'request_car' car_id=car.id %}?check=0"><label class="label label-info">Подать заявку</label></a>
                     {% elif request.status.value == 1%}
                         <label class="label label-warning">Заявка на рассмотрении</label>
-                        <a href="{% url 'withdraw_request_car' car_id=car.id %}"><label>Отозвать заявку</label></a>
+                        <a href="{% url 'withdraw_request_car' car_id=car.id %}?check=0"><label>Отозвать заявку</label></a>
                     {% elif request.status.value == 2%}
                         <label class="label label-success">Заявка одобрена</label>
                     {% elif request.status.value == 3%}
@@ -45,6 +46,7 @@
             {% endif %}
         </div>
     {% endfor %}
+    <h3 class="text-muted center">Заявки на грузы</h3>
     {% for goods, date, car, this_goods, prices, user, request in search_goods %}
         <div class="container_goods box-shadow">
             <div class="goods_7">
@@ -75,21 +77,19 @@
                     <div>{{price}}</div>
                 {% endfor %}
             </div>
-            {% if check %}
-                <div class="goods_7">
-                    <div class="goods_text">Заявка</div>
-                    {% if not request and check %}
-                        <a href="{% url 'request_goods' goods_id=goods.id %}"><label class="label label-info">Подать заявку</label></a>
-                    {% elif request.status.value == 1%}
-                        <label class="label label-warning" style="font: 10pt sans-serif;">Заявка на рассмотрении</label>
-                        <a href="{% url 'withdraw_request_goods' goods_id=goods.id %}"><label>Отозвать заявку</label></a>
-                    {% elif request.status.value == 2%}
-                        <label class="label label-success">Заявка одобрена</label>
-                    {% elif request.status.value == 3%}
-                        <label class="label label-danger">Заявка отклонена</label>
-                    {% endif %}
-                </div>
-            {% endif %}
+            <div class="goods_7">
+                <div class="goods_text">Заявка</div>
+                {% if not request and check %}
+                    <a href="{% url 'request_goods' goods_id=goods.id %}?check=0"><label class="label label-info">Подать заявку</label></a>
+                {% elif request.status.value == 1%}
+                    <label class="label label-warning" style="font: 10pt sans-serif;">Заявка на рассмотрении</label>
+                    <a href="{% url 'withdraw_request_goods' goods_id=goods.id %}?check=0"><label>Отозвать заявку</label></a>
+                {% elif request.status.value == 2%}
+                    <label class="label label-success">Заявка одобрена</label>
+                {% elif request.status.value == 3%}
+                    <label class="label label-danger">Заявка отклонена</label>
+                {% endif %}
+            </div>
         </div>
     {% endfor %}
     <script>

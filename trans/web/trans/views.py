@@ -1011,7 +1011,12 @@ def request_car(request, car_id):
 
     api.create_request(user.id, car_id=car_id)
 
-    return redirect('/cars')
+    check = request.GET.get("check")
+    print(check)
+    if check == "1":
+        return redirect('/cars')
+    else:
+        return redirect('/profile/requests/')
 
 
 def request_goods(request, goods_id):
@@ -1021,7 +1026,11 @@ def request_goods(request, goods_id):
     print(goods_id)
     api.create_request(user.id, goods_id=goods_id)
 
-    return redirect('/goods')
+    check = request.GET.get("check")
+    if check == "1":
+        return redirect('/goods')
+    else:
+        return redirect('/profile/requests/')
 
 
 def withdraw_request_car(request, car_id):
@@ -1032,7 +1041,11 @@ def withdraw_request_car(request, car_id):
 
     api.delete_request(_request.id)
 
-    return redirect('/cars')
+    check = request.GET.get("check")
+    if check == "1":
+        return redirect('/cars')
+    else:
+        return redirect('/profile/requests/')
 
 
 def withdraw_request_goods(request, goods_id):
@@ -1043,7 +1056,11 @@ def withdraw_request_goods(request, goods_id):
 
     api.delete_request(_request.id)
 
-    return redirect('/goods')
+    check = request.GET.get("check")
+    if check == "1":
+        return redirect('/goods')
+    else:
+        return redirect('/profile/requests/')
 
 
 def accept_request(request, company_id, id, request_id, log):
@@ -1152,7 +1169,66 @@ def remove_goods(request, goods_id):
 
 
 def list_request(request):
-    return render(request, 'trans/list_request.html')
+    api = get_api()
+    owner = api.get_user(nickname=request.user.username)
+    nickname = owner.nickname
+
+    user = api.get_user(nickname=nickname)
+    company = api.get_company(company_id=user.company_id)
+    is_administrator = False
+    if company:
+        is_administrator = api.is_administrator(owner.id, company.id)
+
+    check = nickname == request.user.username
+    show = not check or company != None
+    is_my_company = True
+
+    requests = api.get_requests(user_id=user.id)
+    cars = []
+    goods = []
+
+    for _request in requests:
+        if _request.car_id:
+            car = api.get_car(_request.car_id)
+            date = car.get_date()
+
+            body_type = _get_body_type(car.body_type)
+            download_type = DOWNLOAD_TYPE[int(car.download_type)]
+
+            car_info = [body_type + ", " + download_type, str(car.carrying_capacity) + " т., " + str(car.volume) + " м³"]
+
+            price = [str(car.rate) + " " + PRICES[int(car.price)], FORM_PRICES[int(car.form_price)]]
+
+            check = True
+            if car.company_id == user.company_id:
+                check = False
+
+            cars.append((car, date, car_info, price, _request))
+        else:
+            _goods = api.get_goods(_request.goods_id)
+            print(_goods)
+            if _goods:
+                date = _goods.get_date()
+
+                body_type = _get_body_type(_goods.body_type)
+                download_type = DOWNLOAD_TYPE[int(_goods.download_type)]
+
+                car = body_type + ", " + download_type
+
+                this_goods = [_goods.name, str(_goods.weigh) + " т., " + str(_goods.volume) + " м³"]
+
+                price = [str(_goods.rate) + " " + PRICES[int(_goods.price)], FORM_PRICES[int(_goods.form_price)]]
+
+                _user = api.get_user(user_id=_goods.user_id)
+
+                check = True
+                if _goods.user_id == user.id:
+                    check = False
+
+                goods.append((_goods, date, car, this_goods, price, _user, _request))
+
+    return render(request, 'trans/list_request.html', {'member': user, 'is_my_company': is_my_company, 'cars': cars, 'search_goods': goods, 'company': company, 'check': check, 'show': show, 'is_administrator': is_administrator, 'my_company': is_add_car(user)})
+
 
 
 def write_file(text):
