@@ -4,16 +4,16 @@
     {% if user.is_authenticated %}
         <div class="container_profile">
             {% if is_my_company %}
-                <a class="company_picture" href="{% url 'profile' %}"><img src="https://i.ibb.co/Z1h6fjN/about-us.png" alt="Avatar"><p class="center">Профиль</p></a>
-                <a class="company_picture" href="{% url 'goods' %}"><img src="https://i.ibb.co/Z1h6fjN/about-us.png" alt="Avatar"><p class="center">Грузы</p></a>
-                <a class="company_picture" href="{% url 'requests' %}"><img src="https://i.ibb.co/Z1h6fjN/about-us.png" alt="Avatar"><p class="center">Запросы</p></a>
+                <a class="company_picture" href="{% url 'profile' %}"><img src="https://i.ibb.co/1nSDcpB/profile.png" alt="Avatar"><p class="center">Профиль</p></a>
+                <a class="company_picture" href="{% url 'goods' %}"><img src="https://i.ibb.co/0KjxfQY/goods.png" alt="Avatar"><p class="center">Грузы</p></a>
+                <a class="company_picture" href="{% url 'requests' %}"><img src="https://i.ibb.co/YZBxQ7L/requests.png" alt="Avatar"><p class="center">Запросы</p></a>
             {% endif %}
             {% if show %}
                 <a class="company_picture" href="{% url 'company_profile' company_id=company.id %}"><img src="https://i.ibb.co/Z1h6fjN/about-us.png" alt="Avatar"><p class="center">Компания</p></a>
                 <a class="company_picture" href="{% url 'contacts' company_id=company.id %}" ><img src="https://i.ibb.co/SQKdV7x/member.png" alt="Avatar"><p class="center">Контакты</p></a>
-                <a class="company_picture" href="{% url 'car_park' company_id=company.id %}" ><img src="https://i.ibb.co/CVVCnCP/car.png" alt="Avatar"><p class="center">Автопарк</p></a>
+                <a class="company_picture" href="{% url 'car_park' company_id=company.id %}" ><img src="https://i.ibb.co/sKFFFrL/car.png" alt="Avatar"><p class="center">Автопарк</p></a>
                 {% if is_administrator %}
-                    <a class="company_picture" href="{% url 'log' company_id=company.id %}" ><img src="https://i.ibb.co/cFV5Cf9/logs.png" alt="Avatar"><p class="center">Логи</p></a>
+                    <a class="company_picture" href="{% url 'log' company_id=company.id %}" ><img src="https://i.ibb.co/WgHLkGB/logs.png" alt="Avatar"><p class="center">Логи</p></a>
                 {% endif %}
             {% endif %}
         </div>

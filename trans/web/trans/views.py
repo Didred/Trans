@@ -528,6 +528,7 @@ def add_car(request, company_id):
 
     check = request.GET.get("login") == owner
     show = not check or company != None
+    is_my_company = True if user.company_id == company.id else False
     form = None
 
     current_date = str(datetime.now().date())
@@ -556,7 +557,7 @@ def add_car(request, company_id):
                 )
                 return redirect('/company/'+ company_id + '/carpark')
 
-    return render(request, 'trans/add_car.html', {'form': form, 'company': company, 'show': show, 'is_administrator': is_administrator, 'body_type_covered': BODY_TYPE_COVERED, 'body_type_uncovered': BODY_TYPE_UNCOVERED, 'body_type_tank': BODY_TYPE_TANK, 'body_type_special': BODY_TYPE_SPECIAL, 'download_types': DOWNLOAD_TYPE, 'current_date': current_date, 'prices': PRICES, 'form_prices': FORM_PRICES, 'my_company': is_add_car(user)})
+    return render(request, 'trans/add_car.html', {'form': form, 'is_my_company': is_my_company, 'company': company, 'show': show, 'is_administrator': is_administrator, 'body_type_covered': BODY_TYPE_COVERED, 'body_type_uncovered': BODY_TYPE_UNCOVERED, 'body_type_tank': BODY_TYPE_TANK, 'body_type_special': BODY_TYPE_SPECIAL, 'download_types': DOWNLOAD_TYPE, 'current_date': current_date, 'prices': PRICES, 'form_prices': FORM_PRICES, 'my_company': is_add_car(user)})
 
 
 def _check_car_form(form, extra=True, weigh=False):
@@ -1068,7 +1069,7 @@ def accept_request(request, company_id, id, request_id, log):
 
     api.accept_request(company_id, request.user.username, id, request_id, log=log)
 
-    if log == 1:
+    if log == "1":
         return redirect('/company/' + company_id + '/carpark/' + id + '/info')
     else:
         return redirect('/profile/goods/' + id + '/info')
@@ -1079,7 +1080,7 @@ def reject_request(request, company_id, id, request_id, log):
 
     api.reject_request(company_id, request.user.username, id, request_id, log=log)
 
-    if log == 1:
+    if log == "1":
         return redirect('/company/' + company_id + '/carpark/' + id + '/info')
     else:
         return redirect('/profile/goods/' + id + '/info')
@@ -1190,23 +1191,25 @@ def list_request(request):
     for _request in requests:
         if _request.car_id:
             car = api.get_car(_request.car_id)
-            date = car.get_date()
+            if car:
+                date = car.get_date()
 
-            body_type = _get_body_type(car.body_type)
-            download_type = DOWNLOAD_TYPE[int(car.download_type)]
+                body_type = _get_body_type(car.body_type)
+                download_type = DOWNLOAD_TYPE[int(car.download_type)]
 
-            car_info = [body_type + ", " + download_type, str(car.carrying_capacity) + " т., " + str(car.volume) + " м³"]
+                car_info = [body_type + ", " + download_type, str(car.carrying_capacity) + " т., " + str(car.volume) + " м³"]
 
-            price = [str(car.rate) + " " + PRICES[int(car.price)], FORM_PRICES[int(car.form_price)]]
+                price = [str(car.rate) + " " + PRICES[int(car.price)], FORM_PRICES[int(car.form_price)]]
 
-            check = True
-            if car.company_id == user.company_id:
-                check = False
+                check = True
+                if car.company_id == user.company_id:
+                    check = False
 
-            cars.append((car, date, car_info, price, _request))
+                car_company = api.get_company(company_id=car.company_id)
+
+                cars.append((car, date, car_info, price, _request, car_company))
         else:
             _goods = api.get_goods(_request.goods_id)
-            print(_goods)
             if _goods:
                 date = _goods.get_date()
 
