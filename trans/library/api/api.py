@@ -1005,6 +1005,24 @@ class API:
         self._delete(request)
 
 
+    def is_admin(self, user):
+        return True if user.role == Role(4) else False
+
+
+    def change_permission(self, admin, user_id, role):
+        if admin.role == Role(4):
+            user = self.get_user(user_id)
+
+            if role == 1:
+                company = self.get_company(nickname=user.nickname)
+
+                user.role = Role(2) if company else Role(1)
+            else:
+                user.role = Role(role)
+
+            self._session.commit()
+
+
     def _add(self, object):
         self._session.add(object)
         self._session.commit()

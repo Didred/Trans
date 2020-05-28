@@ -1,0 +1,34 @@
+{% extends 'trans/base.html' %}
+
+{% block title %}Админ меню{% endblock %}
+
+{% block content %}
+    <h3 class="text-muted center">Пользователи</h3>
+    {% for user, avatar in users %}
+        <div class="container_review box-shadow container_review_normal">
+            <img src="data:image/gif;base64,{{avatar}}" alt="Avatar" style="width:50px">
+            <div class="container_admin_menu">
+                <span style="font-size: 21px; float: left;">{{ user.nickname}} ({{ user.surname }} {{ user.name }}) </span>
+                {% if user.role.value == 1 or user.role.value == 2 %}
+                    <span style="font-size: 21px; float: left; margin-left: 2%; color: red;"> Пользователь</span>
+                    <div style="position: absolute; right: 6%;">
+                        <a href="{% url 'change_permission' user_id=user.id %}?permission=3"><label class="label label-warning">Повысить до модератора</label></a>
+                        <a href="{% url 'change_permission' user_id=user.id %}?permission=4"><label class="label label-success">Повысить до админа</label></a>
+                    </div>
+                {% elif user.role.value == 3 %}
+                    <span style="font-size: 21px; float: left; margin-left: 2%; color: #fa961c;"> Модератор</span>
+                    <div style="position: absolute; right: 6%;">
+                        <a href="{% url 'change_permission' user_id=user.id %}?permission=1"><label class="label label-danger">Понизить до пользователя</label></a>
+                        <a href="{% url 'change_permission' user_id=user.id %}?permission=4"><label class="label label-success">Повысить до админа</label></a>
+                    </div>
+                {% elif user.role.value == 4 %}
+                    <span style="font-size: 21px; float: left; margin-left: 2%; color: green;"> Админ</span>
+                    <div style="position: absolute; right: 6%;">
+                        <a href="{% url 'change_permission' user_id=user.id %}?permission=1"><label class="label label-danger">Понизить до пользователя</label></a>
+                        <a href="{% url 'change_permission' user_id=user.id %}?permission=3"><label class="label label-warning">Понизить до модератора</label></a>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    {% endfor %}
+{% endblock %}

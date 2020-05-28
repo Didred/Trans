@@ -48,6 +48,9 @@
                             </li>
                             <li><a href="{% url 'requests' %}" class="navbar-nav">Запросы</a></li>
                             <li><a href="{% url 'list_message' %}" class="navbar-nav">Сообщения</a></li>
+                            {% if is_admin %}
+                                <li><a href="{% url 'admin_menu' %}" class="navbar-nav">Админ меню</a></li>
+                            {% endif %}
                         </ul>
                     {% endif %}
                     <ul class="nav navbar-nav navbar-right">

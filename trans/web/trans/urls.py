@@ -50,4 +50,6 @@ urlpatterns = [
     url(r'^profile/goods/(?P<goods_id>[0-9]+)/info$', views.goods_info, name='goods_info'),
     url(r'^profile/goods/remove_goods/(?P<goods_id>[0-9]+)/$', views.remove_goods, name='remove_goods'),
     url(r'^profile/requests/$', views.list_request, name='requests'),
+    url(r'^menu/admin$', views.admin_menu, name='admin_menu'),
+    url(r'^menu/admin/(?P<user_id>[0-9]+)$', views.change_permission, name='change_permission'),
 ]

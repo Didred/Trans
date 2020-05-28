@@ -161,6 +161,7 @@ def home(request):
     companys = []
 
     user = api.get_user(nickname=request.user.username)
+    is_admin = api.is_admin(api.get_user(nickname=request.user.username))
 
     for company in all_companys:
         rating = api.get_ratings(company.id)
@@ -168,7 +169,7 @@ def home(request):
 
         companys.append((company, rating[0], rating[1], rating[2], True if review else False))
 
-    return render(request, 'trans/home.html', {'fields': PRIMARY_OCCUPATION, 'companys': companys, 'my_company': is_add_car(user)})
+    return render(request, 'trans/home.html', {'is_admin': is_admin, 'fields': PRIMARY_OCCUPATION, 'companys': companys, 'my_company': is_add_car(user)})
 
 
 def signup(request):
@@ -1231,6 +1232,32 @@ def list_request(request):
 
     return render(request, 'trans/list_request.html', {'member': user, 'is_my_company': is_my_company, 'cars': cars, 'search_goods': goods, 'company': company, 'check': check, 'show': show, 'is_administrator': is_administrator, 'my_company': is_add_car(user)})
 
+
+def admin_menu(request):
+    api = get_api()
+    admin = api.get_user(nickname=request.user.username)
+
+    if api.is_admin(admin):
+        all_users = api.get_users()
+        users = []
+
+        for user in all_users:
+            avatar = _get_avatar(user.avatar)
+
+            users.append((user, avatar))
+
+        return render(request, 'trans/admin_menu.html', {'users': users})
+    else:
+        return redirect("/")
+
+def change_permission(request, user_id):
+    api = get_api()
+    admin = api.get_user(nickname=request.user.username)
+
+    role = int(request.GET.get("permission"))
+    api.change_permission(admin, user_id, role)
+
+    return redirect("/menu/admin")
 
 
 def write_file(text):

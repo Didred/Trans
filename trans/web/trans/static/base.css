@@ -841,3 +841,11 @@ p.company-text {
 .container_request a {
   text-decoration: none;
 }
+
+.container_admin_menu {
+  margin: 10px;
+}
+
+.container_admin_menu a {
+  text-decoration: none;
+}
