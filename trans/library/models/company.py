@@ -52,13 +52,14 @@ class Company(Base):
         self.phone = phone
         self.date_registration = datetime.now()
         self.description = description
-        self.small_description = self._pars_description()
+        self.small_description = self.pars_description()
 
     def pars_description(self):
         small_description = self.description[0:420]
         residue = self.description[420:]
 
-        index = residue.index(" ")
-        small_description += residue[0: index] + " ..."
+        if residue:
+            index = residue.index(" ")
+            small_description += residue[0: index] + " ..."
 
         return small_description

@@ -42,7 +42,8 @@ class User(Base):
             email,
             phone,
             company_id,
-            role):
+            role,
+            avatar_path):
         self.nickname = nickname
         self.name = name
         self.surname = surname
@@ -50,7 +51,7 @@ class User(Base):
         self.phone = phone
         self.company_id = company_id
         self.role = role
-        with open("../sources/default.txt", "rb+") as f:
+        with open(avatar_path, "rb+") as f:
             self.avatar = f.read()
 
     def add_company(self, company_id):

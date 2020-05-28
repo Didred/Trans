@@ -249,7 +249,7 @@ def add_company(request):
                 form.cleaned_data['phone'],
                 form.cleaned_data['description']
             )
-            return redirect('/profile/')
+            return redirect('/profile')
     else:
         form = CompanyForm()
 
@@ -1013,7 +1013,6 @@ def request_car(request, car_id):
     api.create_request(user.id, car_id=car_id)
 
     check = request.GET.get("check")
-    print(check)
     if check == "1":
         return redirect('/cars')
     else:

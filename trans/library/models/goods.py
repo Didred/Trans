@@ -18,7 +18,7 @@ class Goods(Base):
     car_count = Column(Integer)
     download_type = Column(String)
     belt_count = Column(Integer)
-    weigh = Column(String)
+    weigh = Column(Integer)
     volume = Column(Integer)
     loading_date_from = Column(DateTime)
     loading_date_by = Column(DateTime)

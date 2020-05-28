@@ -275,7 +275,8 @@ class API:
             name,
             surname,
             email,
-            phone):
+            phone,
+            avatar_path="../sources/default.txt"):
 
         user = User(
             nickname,
@@ -284,7 +285,8 @@ class API:
             email,
             phone,
             None,
-            Role(1)
+            Role(1),
+            avatar_path
         )
 
         self._add(user)
@@ -386,7 +388,7 @@ class API:
         user = self.get_user(user_id=user_id)
         administrator = self.get_user(nickname=administrator_nickname)
 
-        if administrator.role.value > 1 and administrator.company_id == user.company_id:
+        if administrator.role.value > 1 and administrator.company_id == user.company_id and administrator_nickname != user.nickname:
             user.remove_company()
 
             text_log = REMOVE_EMPLOYEE % user.nickname
@@ -411,8 +413,8 @@ class API:
                 self.create_log(administrator.company_id, administrator.nickname, text_log)
             self._add(user)
 
-    def delete_user(self, nickname):
-        user = self.get_user(nickname=nickname)
+    def delete_user(self, user_id):
+        user = self.get_user(user_id=user_id)
 
         self._delete(user)
 
@@ -565,6 +567,7 @@ class API:
             goods_id,
             name=None,
             body_type=None,
+            download_type=None,
             weigh=None,
             volume=None,
             loading_date_from=None,
@@ -583,6 +586,9 @@ class API:
 
         if body_type is not None:
             goods.body_type = body_type
+
+        if download_type is not None:
+            goods.download_type = download_type
 
         if weigh is not None:
             goods.weigh = weigh
@@ -652,6 +658,12 @@ class API:
         )
 
         self._add(company)
+
+        user = self.get_user(nickname=nickname)
+        user.company_id = company.id
+        user.role = Role(2)
+
+        self._session.commit()
 
         return company.id
 

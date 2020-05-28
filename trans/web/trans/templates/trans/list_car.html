@@ -111,6 +111,7 @@
                         <label class="label label-warning">Заявка на рассмотрении</label>
                         <a href="{% url 'withdraw_request_car' car_id=car.id %}?check=1"><label>Отозвать заявку</label></a>
                     {% elif request.status.value == 2%}
+                        <a href="{% url 'company_profile' company_id=car.company_id %}"><div>Страница предприятия</div></a>
                         <label class="label label-success">Заявка одобрена</label>
                     {% elif request.status.value == 3%}
                         <label class="label label-danger">Заявка отклонена</label>
