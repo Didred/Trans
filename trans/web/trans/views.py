@@ -161,7 +161,11 @@ def home(request):
     companys = []
 
     user = api.get_user(nickname=request.user.username)
-    is_admin = api.is_admin(api.get_user(nickname=request.user.username))
+
+    if request.user.username:
+        is_admin = api.is_admin(api.get_user(nickname=request.user.username))
+    else:
+        is_admin = False
 
     for company in all_companys:
         rating = api.get_ratings(company.id)
@@ -279,7 +283,7 @@ def edit_profile(request):
     return render(request, 'trans/edit_profile.html', {'form': member, 'my_company': is_add_car(api.get_user(nickname=user))})
 
 
-def edit_company(request):
+def edit_company(request, company_id):
     api = get_api()
     user = request.user.username
     company = ""
@@ -288,14 +292,14 @@ def edit_company(request):
         form = CompanyForm(request.POST)
         if form.is_valid():
             api.edit_company(
-                nickname=user,
+                company_id=company_id,
                 phone=form.cleaned_data['phone'],
                 description=form.cleaned_data['description']
             )
-            return redirect('/profile/' + user)
+            return redirect('/company/' + company_id)
 
     else:
-        company = api.get_company(nickname=user)
+        company = api.get_company(company_id=company_id)
         number = PRIMARY_OCCUPATION.index(company.primary_occupation)
 
     return render(request, 'trans/edit_company.html', {'form': company, 'fields': PRIMARY_OCCUPATION, 'number': number, 'my_company': is_add_car(api.get_user(nickname=user))})
@@ -338,6 +342,7 @@ def add_review(request, company_id):
 
 def get_review(request, company_id):
     api = get_api()
+    owner = api.get_user(nickname=request.user.username)
 
     company = api.get_company(company_id=company_id)
     company_reviews = api.get_reviews(company_id)
@@ -349,7 +354,9 @@ def get_review(request, company_id):
             user = api.get_user(user_id=review.user_id)
             avatar = _get_avatar(user.avatar)
 
-            reviews.append((review, user, review.date.strftime("%d.%m.%Y, %H:%M"), avatar))
+            delete_and_remove_permission = True if owner.nickname == user.nickname or api.is_moder(owner) or api.is_admin(owner) else False
+
+            reviews.append((review, user, review.date.strftime("%d.%m.%Y, %H:%M"), avatar, delete_and_remove_permission))
 
     user = request.user.username
 
@@ -374,7 +381,10 @@ def contacts(request, company_id):
 
     company = api.get_company(company_id=company_id)
 
-    all_administrators = api.get_users(company_id=company_id, role=Role(2))
+    all_administrators = api.get_users(company_id=company_id, role=Role(4))
+    all_administrators.extend(api.get_users(company_id=company_id, role=Role(3)))
+    all_administrators.extend(api.get_users(company_id=company_id, role=Role(2)))
+
     administrators = []
 
     for administrator in all_administrators:
@@ -715,7 +725,7 @@ def verification(request, company_id, review_id):
 
         review = api.get_review(company_id, user.id, review_id)
 
-        if review.id == int(review_id):
+        if api.is_admin(user) or api.is_moder(user) or review.id == int(review_id):
             message = "OK"
         else:
             message = "ERROR"
@@ -725,16 +735,16 @@ def verification(request, company_id, review_id):
     return HttpResponse(message)
 
 
-def edit_review(request, company_id, review_id):
+def edit_review(request, company_id, review_id, user_id):
     if request.is_ajax():
         api = get_api()
         user = api.get_user(nickname=request.user.username)
 
-        review = api.get_review(company_id, user.id, review_id)
+        review = api.get_review(company_id, user_id, review_id)
         text = request.GET.get('text')
 
         if review.id == int(review_id) and len(text) > 0:
-            api.edit_review(company_id, user.id, text)
+            api.edit_review(company_id, user_id, text)
             message = "OK"
         else:
             message = "ERROR"
@@ -744,15 +754,15 @@ def edit_review(request, company_id, review_id):
     return HttpResponse(message)
 
 
-def remove_review(request, company_id, review_id):
+def remove_review(request, company_id, review_id, user_id):
     if request.is_ajax():
         api = get_api()
         user = api.get_user(nickname=request.user.username)
 
-        review = api.get_review(company_id, user.id)
+        review = api.get_review(company_id, user_id)
 
         if review.id == int(review_id):
-            api.delete_review(company_id, user.id)
+            api.delete_review(company_id, user_id)
             message = "OK"
         else:
             message = "ERROR"

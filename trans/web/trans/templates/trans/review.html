@@ -13,7 +13,7 @@
             <label class="rating_text">Нейтральные: {{ neutral }}</label>
             <label class="green rating_text">Положительные: {{ positive }}</label>
         </div>
-    {% for review, user, date_creation, avatar in reviews %}
+    {% for review, user, date_creation, avatar, delete_and_remove_permission in reviews %}
         {% if review.rating.value == 1%}
             <div class="container_review box-shadow container_review_red">
         {% elif review.rating.value == 2%}
@@ -30,10 +30,10 @@
                 </p>
                 <p id="review-{{review.id}}">{{ review.review }}</p>
             </div>
-            {% if nickname == user.nickname %}
+            {% if delete_and_remove_permission %}
                 <div class="review_button">
-                    <a id="edit-{{review.id}}" class="glyphicon glyphicon-pencil"></a>
-                    <a id="remove-{{review.id}}"class="glyphicon glyphicon-remove"></a>
+                    <a id="edit-{{review.id}}-{{user.id}}" class="glyphicon glyphicon-pencil"></a>
+                    <a id="remove-{{review.id}}-{{user.id}}"class="glyphicon glyphicon-remove"></a>
                 </div>
             {% endif %}
         </div>
@@ -42,6 +42,7 @@
         $('a').click(function () {
             let action = $(this).attr('id').split('-')[0]
             let id = $(this).attr('id').split('-')[1]
+            let user_id = $(this).attr('id').split('-')[2]
 
             if (action == "edit") {
                 let tag_p = document.querySelectorAll('p')
@@ -81,7 +82,7 @@
                 }
 
                 if (tag_textarea) {
-                    let message = $.get("review/" + id + "/edit?text=" + $('textarea#review').val(), function(data) {
+                    let message = $.get("review/" + id + "/" + user_id + "/edit?text=" + $('textarea#review').val(), function(data) {
                         $.ajax({
                             url: "review",
                             cache: true,
@@ -92,7 +93,7 @@
                     });
                 }
             } else {
-                $.get("remove_review/" + id, function(data) {
+                $.get("remove_review/" + id + "/" + user_id, function(data) {
                     $.ajax({
                         url: "review",
                         cache: true,

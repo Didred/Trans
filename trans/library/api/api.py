@@ -318,27 +318,14 @@ class API:
         return users
 
     def is_administrator(self, user_id, company_id):
-        _filter = and_(
-            or_(user_id is None, User.id == user_id),
-            or_(company_id is None, User.company_id == company_id),
-            or_(User.role == Role(2))
-        )
+        user = self.get_user(user_id)
 
-        users = self._session.query(User).filter(_filter).all()
-        self._session.commit()
-
-        return len(users) > 0
+        return True if (user.company_id == company_id and user.role == Role(2)) or user.role == Role(3) or user.role == Role(4) else False
 
     def is_employee(self, user_id, company_id):
-        _filter = and_(
-            or_(user_id is None, User.id == user_id),
-            or_(company_id is None, User.company_id == company_id)
-        )
+        user = self.get_user(user_id=user_id)
 
-        users = self._session.query(User).filter(_filter).all()
-        self._session.commit()
-
-        return len(users) > 0
+        return True if user.company_id == company_id or self.is_admin(user) or self.is_moder(user) else False
 
     def edit_user(
             self,
@@ -692,7 +679,7 @@ class API:
 
     def edit_company(
             self,
-            nickname,
+            company_id,
             UNP=None,
             name=None,
             primary_occupation=None,
@@ -702,7 +689,7 @@ class API:
             address=None,
             phone=None,
             description=None):
-        company = self.get_company(nickname=nickname)
+        company = self.get_company(company_id=company_id)
 
         if UNP is not None:
             company.UNP = UNP
@@ -1007,6 +994,9 @@ class API:
 
     def is_admin(self, user):
         return True if user.role == Role(4) else False
+
+    def is_moder(self, user):
+        return True if user.role == Role(3) else False
 
 
     def change_permission(self, admin, user_id, role):

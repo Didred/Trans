@@ -262,7 +262,7 @@ class TestApi(unittest.TestCase):
         company_id = self.create_company()
 
         self.api.edit_company(
-            TEST_USER_NICKNAME,
+            company_id,
             UNP="unp",
             name="name",
             primary_occupation="primary_occupation",

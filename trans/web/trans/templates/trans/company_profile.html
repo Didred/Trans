@@ -43,7 +43,7 @@
                 </div>
                 {% if is_administrator %}
                     <div class="form-group">
-                        <a href="{% url 'edit_company' %}" value="Login">Редактировать данные</a>
+                        <a href="{% url 'edit_company' company_id=company.id %}" value="Login">Редактировать данные</a>
                     </div>
                 {% endif %}
             </div>
