@@ -917,9 +917,9 @@ def list_goods(request):
         if _goods.user_id == user.id:
             check = False
 
-        goods.append((_goods, date, car, this_goods, price, _user, _request))
+        goods.append((_goods, date, car, this_goods, price, _user, _request, check))
 
-    return render(request, 'trans/list_goods.html', {'form': form, 'check': check, 'search_goods': goods})
+    return render(request, 'trans/list_goods.html', {'form': form, 'search_goods': goods})
 
 
 def list_car(request):
@@ -968,9 +968,9 @@ def list_car(request):
         if car.company_id == user.company_id:
             check = False
 
-        cars.append((car, date, car_info, price, _request))
+        cars.append((car, date, car_info, price, _request, check))
 
-    return render(request, 'trans/list_car.html', {'form': form, 'cars': cars, 'check': check, 'body_type_covered': BODY_TYPE_COVERED, 'body_type_uncovered': BODY_TYPE_UNCOVERED, 'body_type_tank': BODY_TYPE_TANK, 'body_type_special': BODY_TYPE_SPECIAL, 'download_types': DOWNLOAD_TYPE, 'current_date': current_date, 'my_company': is_add_car(user)})
+    return render(request, 'trans/list_car.html', {'form': form, 'cars': cars, 'body_type_covered': BODY_TYPE_COVERED, 'body_type_uncovered': BODY_TYPE_UNCOVERED, 'body_type_tank': BODY_TYPE_TANK, 'body_type_special': BODY_TYPE_SPECIAL, 'download_types': DOWNLOAD_TYPE, 'current_date': current_date, 'my_company': is_add_car(user)})
 
 
 def car_info(request, company_id, car_id):

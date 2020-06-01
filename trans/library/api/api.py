@@ -320,12 +320,12 @@ class API:
     def is_administrator(self, user_id, company_id):
         user = self.get_user(user_id)
 
-        return True if (user.company_id == company_id and user.role == Role(2)) or user.role == Role(3) or user.role == Role(4) else False
+        return True if (user.company_id == int(company_id) and user.role == Role(2)) or user.role == Role(3) or user.role == Role(4) else False
 
     def is_employee(self, user_id, company_id):
         user = self.get_user(user_id=user_id)
 
-        return True if user.company_id == company_id or self.is_admin(user) or self.is_moder(user) else False
+        return True if user.company_id == int(company_id) or self.is_admin(user) or self.is_moder(user) else False
 
     def edit_user(
             self,
